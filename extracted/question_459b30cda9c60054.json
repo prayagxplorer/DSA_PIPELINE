@@ -1,0 +1,929 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/1604/C",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "YouKn0wWho has an integer sequence a_1, a_2, …, a_n. He will perform the following operation until the sequence becomes empty: select an index i such that 1 ≤ i ≤ |a| and a_i is not divisible by (i + 1), and erase this element from the sequence. Here |a| is the length of sequence a at the moment of operation. Note that the sequence a changes and the next operation is performed on this changed sequence.\n\nFor example, if a=[3,5,4,5], then he can select i = 2, because a_2 = 5 is not divisible by i+1 = 3. After this operation the sequence is [3,4,5].\n\nHelp YouKn0wWho determine if it is possible to erase the whole sequence using the aforementioned operation.\n\nInput\n\nThe first line contains a single integer t (1 ≤ t ≤ 10 000) — the number of test cases.\n\nThe first line of each test case contains a single integer n (1 ≤ n ≤ 10^5).\n\nThe second line of each test case contains n integers a_1, a_2, …, a_n (1 ≤ a_i ≤ 10^9).\n\nIt is guaranteed that the sum of n over all test cases doesn't exceed 3 ⋅ 10^5.\n\nOutput\n\nFor each test case, print \"YES\" (without quotes) if it is possible to erase the whole sequence using the aforementioned operation, print \"NO\" (without quotes) otherwise. You can print each letter in any register (upper or lower).\n\nExample\n\nInput\n\n\n5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n\n\nOutput\n\n\nYES\nNO\nYES\nYES\nNO\n\nNote\n\nIn the first test case, YouKn0wWho can perform the following operations (the erased elements are underlined): [1, \\underline{2}, 3] → [\\underline{1}, 3] → [\\underline{3}] → [ ].\n\nIn the second test case, it is impossible to erase the sequence as i can only be 1, and when i=1, a_1 = 2 is divisible by i + 1 = 2.",
+  "difficulty": "EASY",
+  "requested_tags": [
+    "greedy",
+    "brute force",
+    "math"
+  ],
+  "matched_tags": [
+    "greedy",
+    "brute force",
+    "math"
+  ],
+  "relaxation_floor": 2,
+  "all_tags": [
+    "brute force",
+    "greedy",
+    "number theory",
+    "math"
+  ],
+  "time_limit_seconds": 1.0,
+  "memory_limit_mb": 256.0,
+  "candidate_solutions": [
+    "import sys\ninput = sys.stdin.buffer.readline\n\ndef gcd(a, b):\n\tif a > b:\n\t\t(a, b) = (b, a)\n\tif b % a == 0:\n\t\treturn a\n\treturn gcd(b % a, a)\n\ndef process(A):\n\tn = len(A)\n\tif A[0] % 2 == 0:\n\t\treturn 'NO'\n\tx = 2\n\tfor i in range(1, n):\n\t\tg = gcd(x, i + 2)\n\t\tx = x * (i + 2) // g\n\t\tif A[i] % x == 0:\n\t\t\treturn 'NO'\n\t\tif x > 10 ** 9:\n\t\t\tbreak\n\treturn 'YES'\nt = int(input())\nfor i in range(t):\n\tn = int(input())\n\tA = [int(x) for x in input().split()]\n\tprint(process(A))\n",
+    "import math\nfrom heapq import heappush, heappop, heapify\nimport random\nimport string\nfrom collections import deque\nfrom bisect import bisect, bisect_left, bisect_right, insort\nimport sys\ninput = sys.stdin.readline\nS = lambda : input().rstrip()\nI = lambda : int(S())\nM = lambda : map(int, S().split())\nL = lambda : list(M())\nH = 1000000000 + 7\na = [1] * 42\nfor i in range(1, 42):\n\ta[i] = a[i - 1] * i // math.gcd(a[i - 1], i)\nfor _ in range(I()):\n\tn = I()\n\tl = L()\n\tf = 0\n\tfor i in range(min(n, 40)):\n\t\tif l[i] % a[i + 2] == 0:\n\t\t\tf = 1\n\t\t\tbreak\n\tif f == 1:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "from __future__ import division, print_function\nimport math\nimport sys\nimport os\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef inp():\n\treturn int(input())\n\ndef inps():\n\treturn input().strip()\n\ndef inlt():\n\treturn list(map(int, input().split()))\n\ndef insr():\n\ts = input().strip()\n\treturn list(s[:len(s)])\n\ndef invr():\n\treturn map(int, input().split())\nfor _ in range(inp()):\n\tn = inp()\n\tl = inlt()\n\tflag = 1\n\tchng = 0\n\tfor i in range(n):\n\t\tif l[i] % (i + 2) == 0:\n\t\t\tchng = 0\n\t\t\twhile l[i] % (i + 2 - chng) == 0:\n\t\t\t\tif i + 2 - chng < 2:\n\t\t\t\t\tflag = 0\n\t\t\t\t\tbreak\n\t\t\t\tchng += 1\n\t\t\tif i + 2 - chng < 2:\n\t\t\t\tflag = 0\n\t\t\t\tbreak\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import os\nimport sys\nfrom io import BytesIO, IOBase\nfrom math import gcd\nnmbr = lambda : int(input())\nlst = lambda : list(map(int, input().split()))\n\ndef main():\n\tlim = 10 ** 9 + 1\n\n\tdef fn(x, v):\n\t\treturn x * v // gcd(x, v)\n\tlcm = [1, 1]\n\tx = 1\n\tfor i in range(2, 100005):\n\t\tif x >= lim:\n\t\t\tx = lim\n\t\telse:\n\t\t\tx = fn(lcm[-1], i)\n\t\tlcm += [x]\n\n\tdef solve():\n\t\tif n == 1:\n\t\t\tif a[0] & 1:\n\t\t\t\treturn True\n\t\t\treturn False\n\t\tl = 1\n\t\tfor i in range(n):\n\t\t\tl = lcm[i + 2]\n\t\t\tif a[i] % l == 0:\n\t\t\t\treturn False\n\t\treturn True\n\tfor _ in range(nmbr()):\n\t\tn = nmbr()\n\t\ta = lst()\n\t\tif solve():\n\t\t\tprint('YES')\n\t\telse:\n\t\t\tprint('NO')\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nfor t in range(1):\n\tmain()\n",
+    "import sys\ninput = sys.stdin.readline\n\ndef main():\n\n\tdef gcd(x, y):\n\t\twhile y:\n\t\t\t(x, y) = (y, x % y)\n\t\treturn x\n\n\tdef lcm(x, y):\n\t\treturn x * y // gcd(x, y)\n\tt = int(input())\n\tfor _ in range(t):\n\t\tn = int(input())\n\t\tar = list(map(int, input().split()))\n\t\tans = True\n\t\trunninga = 2\n\t\tfor i in range(min(n, 23)):\n\t\t\tif ar[i] % runninga:\n\t\t\t\trunninga = lcm(runninga, i + 3)\n\t\t\telse:\n\t\t\t\tans = False\n\t\t\t\tbreak\n\t\tif ans:\n\t\t\tprint('YES')\n\t\telse:\n\t\t\tprint('NO')\nmain()\n",
+    "def gcd(a, b):\n\treturn a if b == 0 else gcd(b, a % b)\n\ndef lcm(a, b):\n\treturn a * b // gcd(a, b)\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tdiv = 1\n\tok = True\n\tfor i in range(0, n):\n\t\tif i <= 24:\n\t\t\tdiv = lcm(div, i + 2)\n\t\tif a[i] % div == 0:\n\t\t\tok = False\n\t\t\tbreak\n\tif ok:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import io\nimport os\nimport sys\nimport math\ninput = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline\n\ndef printd(*args, **kwargs):\n\tprint(*args, **kwargs)\n\treturn\n\ndef read_string():\n\treturn input().decode().strip()\n\ndef read_int_list():\n\treturn list(map(int, input().split()))\n\ndef read_int():\n\treturn int(input())\n\ndef lcm(a, b):\n\treturn a * b // math.gcd(a, b)\n\ndef lcm_factorial(n):\n\tanswer = 2\n\tfor i in range(3, n + 1):\n\t\tanswer = lcm(i, answer)\n\treturn answer\nlcm_factorial_list = []\nfor i in range(2, 30):\n\tlcm_factorial_list.append(lcm_factorial(i))\nt = read_int()\nfor _ in range(t):\n\tn = read_int()\n\ta = read_int_list()\n\tfailed = False\n\tfor i in range(n):\n\t\tif i > 25:\n\t\t\tbreak\n\t\tif a[i] % lcm_factorial_list[i] == 0:\n\t\t\tfailed = True\n\t\t\tbreak\n\tif failed:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "for test in range(int(input())):\n\tn = int(input())\n\ta = [int(i) for i in input().split()]\n\tflag = True\n\tfor i in range(len(a)):\n\t\tfor j in range(2, min(i + 2, 30) + 1):\n\t\t\tif a[i] % j != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tflag = False\n\t\t\tbreak\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "divisor = [2, 6, 12, 60, 60, 420, 840, 2520, 2520, 27720, 27720, 360360, 360360, 360360, 720720, 12252240, 12252240, 232792560, 232792560, 232792560, 232792560, 5354228880]\n_ = int(input())\nfor __ in range(_):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tflag = False\n\tfor i in range(min(n, len(divisor))):\n\t\tif arr[i] % divisor[i] == 0:\n\t\t\tflag = True\n\t\t\tbreak\n\tif flag:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "import math\nfrom collections import OrderedDict\nfrom collections import Counter\nfrom itertools import combinations\n\ndef solve(s):\n\twhile len(s) != 0:\n\t\tk = len(s) - 1\n\t\twhile k >= 0:\n\t\t\tif s[k] % (k + 2) != 0:\n\t\t\t\tdel s[k]\n\t\t\t\tbreak\n\t\t\tk -= 1\n\t\tif k < 0:\n\t\t\tprint('NO')\n\t\t\treturn\n\tif len(s) == 0:\n\t\tprint('YES')\n\t\treturn\n\tprint('NO')\nt = int(input(''))\nfor i in range(t):\n\tn = int(input(''))\n\ta = list(map(int, input('').strip().split()))[:n]\n\tsolve(a)\n",
+    "from math import gcd\nfor i in range(int(input())):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tx = 2\n\tans = 'YES'\n\tfor i in range(2, n + 2):\n\t\tx = x * i // gcd(x, i)\n\t\tif x > 10 ** 9:\n\t\t\tbreak\n\t\tif l[i - 2] % x == 0:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\tprint(ans)\n",
+    "import bisect\nimport heapq\nimport math\nimport collections\nimport sys\nimport copy\nfrom functools import reduce\nimport decimal\nfrom io import BytesIO, IOBase\nimport os\nimport itertools\nimport functools\nfrom types import GeneratorType\ndecimal.getcontext().rounding = decimal.ROUND_HALF_UP\ngraphDict = collections.defaultdict\nqueue = collections.deque\n\ndef bootstrap(f, stack=[]):\n\n\tdef wrappedfunc(*args, **kwargs):\n\t\tto = f(*args, **kwargs)\n\t\tif stack:\n\t\t\treturn to\n\t\telse:\n\t\t\twhile True:\n\t\t\t\tif type(to) is GeneratorType:\n\t\t\t\t\tstack.append(to)\n\t\t\t\t\tto = next(to)\n\t\t\t\telse:\n\t\t\t\t\tstack.pop()\n\t\t\t\t\tif not stack:\n\t\t\t\t\t\treturn to\n\t\t\t\t\tto = stack[-1].send(to)\n\treturn wrappedfunc\n\nclass Graphs:\n\n\tdef __init__(self):\n\t\tself.graph = graphDict(set)\n\n\tdef add_edge(self, u, v):\n\t\tself.graph[u].add(v)\n\t\tself.graph[v].add(u)\n\n\tdef dfs_utility(self, nodes, visited_nodes, colors, parity, level):\n\t\tglobal count\n\t\tif nodes == 1:\n\t\t\tcolors[nodes] = -1\n\t\telif len(self.graph[nodes]) == 1 and parity % 2 == 0:\n\t\t\tif q == 1:\n\t\t\t\tcolors[nodes] = 1\n\t\t\telse:\n\t\t\t\tcolors[nodes] = -1\n\t\t\t\tcount += 1\n\t\telif parity % 2 == 0:\n\t\t\tcolors[nodes] = -1\n\t\telse:\n\t\t\tcolors[nodes] = 1\n\t\tvisited_nodes.add(nodes)\n\t\tfor neighbour in self.graph[nodes]:\n\t\t\tnew_level = level + 1\n\t\t\tif neighbour not in visited_nodes:\n\t\t\t\tself.dfs_utility(neighbour, visited_nodes, colors, level - 1, new_level)\n\n\tdef dfs(self, node):\n\t\tVisited = set()\n\t\tcolor = collections.defaultdict()\n\t\tself.dfs_utility(node, Visited, color, 0, 0)\n\t\treturn color\n\n\tdef bfs(self, node, f_node):\n\t\tcount = float('inf')\n\t\tvisited = set()\n\t\tlevel = 0\n\t\tif node not in visited:\n\t\t\tqueue.append([node, level])\n\t\t\tvisited.add(node)\n\t\tflag = 0\n\t\twhile queue:\n\t\t\tparent = queue.popleft()\n\t\t\tif parent[0] == f_node:\n\t\t\t\tflag = 1\n\t\t\t\tcount = min(count, parent[1])\n\t\t\tlevel = parent[1] + 1\n\t\t\tfor item in self.graph[parent[0]]:\n\t\t\t\tif item not in visited:\n\t\t\t\t\tqueue.append([item, level])\n\t\t\t\t\tvisited.add(item)\n\t\treturn count if flag else -1\n\t\treturn False\n\nclass Tree:\n\n\tdef __init__(self, data):\n\t\tself.data = data\n\t\tself.left = None\n\t\tself.right = None\n\ndef inorder(node, lis):\n\tif node:\n\t\tinorder(node.left, lis)\n\t\tlis.append(node.data)\n\t\tinorder(node.right, lis)\n\treturn lis\n\ndef leaf_node_sum(root):\n\tif root is None:\n\t\treturn 0\n\tif root.left is None and root.right is None:\n\t\treturn root.data\n\treturn leaf_node_sum(root.left) + leaf_node_sum(root.right)\n\ndef hight(root):\n\tif root is None:\n\t\treturn -1\n\tif root.left is None and root.right is None:\n\t\treturn 0\n\treturn max(hight(root.left), hight(root.right)) + 1\n\nclass UF:\n\n\tdef __init__(self, N):\n\t\tself._id = list(range(N))\n\t\tself._count = N\n\t\tself._rank = [0] * N\n\n\tdef find(self, p):\n\t\tid = self._id\n\t\twhile p != id[p]:\n\t\t\tp = id[p]\n\t\treturn p\n\n\tdef count(self):\n\t\treturn self._count\n\n\tdef connected(self, p, q):\n\t\treturn self.find(p) == self.find(q)\n\n\tdef union(self, p, q):\n\t\tid = self._id\n\t\trank = self._rank\n\t\ti = self.find(p)\n\t\tj = self.find(q)\n\t\tif i == j:\n\t\t\treturn\n\t\tself._count -= 1\n\t\tif rank[i] < rank[j]:\n\t\t\tid[i] = j\n\t\telif rank[i] > rank[j]:\n\t\t\tid[j] = i\n\t\telse:\n\t\t\tid[j] = i\n\t\t\trank[i] += 1\n\n\tdef add_roads(self):\n\t\treturn set(self._id)\n\n\tdef __str__(self):\n\t\treturn ' '.join([str(x) for x in self._id])\n\n\tdef __repr__(self):\n\t\treturn 'UF(' + str(self) + ')'\n\ndef rounding(n):\n\treturn int(decimal.Decimal(f'{n}').to_integral_value())\n\ndef factors(n):\n\treturn set(reduce(list.__add__, ([i, n // i] for i in range(1, int(n ** 0.5) + 1) if n % i == 0)))\n\ndef p_sum(array):\n\treturn list(itertools.accumulate(array))\n\ndef base_change(nn, bb):\n\tif nn == 0:\n\t\treturn [0]\n\tdigits = []\n\twhile nn:\n\t\tdigits.append(int(nn % bb))\n\t\tnn //= bb\n\treturn digits[::-1]\n\ndef diophantine(a: int, b: int, c: int):\n\t(d, x, y) = extended_gcd(a, b)\n\tr = c // d\n\treturn (r * x, r * y)\n\n@bootstrap\ndef extended_gcd(a: int, b: int):\n\tif b == 0:\n\t\t(d, x, y) = (a, 1, 0)\n\telse:\n\t\t(d, p, q) = (yield extended_gcd(b, a % b))\n\t\tx = q\n\t\ty = p - q * (a // b)\n\tyield (d, x, y)\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self, **kwargs):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\n\ndef inp():\n\treturn sys.stdin.readline().strip()\n\ndef map_inp(v_type):\n\treturn map(v_type, inp().split())\n\ndef list_inp(v_type):\n\treturn list(map_inp(v_type))\n\ndef find_gcd(lis):\n\tx = lis[0]\n\tfor item in lis:\n\t\tx = math.gcd(item, x)\n\treturn x\nfor _ in range(int(inp())):\n\tn = int(inp())\n\tarr = list_inp(int)\n\tif arr[0] % 2 == 0:\n\t\tprint('NO')\n\telse:\n\t\tind = 3\n\t\ttemp = 2\n\t\tflag = 1\n\t\tfor i in range(1, n):\n\t\t\ttemp = temp * ind // math.gcd(temp, ind)\n\t\t\tif temp > 10 ** 9:\n\t\t\t\tbreak\n\t\t\tif arr[i] % ind == 0:\n\t\t\t\tif arr[i] % temp == 0:\n\t\t\t\t\tflag = 0\n\t\t\t\t\tbreak\n\t\t\tind += 1\n\t\tif flag:\n\t\t\tprint('YES')\n\t\telse:\n\t\t\tprint('NO')\n",
+    "def compute_gcd(x, y):\n\twhile y:\n\t\t(x, y) = (y, x % y)\n\treturn x\n\ndef compute_lcm(x, y):\n\tlcm = x * y // compute_gcd(x, y)\n\treturn lcm\nlcms = []\nlcm_to_this_moment = 1\nfor i in range(1, 22):\n\tlcm_to_this_moment = compute_lcm(lcm_to_this_moment, i + 1)\n\tlcms.append(lcm_to_this_moment)\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tflag = 1\n\tfor (i, j) in zip(a, lcms[:n]):\n\t\tif i % j == 0:\n\t\t\tprint('NO')\n\t\t\tflag = 0\n\t\t\tbreak\n\tif flag:\n\t\tprint('YES')\n",
+    "from sys import stdin\ninput = stdin.readline\nrn = lambda : int(input())\nrns = lambda : map(int, input().split())\nrl = lambda : list(map(int, input().split()))\nrs = lambda : input().strip()\nYN = lambda x: print('YES') if x else print('NO')\nceil_div = lambda a, b: -(-a // b)\nmod = 10 ** 9 + 7\nfor _ in range(rn()):\n\tn = rn()\n\ta = rl()\n\tans = True\n\tf = [2]\n\tfor i in range(n):\n\t\tfound = False\n\t\tfor num in f:\n\t\t\tif a[i] % num != 0:\n\t\t\t\tfound = True\n\t\t\t\tbreak\n\t\tif not found:\n\t\t\tans = False\n\t\t\tbreak\n\t\tf.append(i + 3)\n\tYN(ans)\n",
+    "from sys import *\nfrom math import *\nfor _ in range(int(stdin.readline())):\n\tn = int(stdin.readline())\n\ta = list(map(int, stdin.readline().split()))\n\tif a[0] % 2 == 0:\n\t\tstdout.write('NO\\n')\n\t\tcontinue\n\tver = [False] * n\n\tfor i in range(n):\n\t\tif a[i] % (i + 2) != 0:\n\t\t\tver[i] = True\n\tx = []\n\tx.append([ver[0], 1])\n\tfor i in range(1, n):\n\t\tif ver[i] == x[-1][0]:\n\t\t\tx[-1][1] += 1\n\t\telse:\n\t\t\tx.append([ver[i], 1])\n\tcnt = [0] * n\n\tfor i in range(n):\n\t\tif ver[i] == False:\n\t\t\tcnt[i] = 1\n\t\t\tstart = i + 1\n\t\t\twhile True:\n\t\t\t\tif start == 1:\n\t\t\t\t\tbreak\n\t\t\t\tif a[i] % start != 0:\n\t\t\t\t\tbreak\n\t\t\t\tcnt[i] += 1\n\t\t\t\tstart -= 1\n\tverdict = True\n\ttmp = 0\n\tfor i in range(n):\n\t\tif ver[i] == False:\n\t\t\tif tmp >= cnt[i]:\n\t\t\t\ttmp += 1\n\t\t\telse:\n\t\t\t\tverdict = False\n\t\t\t\tbreak\n\t\telse:\n\t\t\ttmp += 1\n\tif verdict:\n\t\tstdout.write('YES\\n')\n\telse:\n\t\tstdout.write('NO\\n')\n",
+    "def ii():\n\treturn int(input())\n\ndef si():\n\treturn input()\n\ndef mi():\n\treturn map(int, input().split())\n\ndef msi():\n\treturn map(str, input().split())\n\ndef li():\n\treturn list(mi())\nt = ii()\nfor _ in range(t):\n\tn = ii()\n\ta = li()\n\tflag = 0\n\tcnt = 0\n\tfor i in range(1, n + 1):\n\t\tif a[i - 1] % (i + 1) == 0:\n\t\t\tcurr = a[i - 1]\n\t\t\tpos = i + 1\n\t\t\twhile pos > 0 and curr % pos == 0:\n\t\t\t\tpos -= 1\n\t\t\tif pos == 0 or i + 1 - pos > cnt:\n\t\t\t\tflag = 1\n\t\t\t\tprint('NO')\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tcnt += 1\n\t\telse:\n\t\t\tcnt += 1\n\tif flag == 0:\n\t\tprint('YES')\n",
+    "import enum\nimport random\nimport collections\nimport string\nimport math\nimport copy\nimport os\nimport sys\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\n\ndef input():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\nmo = int(1000000000.0 + 7)\n\ndef exgcd(a, b):\n\tif not b:\n\t\treturn (1, 0)\n\t(y, x) = exgcd(b, a % b)\n\ty -= a // b * x\n\treturn (x, y)\n\ndef getinv(a, m):\n\t(x, y) = exgcd(a, m)\n\treturn -1 if x == 1 else x % m\n\ndef comb(n, b):\n\tres = 1\n\tb = min(b, n - b)\n\tfor i in range(b):\n\t\tres = res * (n - i) / (i + 1)\n\treturn res\n\ndef quickpower(a, n):\n\tres = 1\n\twhile n:\n\t\tif n & 1:\n\t\t\tres = res * a % mo\n\t\tn >>= 1\n\t\ta = a * a % mo\n\treturn res\n\ndef dis(a, b):\n\treturn abs(a[0] - b[0]) + abs(a[1] - b[1])\n\ndef getpref(x):\n\tif x > 1:\n\t\treturn x * (x - 1) >> 1\n\telse:\n\t\treturn 0\n\ndef orafli(upp):\n\tprimes = []\n\tmarked = [False for i in range(upp + 3)]\n\tprvs = [i for i in range(upp + 3)]\n\tfor i in range(2, upp):\n\t\tif not marked[i]:\n\t\t\tprimes.append(i)\n\t\tfor j in primes:\n\t\t\tif i * j >= upp:\n\t\t\t\tbreak\n\t\t\tmarked[i * j] = True\n\t\t\tprvs[i * j] = j\n\t\t\tif i % j == 0:\n\t\t\t\tbreak\n\treturn (primes, prvs)\n\ndef lower_ord(c: str) -> int:\n\treturn ord(c) - 97\n\ndef upper_ord(c: str) -> int:\n\treturn ord(c) - 65\n\ndef read_list():\n\treturn [int(i) for i in input().split()]\n\ndef read_int():\n\ts = input().split()\n\tif len(s) == 1:\n\t\treturn int(s[0])\n\telse:\n\t\treturn map(int, s)\n\ndef ask(s, i, j):\n\tprint(f'{s} {i} {j}', flush=True)\n\ndef answer(x):\n\tprint(f'finish {x}', flush=True)\nimport functools\nimport itertools\nfrom fractions import Fraction\nimport random\n\ndef lowbit(x):\n\treturn -x & x\n\ndef pref(x):\n\treturn x * (x + 1) >> 1\n\ndef cum(sx, mx):\n\treturn (sx + mx) * (mx - sx + 1) >> 1\nlis = [i for i in range(2, 40)]\n\ndef solve():\n\tn = read_int()\n\tli = read_list()\n\tfor (p, i) in enumerate(li[:30]):\n\t\tflg = False\n\t\tfor j in lis[:p + 1]:\n\t\t\tif i % j != 0:\n\t\t\t\tflg = True\n\t\t\t\tbreak\n\t\tif flg == False:\n\t\t\tprint('NO')\n\t\t\treturn\n\tprint('YES')\nT = int(input())\nfor ti in range(T):\n\tsolve()\n",
+    "t = int(input())\ndiv_list = [2, 6, 12, 60, 60, 420, 840, 2520, 2520, 27720, 27720, 360360, 360360, 360360, 720720, 12252240, 12252240, 232792560, 232792560, 232792560, 232792560]\nfor _ in range(t):\n\tn = int(input())\n\tarr = str(input())\n\tarr = [int(i) for i in arr.split()]\n\tdiv_list_max_len = len(div_list)\n\tpos = True\n\tfor (index, num) in enumerate(arr):\n\t\tif index >= div_list_max_len:\n\t\t\tbreak\n\t\tif num % div_list[index] == 0:\n\t\t\tpos = False\n\t\t\tbreak\n\tif pos:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import sys\nreadline = sys.stdin.readline\nimport math\nM = 3 * 10 ** 5 + 2\nLCM = [0] * M\nLCM[0] = 1\nend = -1\nfor i in range(1, M):\n\tg = math.gcd(LCM[i - 1], i + 1)\n\tLCM[i] = LCM[i - 1] // g * (i + 1)\n\tif LCM[i] > 10 ** 9:\n\t\tend = i\n\t\tbreak\nLCM = LCM[:end + 1]\nT = int(readline())\nfor t in range(T):\n\tN = int(readline())\n\tA = list(map(int, readline().split()))\n\tfor i in range(N):\n\t\tif i >= end:\n\t\t\tprint('YES')\n\t\t\tbreak\n\t\tif A[i] % LCM[i + 1] == 0:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "lcm = [2]\ncur = 2\ni = 2\n\ndef gcd(x, y):\n\twhile y:\n\t\t(x, y) = (y, x % y)\n\treturn x\nwhile cur <= 10 ** 9:\n\tcur = lcm[i - 2]\n\tlcm.append(cur * (i + 1) // gcd(cur, i + 1))\n\ti += 1\nt = int(input())\nwhile t:\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tt -= 1\n\tf = 1\n\tfor i in range(len(a)):\n\t\tif not a[i] % lcm[min(i, len(lcm) - 1)]:\n\t\t\tf = 0\n\t\t\tprint('NO')\n\t\t\tbreak\n\tif f:\n\t\tprint('YES')\n",
+    "def get_ans(a, n):\n\tneed_to_delete = [0] * n\n\tfor i in range(n - 1, -1, -1):\n\t\tnd = 0\n\t\twhile a[i] % (i - nd + 2) == 0:\n\t\t\tif nd >= i:\n\t\t\t\treturn False\n\t\t\tnd += 1\n\t\tneed_to_delete[i] = nd\n\tmay_to_delete = 0\n\tfor nd in need_to_delete:\n\t\tif nd > may_to_delete:\n\t\t\treturn False\n\t\tmay_to_delete += 1\n\treturn True\nanss = []\nt = int(input())\nfor _ in range(t):\n\t_n = int(input())\n\t_a = list(map(int, input().split()))\n\tanss.append(get_ans(_a, _n))\nfor ans in anss:\n\tif ans:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "def divis(el, ind):\n\twhile ind > 1:\n\t\tif el % ind != 0:\n\t\t\treturn ind\n\t\tind -= 1\n\treturn -1\n\ndef do(arr):\n\tif arr[0] % 2 == 0:\n\t\treturn 'NO'\n\tnow = 1\n\tfor i in range(1, len(arr)):\n\t\tni = divis(arr[i], i + 2)\n\t\tif ni == -1:\n\t\t\treturn 'NO'\n\t\tif i - (ni - 2) > now:\n\t\t\treturn 'NO'\n\t\tnow += 1\n\treturn 'YES'\nfor i in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tprint(do(arr))\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tk = n\n\tfor i in range(n):\n\t\tfor j in range(k - 1, -1, -1):\n\t\t\tif a[j] % (j + 2):\n\t\t\t\ta.pop(j)\n\t\t\t\tbreak\n\t\telse:\n\t\t\tbreak\n\t\tk -= 1\n\tprint('NO' if len(a) else 'YES')\n",
+    "from sys import stdin, stdout\nimport math\n\ndef gcd(a, b):\n\treturn math.gcd(a, b)\nfor _ in range(int(stdin.readline())):\n\tn = int(stdin.readline())\n\ta = list(map(int, stdin.readline().split()))\n\tx = 1\n\txx = 0\n\tfor i in range(n):\n\t\tg = gcd(x, i + 2)\n\t\tx *= i + 2\n\t\tx //= g\n\t\tif x > 1000000000:\n\t\t\txx = 1\n\t\t\tbreak\n\t\tif a[i] % x == 0:\n\t\t\txx = 2\n\t\t\tbreak\n\tif xx == 2:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "import heapq\nimport sys\nfrom math import *\nimport threading\nfrom heapq import *\nfrom itertools import count\nfrom pprint import pprint\nfrom collections import defaultdict\nfrom heapq import heapify, heappop, heappush\nmod = 10 ** 9 + 7\ninf = 10 ** 15\ndecision = ['NO', 'YES']\nyes = 'YES'\nno = 'NO'\nimport os\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\nclass Factorial:\n\n\tdef __init__(self, MOD):\n\t\tself.MOD = MOD\n\t\tself.factorials = [1, 1]\n\t\tself.invModulos = [0, 1]\n\t\tself.invFactorial_ = [1, 1]\n\n\tdef calc(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate n!')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tif n < len(self.factorials):\n\t\t\treturn self.factorials[n]\n\t\tnextArr = [0] * (n + 1 - len(self.factorials))\n\t\tinitialI = len(self.factorials)\n\t\tprev = self.factorials[-1]\n\t\tm = self.MOD\n\t\tfor i in range(initialI, n + 1):\n\t\t\tprev = nextArr[i - initialI] = prev * i % m\n\t\tself.factorials += nextArr\n\t\treturn self.factorials[n]\n\n\tdef inv(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate n^(-1)')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tp = self.MOD\n\t\tpi = n % p\n\t\tif pi < len(self.invModulos):\n\t\t\treturn self.invModulos[pi]\n\t\tnextArr = [0] * (n + 1 - len(self.invModulos))\n\t\tinitialI = len(self.invModulos)\n\t\tfor i in range(initialI, min(p, n + 1)):\n\t\t\tnext = -self.invModulos[p % i] * (p // i) % p\n\t\t\tself.invModulos.append(next)\n\t\treturn self.invModulos[pi]\n\n\tdef invFactorial(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate (n^(-1))!')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tif n < len(self.invFactorial_):\n\t\t\treturn self.invFactorial_[n]\n\t\tself.inv(n)\n\t\tnextArr = [0] * (n + 1 - len(self.invFactorial_))\n\t\tinitialI = len(self.invFactorial_)\n\t\tprev = self.invFactorial_[-1]\n\t\tp = self.MOD\n\t\tfor i in range(initialI, n + 1):\n\t\t\tprev = nextArr[i - initialI] = prev * self.invModulos[i % p] % p\n\t\tself.invFactorial_ += nextArr\n\t\treturn self.invFactorial_[n]\n\nclass Combination:\n\n\tdef __init__(self, MOD):\n\t\tself.MOD = MOD\n\t\tself.factorial = Factorial(MOD)\n\n\tdef ncr(self, n, k):\n\t\tif k < 0 or n < k:\n\t\t\treturn 0\n\t\tk = min(k, n - k)\n\t\tf = self.factorial\n\t\treturn f.calc(n) * f.invFactorial(max(n - k, k)) * f.invFactorial(min(k, n - k)) % self.MOD\n\n\tdef npr(self, n, k):\n\t\tif k < 0 or n < k:\n\t\t\treturn 0\n\t\tf = self.factorial\n\t\treturn f.calc(n) * f.invFactorial(n - k) % self.MOD\n\nclass SegmentTree:\n\n\tdef __init__(self, data, default=0, func=lambda a, b: max(a, b)):\n\t\tself._default = default\n\t\tself._func = func\n\t\tself._len = len(data)\n\t\tself._size = _size = 1 << (self._len - 1).bit_length()\n\t\tself.data = [default] * (2 * _size)\n\t\tself.data[_size:_size + self._len] = data\n\t\tfor i in reversed(range(_size)):\n\t\t\tself.data[i] = func(self.data[i + i], self.data[i + i + 1])\n\n\tdef __delitem__(self, idx):\n\t\tself[idx] = self._default\n\n\tdef __getitem__(self, idx):\n\t\treturn self.data[idx + self._size]\n\n\tdef __setitem__(self, idx, value):\n\t\tidx += self._size\n\t\tself.data[idx] = value\n\t\tidx >>= 1\n\t\twhile idx:\n\t\t\tself.data[idx] = self._func(self.data[2 * idx], self.data[2 * idx + 1])\n\t\t\tidx >>= 1\n\n\tdef __len__(self):\n\t\treturn self._len\n\n\tdef query(self, start, stop):\n\t\tif start == stop:\n\t\t\treturn self.__getitem__(start)\n\t\tstop += 1\n\t\tstart += self._size\n\t\tstop += self._size\n\t\tres = self._default\n\t\twhile start < stop:\n\t\t\tif start & 1:\n\t\t\t\tres = self._func(res, self.data[start])\n\t\t\t\tstart += 1\n\t\t\tif stop & 1:\n\t\t\t\tstop -= 1\n\t\t\t\tres = self._func(res, self.data[stop])\n\t\t\tstart >>= 1\n\t\t\tstop >>= 1\n\t\treturn res\n\n\tdef __repr__(self):\n\t\treturn 'SegmentTree({0})'.format(self.data)\n\ndef lower_bound(li, num):\n\tanswer = len(li)\n\tstart = 0\n\tend = len(li) - 1\n\twhile start <= end:\n\t\tmiddle = (end + start) // 2\n\t\tif li[middle] >= num:\n\t\t\tanswer = middle\n\t\t\tend = middle - 1\n\t\telse:\n\t\t\tstart = middle + 1\n\treturn answer\n\ndef upper_bound(li, num):\n\tanswer = len(li)\n\tstart = 0\n\tend = len(li) - 1\n\twhile start <= end:\n\t\tmiddle = (end + start) // 2\n\t\tif li[middle] <= num:\n\t\t\tstart = middle + 1\n\t\telse:\n\t\t\tanswer = middle\n\t\t\tend = middle - 1\n\treturn answer\n\ndef abs(x):\n\treturn x if x >= 0 else -x\n\ndef binary_search(li, val):\n\tans = -1\n\tlb = 0\n\tub = len(li) - 1\n\twhile lb <= ub:\n\t\tmid = (lb + ub) // 2\n\t\tif li[mid] > val:\n\t\t\tub = mid - 1\n\t\telif val > li[mid]:\n\t\t\tlb = mid + 1\n\t\telse:\n\t\t\tans = mid\n\t\t\tbreak\n\treturn ans\n\ndef kadane(x):\n\tsum_so_far = 0\n\tcurrent_sum = 0\n\tfor i in x:\n\t\tcurrent_sum += i\n\t\tif current_sum < 0:\n\t\t\tcurrent_sum = 0\n\t\telse:\n\t\t\tsum_so_far = max(sum_so_far, current_sum)\n\treturn sum_so_far\n\ndef pref(li):\n\tpref_sum = [li[0]]\n\tfor i in range(1, len(li)):\n\t\tpref_sum.append(pref_sum[-1] + i)\n\treturn pref_sum\n\ndef SieveOfEratosthenes(n):\n\tprime = [{1, i} for i in range(n + 1)]\n\tp = 2\n\twhile p <= n:\n\t\tfor i in range(p * 2, n + 1, p):\n\t\t\tprime[i].add(p)\n\t\tp += 1\n\treturn prime\n\ndef primefactors(n):\n\tfactors = []\n\twhile n % 2 == 0:\n\t\tfactors.append(2)\n\t\tn //= 2\n\tfor i in range(3, int(sqrt(n)) + 1, 2):\n\t\twhile n % i == 0:\n\t\t\tfactors.append(i)\n\t\t\tn //= i\n\tif n > 2:\n\t\tfactors.append(n)\n\treturn factors\n\ndef prod(li):\n\tans = 1\n\tfor i in li:\n\t\tans *= i\n\treturn ans\n\ndef given():\n\ta = list(map(int, input().split()))\n\treturn a\n\ndef givenStringList():\n\ts = list(input())\n\treturn s\n\ndef givenStringListInt():\n\ts = [int(x) for x in givenStringList()]\n\treturn s\n\ndef main():\n\tkarmanya = given()[0]\n\twhile karmanya != 0:\n\t\tkarmanya -= 1\n\t\tn = given()[0]\n\t\ta = given()\n\t\tflag = 1\n\t\tfor i in range(n):\n\t\t\tf = 0\n\t\t\tfor j in range(i + 2, 1, -1):\n\t\t\t\tif a[i] % j != 0:\n\t\t\t\t\tf = 1\n\t\t\t\t\tbreak\n\t\t\tif not f:\n\t\t\t\tflag = 0\n\t\t\t\tbreak\n\t\tprint(decision[flag])\nmain()\n",
+    "from sys import stdin\n\ndef read_input():\n\tn = int(stdin.readline())\n\ta = list(map(int, stdin.readline().split()))\n\treturn (n, a)\n\ndef solve(n, a):\n\tfor (i, ai) in enumerate(a, 1):\n\t\tindivisible = False\n\t\tfor d in range(2, min(i + 2, 30)):\n\t\t\tif ai % d != 0:\n\t\t\t\tindivisible = True\n\t\t\t\tbreak\n\t\tif not indivisible:\n\t\t\treturn 'NO'\n\treturn 'YES'\n\ndef main():\n\tt = int(stdin.readline())\n\tfor _ in range(t):\n\t\tinput = read_input()\n\t\tanswer = solve(*input)\n\t\tprint(answer)\nmain()\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = [int(i) for i in input().split()]\n\tworks = True\n\tfor i in range(1, n + 1):\n\t\tif a[i - 1] % 2 == 0:\n\t\t\tbroke = False\n\t\t\tfor x in range(1, i + 1):\n\t\t\t\tif a[i - 1] % (x + 1) != 0:\n\t\t\t\t\tbroke = True\n\t\t\t\t\tbreak\n\t\t\tif not broke:\n\t\t\t\tprint('NO')\n\t\t\t\tworks = False\n\t\t\t\tbreak\n\tif works:\n\t\tprint('YES')\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = [int(i) for i in input().strip().split()]\n\ti = 0\n\tmin_i = 0\n\twhile i < n:\n\t\tcheck = False\n\t\tfor j in range(0, i + 1):\n\t\t\tif a[i] % (j + 2) != 0:\n\t\t\t\tcheck = True\n\t\t\t\tbreak\n\t\tif check == False:\n\t\t\tbreak\n\t\ti += 1\n\tif check:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tpos = True\n\tfor (i, a) in enumerate(a):\n\t\tv = i + 2\n\t\twhile a % v == 0:\n\t\t\tv -= 1\n\t\t\tif v == 0:\n\t\t\t\tpos = False\n\t\t\t\tbreak\n\t\tdiff = i + 2 - v\n\t\tif diff > i + 1:\n\t\t\tpos = False\n\tprint('YES' if pos else 'NO')\n",
+    "from math import gcd\nimport sys\ninput = sys.stdin.readline\nT = int(input())\nfor _ in range(T):\n\tn = int(input())\n\tdata = list(map(int, input().split()))\n\taccum = 1\n\tflg = True\n\tfor (i, t) in enumerate(data):\n\t\taccum = accum // gcd(i + 2, accum) * (i + 2)\n\t\tif accum > int(1000000000.0):\n\t\t\tbreak\n\t\tif t % accum == 0:\n\t\t\tflg = False\n\t\t\tbreak\n\tif flg:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "def sol():\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\twhile len(a) != 0:\n\t\ti = len(a) - 1\n\t\twhile i >= 0:\n\t\t\tif a[i] % (i + 2) != 0:\n\t\t\t\tdel a[i]\n\t\t\t\tbreak\n\t\t\ti -= 1\n\t\tif i < 0:\n\t\t\treturn 'NO'\n\tif len(a) == 0:\n\t\treturn 'YES'\n\treturn 'NO'\nt = int(input())\nfor _ in range(t):\n\tprint(sol())\n",
+    "import sys\nfrom math import factorial as f\ninput = sys.stdin.readline\nfor _ in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tflag = True\n\tlst = [2, 2 * 3, 4 * 3, 3 * 4 * 5, 3 * 4 * 5, 3 * 4 * 5 * 7, 3 * 5 * 7 * 8, 5 * 7 * 8 * 9, 5 * 7 * 8 * 9, 5 * 7 * 8 * 9 * 11, 5 * 7 * 8 * 9 * 11, 5 * 7 * 8 * 9 * 11 * 13, 5 * 7 * 8 * 9 * 11 * 13, 5 * 7 * 8 * 9 * 11 * 13, 5 * 7 * 9 * 11 * 13 * 16, 5 * 7 * 9 * 11 * 13 * 16 * 17, 5 * 7 * 9 * 11 * 13 * 16 * 17, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19 * 23, 5 * 7 * 9 * 11 * 13 * 16 * 17 * 19 * 23, 7 * 9 * 11 * 13 * 16 * 17 * 19 * 23 * 25, 7 * 9 * 11 * 13 * 16 * 17 * 19 * 23 * 25]\n\tfor i in range(n):\n\t\tnow = lst[i]\n\t\tif now > 10 ** 9:\n\t\t\tbreak\n\t\telif arr[i] % now == 0:\n\t\t\tflag = False\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import math\nimport os\nimport sys\nfrom io import BytesIO, IOBase\n\ndef main():\n\tpass\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\nT = int(input())\nfor _ in range(T):\n\tn = int(input())\n\tA = list(map(int, input().split()))\n\tans = 1\n\tmv = max(A)\n\tlcm = 2\n\tgcd = 2\n\tfor i in range(n):\n\t\tif A[i] % lcm == 0:\n\t\t\tans = 0\n\t\t\tbreak\n\t\tif lcm <= mv:\n\t\t\tgcd = math.gcd(lcm, i + 3)\n\t\t\tpv = lcm * (i + 3)\n\t\t\tlcm = pv // gcd\n\tif ans == 1:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\tarr = list(map(int, input().split(' ')))\n\tflag = 1\n\twhile len(arr) and flag:\n\t\tn = len(arr)\n\t\tflag = 0\n\t\tfor i in range(n):\n\t\t\tj = n - 1 - i\n\t\t\tif arr[j] // (j + 2) != arr[j] / (j + 2):\n\t\t\t\tarr.pop(j)\n\t\t\t\tflag = 1\n\t\t\t\tbreak\n\tif len(arr):\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "def gcf(a, b):\n\tif a == 0:\n\t\treturn b\n\treturn gcf(b % a, a)\n\ndef lcm(a, b):\n\treturn a // gcf(min(a, b), max(a, b)) * b\nno = [1]\ntop = 10 ** 9\nfor i in range(1, 100001):\n\tif no[-1] > top:\n\t\tno.append(top + 1)\n\telse:\n\t\tno.append(lcm(no[-1], i + 1))\nfor t in range(int(input())):\n\tn = int(input())\n\tnums = [int(_) for _ in input().split()]\n\tfor i in range(n):\n\t\tif nums[i] % no[i + 1] == 0:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "t = int(input())\nfor tc in range(t):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tsolve = True\n\tfor i in range(1, n + 1):\n\t\tnum = a[i - 1]\n\t\tnumflag = False\n\t\tfor j in range(2, i + 2):\n\t\t\tif num % j != 0:\n\t\t\t\tnumflag = True\n\t\t\t\tbreak\n\t\tsolve &= numflag\n\tif solve:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "def gcd(a, b):\n\twhile b != 0:\n\t\t(a, b) = (b, a % b)\n\treturn a\nt = int(input())\nfor w in range(t):\n\tn = int(input())\n\tN = list(map(int, input().split()))\n\tNumLcm = 2\n\tisGood = True\n\tfor i in range(n):\n\t\tif NumLcm < 2 * 10 ** 9:\n\t\t\tNumLcm = NumLcm * (i + 2) // gcd(NumLcm, i + 2)\n\t\tif N[i] % NumLcm == 0:\n\t\t\tisGood = False\n\t\t\tbreak\n\tif isGood:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "class Comba:\n\n\tdef __init__(self, mod):\n\t\tself.fact = array.array('i', [0] * MX)\n\t\tself.fact[0] = 1\n\t\tself.fact_inv = array.array('i', [0] * MX)\n\t\tself.mod = mod\n\t\tfor i in range(1, MX):\n\t\t\tself.fact[i] = self.fact[i - 1] * i % self.mod\n\t\tself.fact_inv[MX - 1] = pow(self.fact[MX - 1], self.mod - 2, self.mod)\n\t\tfor i in range(MX - 2, -1, -1):\n\t\t\tself.fact_inv[i] = self.fact_inv[i + 1] * (i + 1) % self.mod\n\n\tdef ncr(self, n, r):\n\t\tif r > n or n < 0 or r < 0:\n\t\t\treturn 0\n\t\treturn self.fact[n] * self.fact_inv[r] % self.mod * self.fact_inv[n - r] % self.mod\n\n\tdef npr(self, n, r):\n\t\tif r > n or n < 0 or r < 0:\n\t\t\treturn 0\n\t\treturn self.fact[n] * self.fact_inv[n - r] % self.mod\n\ndef lcm(a, b):\n\treturn a * b // gcd(a, b)\n\ndef rw_file():\n\tsys.stdin = open('', 'r')\n\tsys.stdout = open('', 'w')\n\ndef re(data=str):\n\treturn data(sys.stdin.readline().rstrip())\n\ndef mp(data=str):\n\treturn map(data, sys.stdin.readline().split())\nimport sys, array\nfrom bisect import bisect_left, bisect_right, insort_left\nfrom math import ceil, floor, log, sqrt, gcd\nfrom collections import deque, defaultdict, Counter\nfrom heapq import heappush, heappop, heapify\n(mod, mod9, nl, MX) = (1000000007, 998244353, '\\n', 200003)\n\ndef solve(tc):\n\tn = re(int)\n\ta = list(mp(int))\n\ti = n - 1\n\twhile i >= 0:\n\t\tif a[i] % (i + 2):\n\t\t\ta.pop(i)\n\t\t\ti = len(a)\n\t\ti -= 1\n\tprint('YES' if not a else 'NO')\n\treturn None\n\ndef main():\n\ttests = 1\n\ttests = re(int)\n\tfor case in range(1, tests + 1):\n\t\tsolve(case)\nmain()\n",
+    "t = int(input())\nfor tc in range(t):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tans = True\n\tfor i in range(1, n + 1):\n\t\ttmp = False\n\t\tfor mod in range(i + 1, 1, -1):\n\t\t\tif l[i - 1] % mod != 0:\n\t\t\t\ttmp = True\n\t\t\t\tbreak\n\t\tans = ans and tmp\n\tprint('YES') if ans else print('NO')\n",
+    "import sys\ninput = sys.stdin.readline\nt = int(input())\nfor _ in range(t):\n\tn = int(input())\n\tm = [*map(int, input().split())]\n\tk = []\n\tfl = False\n\tfor i in range(len(m)):\n\t\tc = 0\n\t\tfor j in range(i + 2, 1, -1):\n\t\t\tif m[i] % j:\n\t\t\t\tk.append(c)\n\t\t\t\tbreak\n\t\t\tc += 1\n\t\telse:\n\t\t\tk.append(-1)\n\t\t\tfl = True\n\t\t\tbreak\n\tif fl:\n\t\tprint('NO')\n\t\tcontinue\n\tfor j in range(n):\n\t\tif k[j] > j + 1:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "k = int(input())\nfor i in range(k):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tfor i in range(n):\n\t\tfor j in range(i + 2, 1, -1):\n\t\t\tif a[i] % j != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "def solve(n, arr):\n\twhile n != 0:\n\t\tfor i in range(n - 1, -1, -1):\n\t\t\tif arr[i] % (i + 2) != 0:\n\t\t\t\tarr.pop(i)\n\t\t\t\tn -= 1\n\t\t\t\tbreak\n\t\telse:\n\t\t\treturn 'NO'\n\treturn 'YES'\nt = int(input().strip())\nfor _ in range(t):\n\t_n_ = int(input().strip())\n\t_arr_ = [int(x) for x in input().strip().split()]\n\t_result_ = solve(_n_, _arr_)\n\tprint(_result_)\n",
+    "import os\nimport sys\nfrom io import BytesIO, IOBase\nfrom bisect import bisect_left\nfrom math import gcd, log, ceil\nfrom collections import Counter\nfrom pprint import pprint\nimport heapq\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef num_remaining(arr):\n\tans = 0\n\tfor i in arr:\n\t\tif not i:\n\t\t\tans += 1\n\treturn ans\n\ndef print_remaining_arr(arr, removed):\n\tprint(*[arr[i] for i in removed])\n\ndef main():\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tfor i in range(n):\n\t\tposs = False\n\t\tfor j in range(i + 1):\n\t\t\tif arr[i] % (j + 2) != 0:\n\t\t\t\tposs = True\n\t\t\t\tbreak\n\t\tif poss == False:\n\t\t\treturn 'NO'\n\treturn 'YES'\nt = int(input())\nfor _ in range(t):\n\tans = main()\n\tprint(ans)\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\tal = list(map(int, input().split()))\n\tfor (i, a) in enumerate(al):\n\t\td = i + 2\n\t\tfor di in range(d, 1, -1):\n\t\t\tif a % di != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "import types\n_atcoder_code = \"\\n# Python port of AtCoder Library.\\n\\n__version__ = '0.0.1'\\n\"\natcoder = types.ModuleType('atcoder')\nexec(_atcoder_code, atcoder.__dict__)\n_atcoder_fenwicktree_code = \"\\nimport typing\\n\\n\\nclass FenwickTree:\\n    '''Reference: https://en.wikipedia.org/wiki/Fenwick_tree'''\\n\\n    def __init__(self, n: int = 0) -> None:\\n        self._n = n\\n        self.data = [0] * n\\n\\n    def add(self, p: int, x: typing.Any) -> None:\\n        assert 0 <= p < self._n\\n\\n        p += 1\\n        while p <= self._n:\\n            self.data[p - 1] += x\\n            p += p & -p\\n\\n    def sum(self, left: int, right: int) -> typing.Any:\\n        assert 0 <= left <= right <= self._n\\n\\n        return self._sum(right) - self._sum(left)\\n\\n    def _sum(self, r: int) -> typing.Any:\\n        s = 0\\n        while r > 0:\\n            s += self.data[r - 1]\\n            r -= r & -r\\n\\n        return s\\n\"\natcoder.fenwicktree = types.ModuleType('atcoder.fenwicktree')\nexec(_atcoder_fenwicktree_code, atcoder.fenwicktree.__dict__)\nimport sys\nimport heapq\nIS_INTERACTIVE = False\ninput = input\nif not IS_INTERACTIVE:\n\t(*data,) = sys.stdin.read().split('\\n')[::-1]\n\n\tdef input():\n\t\treturn data.pop()\n\ndef fprint(*args, **kwargs):\n\tprint(*args, **kwargs, flush=True)\n\ndef eprint(*args, **kwargs):\n\tprint(*args, **kwargs, file=sys.stderr)\nfor _ in range(int(input())):\n\tn = int(input())\n\t(*arr,) = map(int, input().split())\n\tfw = atcoder.fenwicktree.FenwickTree(n)\n\tneed2remove = []\n\tfor (i, v) in enumerate(arr):\n\t\tdivisor = i + 2\n\t\tneed2shift = 0\n\t\twhile divisor and v % divisor == 0:\n\t\t\tdivisor -= 1\n\t\t\tneed2shift += 1\n\t\tif not divisor:\n\t\t\tneed2shift = n + 1\n\t\tneed2remove.append((need2shift, i))\n\tneed2remove.sort()\n\tis_ok = True\n\tfor (v, i) in need2remove:\n\t\tcnt = fw.sum(0, i)\n\t\tif cnt < v:\n\t\t\tis_ok = False\n\t\t\tbreak\n\t\tfw.add(i, 1)\n\tprint('YES' if is_ok else 'NO')\n",
+    "import sys\nfrom os import path\nif path.exists('input.txt'):\n\tsys.stdout = open('output.txt', 'w')\n\tsys.stdin = open('input.txt', 'r')\n\ndef main():\n\tinp = [int(x) for x in sys.stdin.buffer.read().split()]\n\tii = 0\n\tout = []\n\tt = int(inp[ii])\n\tii += 1\n\tfor _ in range(t):\n\t\tn = int(inp[ii])\n\t\tii += 1\n\t\tarr = list(map(int, inp[ii:ii + n]))\n\t\tii += n\n\t\tans = True\n\t\tfor i in range(n):\n\t\t\tflag = False\n\t\t\tfor j in range(i + 2, 1, -1):\n\t\t\t\tif arr[i] % j != 0:\n\t\t\t\t\tflag = True\n\t\t\t\t\tbreak\n\t\t\tif not flag:\n\t\t\t\tans = False\n\t\tif ans:\n\t\t\tout.append('YES')\n\t\telse:\n\t\t\tout.append('NO')\n\t\tpass\n\tout_str = '\\n'.join((str(x) for x in out))\n\tsys.stdout.write(out_str)\nmain()\n",
+    "t = int(input())\nfor t_i in range(t):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tfor i in range(min(29, n)):\n\t\tflag = True\n\t\tfor j in range(2, i + 3):\n\t\t\tif a[i] % j != 0:\n\t\t\t\tflag = False\n\t\t\t\tbreak\n\t\tif flag == True:\n\t\t\tprint('NO')\n\t\t\tbreak\n\tif flag == False:\n\t\tprint('YES')\n",
+    "from math import gcd\nt = int(input())\nfor j in range(t):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tans = 'YES'\n\tnk = 2\n\tfor j in range(n):\n\t\tif j + 2 <= 24:\n\t\t\tnk = nk * (j + 2) // gcd(nk, j + 2)\n\t\tif l[j] % nk == 0:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\tprint(ans)\n",
+    "from math import gcd\n\ndef solve():\n\tl = int(input())\n\tdiv = 1\n\tarr = list(map(int, input().split()))\n\tfor i in range(l):\n\t\tval = lcm(div, i + 2)\n\t\tif div < 10 ** 9:\n\t\t\tdiv = val\n\t\tif arr[i] % div == 0:\n\t\t\treturn 'NO'\n\treturn 'YES'\n\ndef lcm(a, b):\n\treturn a * b // gcd(a, b)\nn = int(input())\nfor i in range(n):\n\tprint(solve())\n",
+    "import os\nimport sys\nimport math\nfrom io import BytesIO, IOBase\nimport io\nfrom fractions import Fraction\nimport collections\nfrom itertools import permutations\nfrom collections import defaultdict\nfrom collections import deque\nfrom collections import Counter\nimport threading\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\nclass SegmentTree:\n\n\tdef __init__(self, data, default=0, func=lambda a, b: max(a, b)):\n\t\tself._default = default\n\t\tself._func = func\n\t\tself._len = len(data)\n\t\tself._size = _size = 1 << (self._len - 1).bit_length()\n\t\tself.data = [default] * (2 * _size)\n\t\tself.data[_size:_size + self._len] = data\n\t\tfor i in reversed(range(_size)):\n\t\t\tself.data[i] = func(self.data[i + i], self.data[i + i + 1])\n\n\tdef __delitem__(self, idx):\n\t\tself[idx] = self._default\n\n\tdef __getitem__(self, idx):\n\t\treturn self.data[idx + self._size]\n\n\tdef __setitem__(self, idx, value):\n\t\tidx += self._size\n\t\tself.data[idx] = value\n\t\tidx >>= 1\n\t\twhile idx:\n\t\t\tself.data[idx] = self._func(self.data[2 * idx], self.data[2 * idx + 1])\n\t\t\tidx >>= 1\n\n\tdef __len__(self):\n\t\treturn self._len\n\n\tdef query(self, start, stop):\n\t\tif start == stop:\n\t\t\treturn self.__getitem__(start)\n\t\tstop += 1\n\t\tstart += self._size\n\t\tstop += self._size\n\t\tres = self._default\n\t\twhile start < stop:\n\t\t\tif start & 1:\n\t\t\t\tres = self._func(res, self.data[start])\n\t\t\t\tstart += 1\n\t\t\tif stop & 1:\n\t\t\t\tstop -= 1\n\t\t\t\tres = self._func(res, self.data[stop])\n\t\t\tstart >>= 1\n\t\t\tstop >>= 1\n\t\treturn res\n\n\tdef __repr__(self):\n\t\treturn 'SegmentTree({0})'.format(self.data)\n\nclass SegmentTree1:\n\n\tdef __init__(self, data, default=0, func=lambda a, b: a + b):\n\t\tself._default = default\n\t\tself._func = func\n\t\tself._len = len(data)\n\t\tself._size = _size = 1 << (self._len - 1).bit_length()\n\t\tself.data = [default] * (2 * _size)\n\t\tself.data[_size:_size + self._len] = data\n\t\tfor i in reversed(range(_size)):\n\t\t\tself.data[i] = func(self.data[i + i], self.data[i + i + 1])\n\n\tdef __delitem__(self, idx):\n\t\tself[idx] = self._default\n\n\tdef __getitem__(self, idx):\n\t\treturn self.data[idx + self._size]\n\n\tdef __setitem__(self, idx, value):\n\t\tidx += self._size\n\t\tself.data[idx] = value\n\t\tidx >>= 1\n\t\twhile idx:\n\t\t\tself.data[idx] = self._func(self.data[2 * idx], self.data[2 * idx + 1])\n\t\t\tidx >>= 1\n\n\tdef __len__(self):\n\t\treturn self._len\n\n\tdef query(self, start, stop):\n\t\tif start == stop:\n\t\t\treturn self.__getitem__(start)\n\t\tstop += 1\n\t\tstart += self._size\n\t\tstop += self._size\n\t\tres = self._default\n\t\twhile start < stop:\n\t\t\tif start & 1:\n\t\t\t\tres = self._func(res, self.data[start])\n\t\t\t\tstart += 1\n\t\t\tif stop & 1:\n\t\t\t\tstop -= 1\n\t\t\t\tres = self._func(res, self.data[stop])\n\t\t\tstart >>= 1\n\t\t\tstop >>= 1\n\t\treturn res\n\n\tdef __repr__(self):\n\t\treturn 'SegmentTree({0})'.format(self.data)\nMOD = 10 ** 9 + 7\n\nclass Factorial:\n\n\tdef __init__(self, MOD):\n\t\tself.MOD = MOD\n\t\tself.factorials = [1, 1]\n\t\tself.invModulos = [0, 1]\n\t\tself.invFactorial_ = [1, 1]\n\n\tdef calc(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate n!')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tif n < len(self.factorials):\n\t\t\treturn self.factorials[n]\n\t\tnextArr = [0] * (n + 1 - len(self.factorials))\n\t\tinitialI = len(self.factorials)\n\t\tprev = self.factorials[-1]\n\t\tm = self.MOD\n\t\tfor i in range(initialI, n + 1):\n\t\t\tprev = nextArr[i - initialI] = prev * i % m\n\t\tself.factorials += nextArr\n\t\treturn self.factorials[n]\n\n\tdef inv(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate n^(-1)')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tp = self.MOD\n\t\tpi = n % p\n\t\tif pi < len(self.invModulos):\n\t\t\treturn self.invModulos[pi]\n\t\tnextArr = [0] * (n + 1 - len(self.invModulos))\n\t\tinitialI = len(self.invModulos)\n\t\tfor i in range(initialI, min(p, n + 1)):\n\t\t\tnext = -self.invModulos[p % i] * (p // i) % p\n\t\t\tself.invModulos.append(next)\n\t\treturn self.invModulos[pi]\n\n\tdef invFactorial(self, n):\n\t\tif n <= -1:\n\t\t\tprint('Invalid argument to calculate (n^(-1))!')\n\t\t\tprint('n must be non-negative value. But the argument was ' + str(n))\n\t\t\texit()\n\t\tif n < len(self.invFactorial_):\n\t\t\treturn self.invFactorial_[n]\n\t\tself.inv(n)\n\t\tnextArr = [0] * (n + 1 - len(self.invFactorial_))\n\t\tinitialI = len(self.invFactorial_)\n\t\tprev = self.invFactorial_[-1]\n\t\tp = self.MOD\n\t\tfor i in range(initialI, n + 1):\n\t\t\tprev = nextArr[i - initialI] = prev * self.invModulos[i % p] % p\n\t\tself.invFactorial_ += nextArr\n\t\treturn self.invFactorial_[n]\n\nclass Combination:\n\n\tdef __init__(self, MOD):\n\t\tself.MOD = MOD\n\t\tself.factorial = Factorial(MOD)\n\n\tdef ncr(self, n, k):\n\t\tif k < 0 or n < k:\n\t\t\treturn 0\n\t\tk = min(k, n - k)\n\t\tf = self.factorial\n\t\treturn f.calc(n) * f.invFactorial(max(n - k, k)) * f.invFactorial(min(k, n - k)) % self.MOD\nmod = 10 ** 9 + 7\nomod = 998244353\nprime = [True for i in range(10001)]\nprime[0] = prime[1] = False\n\ndef SieveOfEratosthenes(n=10000):\n\tp = 2\n\tc = 0\n\twhile p <= n:\n\t\tif prime[p] == True:\n\t\t\tc += 1\n\t\t\tfor i in range(p, n + 1, p):\n\t\t\t\tprime[i] = False\n\t\tp += 1\n\nclass DSU:\n\n\tdef __init__(self, R, C):\n\t\tself.par = range(R * C + 1)\n\t\tself.rnk = [0] * (R * C + 1)\n\t\tself.sz = [1] * (R * C + 1)\n\n\tdef find(self, x):\n\t\tif self.par[x] != x:\n\t\t\tself.par[x] = self.find(self.par[x])\n\t\treturn self.par[x]\n\n\tdef union(self, x, y):\n\t\t(xr, yr) = (self.find(x), self.find(y))\n\t\tif xr == yr:\n\t\t\treturn\n\t\tif self.rnk[xr] < self.rnk[yr]:\n\t\t\t(xr, yr) = (yr, xr)\n\t\tif self.rnk[xr] == self.rnk[yr]:\n\t\t\tself.rnk[xr] += 1\n\t\tself.par[yr] = xr\n\t\tself.sz[xr] += self.sz[yr]\n\n\tdef size(self, x):\n\t\treturn self.sz[self.find(x)]\n\n\tdef top(self):\n\t\treturn self.size(len(self.sz) - 1) - 1\n\nclass LazySegTree:\n\n\tdef __init__(self, _op, _e, _mapping, _composition, _id, v):\n\n\t\tdef set(p, x):\n\t\t\tassert 0 <= p < _n\n\t\t\tp += _size\n\t\t\tfor i in range(_log, 0, -1):\n\t\t\t\t_push(p >> i)\n\t\t\t_d[p] = x\n\t\t\tfor i in range(1, _log + 1):\n\t\t\t\t_update(p >> i)\n\n\t\tdef get(p):\n\t\t\tassert 0 <= p < _n\n\t\t\tp += _size\n\t\t\tfor i in range(_log, 0, -1):\n\t\t\t\t_push(p >> i)\n\t\t\treturn _d[p]\n\n\t\tdef prod(l, r):\n\t\t\tassert 0 <= l <= r <= _n\n\t\t\tif l == r:\n\t\t\t\treturn _e\n\t\t\tl += _size\n\t\t\tr += _size\n\t\t\tfor i in range(_log, 0, -1):\n\t\t\t\tif l >> i << i != l:\n\t\t\t\t\t_push(l >> i)\n\t\t\t\tif r >> i << i != r:\n\t\t\t\t\t_push(r >> i)\n\t\t\tsml = _e\n\t\t\tsmr = _e\n\t\t\twhile l < r:\n\t\t\t\tif l & 1:\n\t\t\t\t\tsml = _op(sml, _d[l])\n\t\t\t\t\tl += 1\n\t\t\t\tif r & 1:\n\t\t\t\t\tr -= 1\n\t\t\t\t\tsmr = _op(_d[r], smr)\n\t\t\t\tl >>= 1\n\t\t\t\tr >>= 1\n\t\t\treturn _op(sml, smr)\n\n\t\tdef apply(l, r, f):\n\t\t\tassert 0 <= l <= r <= _n\n\t\t\tif l == r:\n\t\t\t\treturn\n\t\t\tl += _size\n\t\t\tr += _size\n\t\t\tfor i in range(_log, 0, -1):\n\t\t\t\tif l >> i << i != l:\n\t\t\t\t\t_push(l >> i)\n\t\t\t\tif r >> i << i != r:\n\t\t\t\t\t_push(r - 1 >> i)\n\t\t\tl2 = l\n\t\t\tr2 = r\n\t\t\twhile l < r:\n\t\t\t\tif l & 1:\n\t\t\t\t\t_all_apply(l, f)\n\t\t\t\t\tl += 1\n\t\t\t\tif r & 1:\n\t\t\t\t\tr -= 1\n\t\t\t\t\t_all_apply(r, f)\n\t\t\t\tl >>= 1\n\t\t\t\tr >>= 1\n\t\t\tl = l2\n\t\t\tr = r2\n\t\t\tfor i in range(1, _log + 1):\n\t\t\t\tif l >> i << i != l:\n\t\t\t\t\t_update(l >> i)\n\t\t\t\tif r >> i << i != r:\n\t\t\t\t\t_update(r - 1 >> i)\n\n\t\tdef _update(k):\n\t\t\t_d[k] = _op(_d[2 * k], _d[2 * k + 1])\n\n\t\tdef _all_apply(k, f):\n\t\t\t_d[k] = _mapping(f, _d[k])\n\t\t\tif k < _size:\n\t\t\t\t_lz[k] = _composition(f, _lz[k])\n\n\t\tdef _push(k):\n\t\t\t_all_apply(2 * k, _lz[k])\n\t\t\t_all_apply(2 * k + 1, _lz[k])\n\t\t\t_lz[k] = _id\n\t\t_n = len(v)\n\t\t_log = _n.bit_length()\n\t\t_size = 1 << _log\n\t\t_d = [_e] * (2 * _size)\n\t\t_lz = [_id] * _size\n\t\tfor i in range(_n):\n\t\t\t_d[_size + i] = v[i]\n\t\tfor i in range(_size - 1, 0, -1):\n\t\t\t_update(i)\n\t\tself.set = set\n\t\tself.get = get\n\t\tself.prod = prod\n\t\tself.apply = apply\nMIL = 1 << 20\n\ndef makeNode(total, count):\n\treturn total * MIL + count\n\ndef getTotal(node):\n\treturn math.floor(node / MIL)\n\ndef getCount(node):\n\treturn node - getTotal(node) * MIL\nnodeIdentity = makeNode(0.0, 0.0)\n\ndef nodeOp(node1, node2):\n\treturn node1 + node2\n\treturn makeNode(getTotal(node1) + getTotal(node2), getCount(node1) + getCount(node2))\nidentityMapping = -1\n\ndef mapping(tag, node):\n\tif tag == identityMapping:\n\t\treturn node\n\tcount = getCount(node)\n\treturn makeNode(tag * count, count)\n\ndef composition(mapping1, mapping2):\n\treturn mapping1 if mapping1 != identityMapping else mapping2\n\nclass LazySegUpdate:\n\n\tdef __init__(self, N):\n\t\tself.N = N\n\t\tn = 4 * N\n\t\tself.tree = [0] * n\n\t\tself.lazy = [0] * n\n\n\tdef queryHelper(self, index, s, e, l, r):\n\t\tif self.lazy[index]:\n\t\t\tupdate = self.lazy[index]\n\t\t\tself.lazy[index] = 0\n\t\t\tself.tree[index] = max(self.tree[index], update)\n\t\t\tif s != e:\n\t\t\t\tself.lazy[2 * index] = max(self.lazy[2 * index], update)\n\t\t\t\tself.lazy[2 * index + 1] = max(self.lazy[2 * index + 1], update)\n\t\tif s > e or s > r or e < l:\n\t\t\treturn 0\n\t\tif s >= l and e <= r:\n\t\t\treturn self.tree[index]\n\t\tmid = (s + e) // 2\n\t\treturn max(self.queryHelper(2 * index, s, mid, l, r), self.queryHelper(2 * index + 1, mid + 1, e, l, r))\n\n\tdef updateHelper(self, index, s, e, l, r, h):\n\t\tif self.lazy[index]:\n\t\t\tupdate = self.lazy[index]\n\t\t\tself.lazy[index] = 0\n\t\t\tself.tree[index] = max(self.tree[index], update)\n\t\t\tif s != e:\n\t\t\t\tself.lazy[2 * index] = max(self.lazy[2 * index], update)\n\t\t\t\tself.lazy[2 * index + 1] = max(self.lazy[2 * index + 1], update)\n\t\tif s > e or s > r or e < l:\n\t\t\treturn\n\t\tif s >= l and e <= r:\n\t\t\tself.tree[index] = max(self.tree[index], h)\n\t\t\tif s != e:\n\t\t\t\tself.lazy[2 * index] = max(self.lazy[2 * index], h)\n\t\t\t\tself.lazy[2 * index + 1] = max(self.lazy[2 * index + 1], h)\n\t\t\treturn\n\t\tmid = (s + e) // 2\n\t\tself.updateHelper(2 * index, s, mid, l, r, h)\n\t\tself.updateHelper(2 * index + 1, mid + 1, e, l, r, h)\n\t\tself.tree[index] = max(self.tree[2 * index], self.tree[2 * index + 1])\n\n\tdef query(self, l, r):\n\t\treturn self.queryHelper(1, 0, self.N - 1, l, r - 1)\n\n\tdef update(self, l, r, h):\n\t\tself.updateHelper(1, 0, self.N - 1, l, r - 1, h)\n\ndef memodict(f):\n\n\tclass memodict(dict):\n\n\t\tdef __missing__(self, key):\n\t\t\tret = self[key] = f(key)\n\t\t\treturn ret\n\treturn memodict().__getitem__\n\ndef pollard_rho(n):\n\tif n & 1 == 0:\n\t\treturn 2\n\tif n % 3 == 0:\n\t\treturn 3\n\ts = (n - 1 & 1 - n).bit_length() - 1\n\td = n >> s\n\tfor a in [2, 325, 9375, 28178, 450775, 9780504, 1795265022]:\n\t\tp = pow(a, d, n)\n\t\tif p == 1 or p == n - 1 or a % n == 0:\n\t\t\tcontinue\n\t\tfor _ in range(s):\n\t\t\tprev = p\n\t\t\tp = p * p % n\n\t\t\tif p == 1:\n\t\t\t\treturn math.gcd(prev - 1, n)\n\t\t\tif p == n - 1:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tfor i in range(2, n):\n\t\t\t\t(x, y) = (i, (i * i + 1) % n)\n\t\t\t\tf = math.gcd(abs(x - y), n)\n\t\t\t\twhile f == 1:\n\t\t\t\t\t(x, y) = ((x * x + 1) % n, (y * y + 1) % n)\n\t\t\t\t\ty = (y * y + 1) % n\n\t\t\t\t\tf = math.gcd(abs(x - y), n)\n\t\t\t\tif f != n:\n\t\t\t\t\treturn f\n\treturn n\n\n@memodict\ndef prime_factors(n):\n\tif n <= 1:\n\t\treturn Counter()\n\tf = pollard_rho(n)\n\treturn Counter([n]) if f == n else prime_factors(f) + prime_factors(n // f)\n\ndef distinct_factors(n):\n\tfactors = [1]\n\tfor (p, exp) in prime_factors(n).items():\n\t\tfactors += [p ** i * factor for factor in factors for i in range(1, exp + 1)]\n\treturn factors\n\ndef all_factors(n):\n\t(small, large) = ([], [])\n\tfor i in range(1, int(n ** 0.5) + 1, 2 if n & 1 else 1):\n\t\tif not n % i:\n\t\t\tsmall.append(i)\n\t\t\tlarge.append(n // i)\n\tif small[-1] == large[-1]:\n\t\tlarge.pop()\n\tlarge.reverse()\n\tsmall.extend(large)\n\treturn small\n\nclass SortedList:\n\n\tdef __init__(self, iterable=[], _load=200):\n\t\tvalues = sorted(iterable)\n\t\tself._len = _len = len(values)\n\t\tself._load = _load\n\t\tself._lists = _lists = [values[i:i + _load] for i in range(0, _len, _load)]\n\t\tself._list_lens = [len(_list) for _list in _lists]\n\t\tself._mins = [_list[0] for _list in _lists]\n\t\tself._fen_tree = []\n\t\tself._rebuild = True\n\n\tdef _fen_build(self):\n\t\tself._fen_tree[:] = self._list_lens\n\t\t_fen_tree = self._fen_tree\n\t\tfor i in range(len(_fen_tree)):\n\t\t\tif i | i + 1 < len(_fen_tree):\n\t\t\t\t_fen_tree[i | i + 1] += _fen_tree[i]\n\t\tself._rebuild = False\n\n\tdef _fen_update(self, index, value):\n\t\tif not self._rebuild:\n\t\t\t_fen_tree = self._fen_tree\n\t\t\twhile index < len(_fen_tree):\n\t\t\t\t_fen_tree[index] += value\n\t\t\t\tindex |= index + 1\n\n\tdef _fen_query(self, end):\n\t\tif self._rebuild:\n\t\t\tself._fen_build()\n\t\t_fen_tree = self._fen_tree\n\t\tx = 0\n\t\twhile end:\n\t\t\tx += _fen_tree[end - 1]\n\t\t\tend &= end - 1\n\t\treturn x\n\n\tdef _fen_findkth(self, k):\n\t\t_list_lens = self._list_lens\n\t\tif k < _list_lens[0]:\n\t\t\treturn (0, k)\n\t\tif k >= self._len - _list_lens[-1]:\n\t\t\treturn (len(_list_lens) - 1, k + _list_lens[-1] - self._len)\n\t\tif self._rebuild:\n\t\t\tself._fen_build()\n\t\t_fen_tree = self._fen_tree\n\t\tidx = -1\n\t\tfor d in reversed(range(len(_fen_tree).bit_length())):\n\t\t\tright_idx = idx + (1 << d)\n\t\t\tif right_idx < len(_fen_tree) and k >= _fen_tree[right_idx]:\n\t\t\t\tidx = right_idx\n\t\t\t\tk -= _fen_tree[idx]\n\t\treturn (idx + 1, k)\n\n\tdef _delete(self, pos, idx):\n\t\t_lists = self._lists\n\t\t_mins = self._mins\n\t\t_list_lens = self._list_lens\n\t\tself._len -= 1\n\t\tself._fen_update(pos, -1)\n\t\tdel _lists[pos][idx]\n\t\t_list_lens[pos] -= 1\n\t\tif _list_lens[pos]:\n\t\t\t_mins[pos] = _lists[pos][0]\n\t\telse:\n\t\t\tdel _lists[pos]\n\t\t\tdel _list_lens[pos]\n\t\t\tdel _mins[pos]\n\t\t\tself._rebuild = True\n\n\tdef _loc_left(self, value):\n\t\tif not self._len:\n\t\t\treturn (0, 0)\n\t\t_lists = self._lists\n\t\t_mins = self._mins\n\t\t(lo, pos) = (-1, len(_lists) - 1)\n\t\twhile lo + 1 < pos:\n\t\t\tmi = lo + pos >> 1\n\t\t\tif value <= _mins[mi]:\n\t\t\t\tpos = mi\n\t\t\telse:\n\t\t\t\tlo = mi\n\t\tif pos and value <= _lists[pos - 1][-1]:\n\t\t\tpos -= 1\n\t\t_list = _lists[pos]\n\t\t(lo, idx) = (-1, len(_list))\n\t\twhile lo + 1 < idx:\n\t\t\tmi = lo + idx >> 1\n\t\t\tif value <= _list[mi]:\n\t\t\t\tidx = mi\n\t\t\telse:\n\t\t\t\tlo = mi\n\t\treturn (pos, idx)\n\n\tdef _loc_right(self, value):\n\t\tif not self._len:\n\t\t\treturn (0, 0)\n\t\t_lists = self._lists\n\t\t_mins = self._mins\n\t\t(pos, hi) = (0, len(_lists))\n\t\twhile pos + 1 < hi:\n\t\t\tmi = pos + hi >> 1\n\t\t\tif value < _mins[mi]:\n\t\t\t\thi = mi\n\t\t\telse:\n\t\t\t\tpos = mi\n\t\t_list = _lists[pos]\n\t\t(lo, idx) = (-1, len(_list))\n\t\twhile lo + 1 < idx:\n\t\t\tmi = lo + idx >> 1\n\t\t\tif value < _list[mi]:\n\t\t\t\tidx = mi\n\t\t\telse:\n\t\t\t\tlo = mi\n\t\treturn (pos, idx)\n\n\tdef add(self, value):\n\t\t_load = self._load\n\t\t_lists = self._lists\n\t\t_mins = self._mins\n\t\t_list_lens = self._list_lens\n\t\tself._len += 1\n\t\tif _lists:\n\t\t\t(pos, idx) = self._loc_right(value)\n\t\t\tself._fen_update(pos, 1)\n\t\t\t_list = _lists[pos]\n\t\t\t_list.insert(idx, value)\n\t\t\t_list_lens[pos] += 1\n\t\t\t_mins[pos] = _list[0]\n\t\t\tif _load + _load < len(_list):\n\t\t\t\t_lists.insert(pos + 1, _list[_load:])\n\t\t\t\t_list_lens.insert(pos + 1, len(_list) - _load)\n\t\t\t\t_mins.insert(pos + 1, _list[_load])\n\t\t\t\t_list_lens[pos] = _load\n\t\t\t\tdel _list[_load:]\n\t\t\t\tself._rebuild = True\n\t\telse:\n\t\t\t_lists.append([value])\n\t\t\t_mins.append(value)\n\t\t\t_list_lens.append(1)\n\t\t\tself._rebuild = True\n\n\tdef discard(self, value):\n\t\t_lists = self._lists\n\t\tif _lists:\n\t\t\t(pos, idx) = self._loc_right(value)\n\t\t\tif idx and _lists[pos][idx - 1] == value:\n\t\t\t\tself._delete(pos, idx - 1)\n\n\tdef remove(self, value):\n\t\t_len = self._len\n\t\tself.discard(value)\n\t\tif _len == self._len:\n\t\t\traise ValueError('{0!r} not in list'.format(value))\n\n\tdef pop(self, index=-1):\n\t\t(pos, idx) = self._fen_findkth(self._len + index if index < 0 else index)\n\t\tvalue = self._lists[pos][idx]\n\t\tself._delete(pos, idx)\n\t\treturn value\n\n\tdef bisect_left(self, value):\n\t\t(pos, idx) = self._loc_left(value)\n\t\treturn self._fen_query(pos) + idx\n\n\tdef bisect_right(self, value):\n\t\t(pos, idx) = self._loc_right(value)\n\t\treturn self._fen_query(pos) + idx\n\n\tdef count(self, value):\n\t\treturn self.bisect_right(value) - self.bisect_left(value)\n\n\tdef __len__(self):\n\t\treturn self._len\n\n\tdef __getitem__(self, index):\n\t\t(pos, idx) = self._fen_findkth(self._len + index if index < 0 else index)\n\t\treturn self._lists[pos][idx]\n\n\tdef __delitem__(self, index):\n\t\t(pos, idx) = self._fen_findkth(self._len + index if index < 0 else index)\n\t\tself._delete(pos, idx)\n\n\tdef __contains__(self, value):\n\t\t_lists = self._lists\n\t\tif _lists:\n\t\t\t(pos, idx) = self._loc_left(value)\n\t\t\treturn idx < len(_lists[pos]) and _lists[pos][idx] == value\n\t\treturn False\n\n\tdef __iter__(self):\n\t\treturn (value for _list in self._lists for value in _list)\n\n\tdef __reversed__(self):\n\t\treturn (value for _list in reversed(self._lists) for value in reversed(_list))\n\n\tdef __repr__(self):\n\t\treturn 'SortedList({0})'.format(list(self))\n\ndef binarySearch(arr, n, key):\n\tleft = 0\n\tright = n - 1\n\tmid = 0\n\tres = n\n\twhile left <= right:\n\t\tmid = (right + left) // 2\n\t\tif arr[mid] >= key:\n\t\t\tres = mid\n\t\t\tright = mid - 1\n\t\telse:\n\t\t\tleft = mid + 1\n\treturn res\n\ndef binarySearch1(arr, n, key):\n\tleft = 0\n\tright = n - 1\n\tmid = 0\n\tres = -1\n\twhile left <= right:\n\t\tmid = (right + left) // 2\n\t\tif arr[mid] > key:\n\t\t\tright = mid - 1\n\t\telse:\n\t\t\tres = mid\n\t\t\tleft = mid + 1\n\treturn res\ntt = 1\ntt = int(input())\nfor _ in range(tt):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tch = 1\n\tlcm = 1\n\tfor i in range(n):\n\t\tif lcm > 10 ** 9:\n\t\t\tcontinue\n\t\tgcd = math.gcd(lcm, i + 2)\n\t\tlcm = lcm * (i + 2) // gcd\n\t\tif a[i] % lcm == 0:\n\t\t\tch = 0\n\t\t\tbreak\n\tif ch:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import os\nimport sys\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef gcd(x, y):\n\twhile y:\n\t\t(x, y) = (y, x % y)\n\treturn x\n\ndef lcm(a, b):\n\treturn a * b // gcd(a, b)\nfor _ in range(int(input())):\n\tno_of_ele = int(input())\n\tinput_arr = list(map(int, input().split()))\n\tpoy = max(input_arr)\n\tlcm1 = 2\n\tres = 1\n\tif input_arr[0] % 2 == 0:\n\t\tres = 0\n\telse:\n\t\tfor i in range(1, no_of_ele):\n\t\t\tlcm1 = lcm(lcm1, i + 2)\n\t\t\tif lcm1 > poy:\n\t\t\t\tbreak\n\t\t\tif input_arr[i] % lcm1 == 0:\n\t\t\t\tres = 0\n\t\t\t\tbreak\n\tif res == 0:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "from sys import stdin, stdout, setrecursionlimit\nfrom io import BytesIO, IOBase\nfrom math import gcd, floor, sqrt, ceil\nsetrecursionlimit(10000)\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\timport os\n\t\tself.os = os\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\t\tself.BUFSIZE = 8192\n\n\tdef read(self):\n\t\twhile True:\n\t\t\ta = self.os.read(self._fd, max(self.os.fstat(self._fd).st_size, self.BUFSIZE))\n\t\t\tif not a:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(a), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\ta = self.os.read(self._fd, max(self.os.fstat(self._fd).st_size, self.BUFSIZE))\n\t\t\tself.newlines = a.count(b'\\n') + (not a)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(a), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tself.os.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(stdin, stdout) = (IOWrapper(stdin), IOWrapper(stdout))\ninput = lambda : stdin.readline().rstrip('\\r\\n')\ninp = lambda : int(input())\nst = lambda : input().strip()\njn = lambda x, l: x.join(map(str, l))\nint_arr = lambda : list(map(int, input().strip().split()))\nstr_arr = lambda : list(map(str, input().split()))\nget_str = lambda : map(str, input().strip().split())\nget_int = lambda : map(int, input().strip().split())\nget_float = lambda : map(float, input().strip().split())\nmod = 1000000007\nfor _ in range(inp()):\n\tn = inp()\n\tarr = int_arr()\n\tfor i in range(n):\n\t\tcond = False\n\t\tfor j in range(2, i + 3):\n\t\t\tif arr[i] % j:\n\t\t\t\tcond = True\n\t\t\t\tbreak\n\t\tif not cond:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "import math\nimport os\nimport sys\nfrom io import BytesIO, IOBase\nfrom types import GeneratorType\nfrom collections import defaultdict\nBUFSIZE = 8192\nfrom bisect import bisect_left\nfrom bisect import bisect_right\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nfrom collections import deque\n\ndef ceil(a, b):\n\tif a <= 0:\n\t\treturn 0\n\tif a % b == 0:\n\t\treturn a // b\n\telse:\n\t\treturn a // b + 1\nt = int(input())\nfor _ in range(t):\n\tn = int(input())\n\tb = list(map(int, input().split()))\n\ti = 0\n\tposs = 1\n\twhile i < min(n, 70):\n\t\tj = i + 2\n\t\tr = 0\n\t\twhile j >= 2:\n\t\t\tif b[i] % j != 0:\n\t\t\t\tr = 1\n\t\t\t\tbreak\n\t\t\tj += -1\n\t\tif r == 0:\n\t\t\tposs = 0\n\t\t\tbreak\n\t\ti += 1\n\tif poss:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\ttemp = [-1] * n\n\tans = 1\n\tfor i in range(n):\n\t\tif ans:\n\t\t\tt = i + 2\n\t\t\twhile t >= 2:\n\t\t\t\ttt = t\n\t\t\t\tt -= 1\n\t\t\t\tif l[i] % tt != 0:\n\t\t\t\t\ttemp[i] = tt - 1\n\t\t\t\t\tbreak\n\t\t\tif temp[i] == -1:\n\t\t\t\tans = 0\n\tif ans:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "for t in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tst = 2\n\tbool = True\n\tfor i in range(n):\n\t\tbool = True\n\t\tfor j in range(2, i + 3):\n\t\t\tif arr[i] % j != 0:\n\t\t\t\tbool = False\n\t\t\t\tbreak\n\t\tif bool:\n\t\t\tprint('NO')\n\t\t\tbreak\n\tif not bool:\n\t\tprint('YES')\n\t\tcontinue\n",
+    "inf = float('inf')\nimport sys\nimport pprint\nimport logging\nfrom logging import getLogger\nimport array\nimport collections\nimport math\n\ndef input():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\n\ndef maps():\n\treturn [int(i) for i in input().split()]\nlogging.basicConfig(format='%(message)s', level=logging.WARNING)\nlogger = getLogger(__name__)\nlogger.setLevel(logging.INFO)\n\ndef debug(msg, *args):\n\tlogger.info(f'{msg}={pprint.pformat(args)}')\n\ndef lcm(a, b):\n\treturn a * b // math.gcd(a, b)\nfor _ in range(*maps()):\n\t(n,) = maps()\n\ta = list(maps())\n\tl = 1\n\tok = True\n\tfor i in range(n):\n\t\tl = lcm(l, i + 2)\n\t\tif l > int(1000000000.0):\n\t\t\tbreak\n\t\tif a[i] % l == 0:\n\t\t\tok = False\n\t\t\tbreak\n\tprint('YES' if ok else 'NO')\n",
+    "from math import gcd\nfor _ in range(int(input())):\n\tN = int(input())\n\tA = list(map(int, input().split()))\n\tflag = True\n\tfor (i, a) in enumerate(A):\n\t\tj = i + 2\n\t\tmin_undiv = 0\n\t\tfor k in range(1, 10 ** 9 + 2):\n\t\t\tif a % k != 0:\n\t\t\t\tmin_undiv = k\n\t\t\t\tbreak\n\t\tif min_undiv > j:\n\t\t\tflag = False\n\t\t\tbreak\n\tprint('YES' if flag else 'No')\n",
+    "import sys\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\ninp_vars_int = lambda : map(int, input().split())\ninp_list_int = lambda : list(map(int, input().split()))\nt = int(input())\nfor _ in range(t):\n\t_ = input()\n\ta = inp_list_int()\n\tn = len(a)\n\tids = set()\n\tpos = [False for _ in range(n)]\n\tfor d in range(2, 31):\n\t\tfor (i, el) in enumerate(a, 1):\n\t\t\tif i + 1 >= d and el % d:\n\t\t\t\tpos[i - 1] = True\n\tres = all(pos)\n\tprint('YES' if res else 'NO')\n",
+    "for __ in range(int(input())):\n\tn = int(input())\n\tar = list(map(int, input().split()))\n\tkek = [0] * n\n\tans = 'YES'\n\tfor i in range(n):\n\t\tlol = i + 2\n\t\twhile lol != 0 and ar[i] % lol == 0:\n\t\t\tlol -= 1\n\t\tif lol == 0:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\t\tkek[i + 2 - lol] += 1\n\taboba = 0\n\tfor i in range(n):\n\t\taboba += kek[i]\n\t\tif aboba < i + 1:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\tprint(ans)\n",
+    "import sys\nfrom bisect import bisect_left as lb\nfrom bisect import bisect_right as rb\nfrom collections import deque\nfrom queue import PriorityQueue as pq\nfrom math import gcd\ninput_ = lambda : sys.stdin.readline().strip('\\r\\n')\nii = lambda : int(input_())\nil = lambda : list(map(int, input_().split()))\nilf = lambda : list(map(float, input_().split()))\nlii = lambda : list(map(int, list(ip())))\nip = lambda : input_()\nfi = lambda : float(input_())\nap = lambda ab, bc, cd: ab[bc].append(cd)\nli = lambda : list(input_())\npr = lambda x: print(x)\nprinT = lambda x: print(x)\nf = lambda : sys.stdout.flush()\ninv = lambda x: pow(x, mod - 2, mod)\nmod = 10 ** 9 + 7\nmod1 = 998244353\nfor _ in range(ii()):\n\tn = ii()\n\ta = il()\n\tif a[0] % 2 == 0:\n\t\tprint('NO')\n\t\tcontinue\n\tfl = 0\n\tb = a.copy()\n\tc = []\n\twhile len(b) != 0:\n\t\tif b[-1] % (len(b) + 1) != 0:\n\t\t\tb.pop()\n\t\telse:\n\t\t\twhile len(b) != 0 and b[-1] % (len(b) + 1) == 0:\n\t\t\t\tc.append(b[-1])\n\t\t\t\tb.pop()\n\t\t\tif len(b) == 0:\n\t\t\t\tfl = 1\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tb.pop()\n\t\t\t\twhile len(c) != 0:\n\t\t\t\t\tb.append(c[-1])\n\t\t\t\t\tc.pop()\n\tif fl == 0:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "for _ in range(int(input())):\n\tsize = int(input())\n\tarr = list(map(int, input().split()))\n\twhile True:\n\t\tif len(arr) == 0:\n\t\t\tprint('YES')\n\t\t\tbreak\n\t\tdif = 0\n\t\tbad = 0\n\t\tfor ind in range(len(arr) - 1, -1, -1):\n\t\t\tif arr[ind] % (ind + 2) != 0 and (not bad):\n\t\t\t\tarr.pop(ind)\n\t\t\t\tdif += 1\n\t\t\telif arr[ind] % (ind + 2) != 0:\n\t\t\t\tarr.pop(ind)\n\t\t\t\tdif += 1\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tbad = 1\n\t\tif dif == 0 and len(arr) != 0:\n\t\t\tprint('NO')\n\t\t\tbreak\n",
+    "for i in range(int(input())):\n\tn = int(input())\n\tarr = [int(x) for x in input().split()]\n\tcan = 0\n\tcannot = 0\n\tdiv = [False] * n\n\tans = 'YES'\n\tfor j in range(n):\n\t\tif arr[j] % (j + 2) == 0:\n\t\t\tdiv[j] = True\n\tfor j in range(n):\n\t\tif div[j]:\n\t\t\tcnt = 0\n\t\t\tfor k in range(2, j + 2):\n\t\t\t\tif arr[j] % k != 0:\n\t\t\t\t\tbreak\n\t\t\t\tcnt += 1\n\t\t\tif cnt == j:\n\t\t\t\tans = 'NO'\n\tprint(ans)\n",
+    "testcase = int(input())\nfor test in range(0, testcase):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tavailable = 0\n\tfor i in range(0, n):\n\t\tfor j in range(i + 2, i + 2 - available - 1, -1):\n\t\t\tif a[i] % j != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tprint('NO')\n\t\t\tbreak\n\t\tavailable += 1\n\telse:\n\t\tprint('YES')\n",
+    "def gcd(a, b):\n\tif a == 0:\n\t\treturn b\n\treturn gcd(b % a, a)\n\ndef lcm(a, b):\n\treturn a / gcd(a, b) * b\n\ndef main():\n\tt = int(input())\n\tfor i in range(t):\n\t\tn = int(input())\n\t\ta = list(map(int, input().split(' ')))\n\t\tl = len(a)\n\t\tflag = True\n\t\tlc = 2\n\t\tfor j in range(l):\n\t\t\tlc = lcm(lc, j + 2)\n\t\t\tif lc > 1000000000:\n\t\t\t\tbreak\n\t\t\tif a[j] % lc == 0:\n\t\t\t\tflag = False\n\t\t\t\tbreak\n\t\tif flag:\n\t\t\tprint('YES')\n\t\telse:\n\t\t\tprint('NO')\nmain()\n",
+    "import math\nimport os\nimport sys\nfrom io import BytesIO, IOBase\nM = 1000000007\nimport random\nimport heapq\nimport threading\nimport bisect\nimport time\nfrom functools import *\nfrom collections import *\nfrom itertools import *\nBUFSIZE = 8192\nimport array\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef inp():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\n\ndef out(var):\n\tsys.stdout.write(str(var))\n\ndef lis():\n\treturn list(map(int, inp().split()))\n\ndef stringlis():\n\treturn list(map(str, inp().split()))\n\ndef sep():\n\treturn map(int, inp().split())\n\ndef strsep():\n\treturn map(str, inp().split())\n\ndef fsep():\n\treturn map(float, inp().split())\n\ndef inpu():\n\treturn int(inp())\n\ndef build(arr, a, b, st, node):\n\tif a == b:\n\t\tst[node] = arr[a]\n\t\treturn st[node]\n\tmid = (a + b) // 2\n\tst[node] = min(build(arr, a, mid, st, 2 * node + 1), build(arr, mid + 1, b, st, 2 * node + 2))\n\treturn st[node]\n\ndef getmin(arr, a, b, l, r, st, node):\n\tif l > b or r < a:\n\t\treturn float('inf')\n\tif l <= a and r >= b:\n\t\treturn st[node]\n\tmid = (a + b) // 2\n\treturn min(getmin(arr, a, mid, l, r, st, 2 * node + 1), getmin(arr, mid + 1, b, l, r, st, 2 * node + 2))\n\ndef main():\n\tt = 1\n\tt = int(input())\n\tfor _ in range(t):\n\t\tn = int(input())\n\t\tarr = deque(list(map(int, input().split())))\n\t\tp = 2\n\t\tj = 3\n\t\tfor i in range(n):\n\t\t\tif arr[i] % p == 0:\n\t\t\t\tprint('NO')\n\t\t\t\tbreak\n\t\t\tif p > 10 ** 9:\n\t\t\t\tcontinue\n\t\t\tp = p * j // math.gcd(p, j)\n\t\t\tj += 1\n\t\telse:\n\t\t\tprint('YES')\nmain()\n",
+    "import sys\nINF = 10 ** 20\nMOD = 10 ** 9 + 7\nimport io, os\ninput = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline\nI = lambda : list(map(int, input().split()))\nfrom math import gcd\nfrom math import ceil, log2, factorial\nfrom collections import defaultdict as dd, Counter\nfrom bisect import bisect_left as bl, bisect_right as br\nTESTS = 1\n\ndef removable(el, idx):\n\tif el % (idx + 2):\n\t\treturn True\n\treturn False\n\ndef solve():\n\t(n,) = I()\n\ta = I()\n\tlcm = 1\n\titer = 2\n\tall = []\n\twhile lcm < 10 ** 10:\n\t\tlcm = lcm * iter // gcd(lcm, iter)\n\t\tall.append(lcm)\n\t\titer += 1\n\tif a[0] % 2 == 0:\n\t\tprint('NO')\n\t\treturn\n\tfor i in range(1, min(len(all), n)):\n\t\tif a[i] % all[i] == 0:\n\t\t\tprint('NO')\n\t\t\treturn\n\tprint('YES')\n\ndef main():\n\tif not TESTS:\n\t\tsolve()\n\t\treturn\n\t(t,) = I()\n\twhile t:\n\t\tsolve()\n\t\tt -= 1\nmain()\n",
+    "import os\nimport sys\nfrom io import BytesIO, IOBase\n\ndef main():\n\tfor _ in range(int(input())):\n\t\t_ = int(input())\n\t\tseq = list(map(int, input().split()))\n\t\tprint(iter_solution(seq))\n\ndef iter_solution(seq: list) -> str:\n\twhile seq:\n\t\tno = True\n\t\tfor i in range(len(seq), 0, -1):\n\t\t\ta = seq[i - 1]\n\t\t\tif a % (i + 1) != 0:\n\t\t\t\tno = False\n\t\t\t\tdel seq[i - 1]\n\t\t\t\tbreak\n\t\tif no and seq:\n\t\t\treturn 'NO'\n\treturn 'YES'\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\n",
+    "from math import *\nfrom bisect import bisect_left as bl\nfrom bisect import bisect_right as br\nfrom collections import Counter as ctr\nfrom collections import deque as dq\nfrom array import array\nfrom re import search\nli = lambda : list(map(int, input().split()))\narr = lambda a: array('i', a)\nbi = lambda n: bin(n).replace('0b', '')\nyn = lambda f: print('NYOE S'[f::2])\nsbstr = lambda a, s: search('.*'.join(a), s)\n\ndef smnd(n):\n\tfor i in range(2, n + 2):\n\t\tif n % i != 0:\n\t\t\treturn i\n\ndef solve():\n\tfor _ in range(int(input())):\n\t\tn = int(input())\n\t\ta = li()\n\t\tf = True\n\t\td = 1\n\t\tfor i in range(n):\n\t\t\tif a[i] % (i + 2) == 0 and smnd(a[i]) > i + 2:\n\t\t\t\tf = False\n\t\t\t\tbreak\n\t\tyn(f)\nsolve()\n",
+    "import sys\nfrom math import factorial, gcd\nfrom collections import Counter, deque, defaultdict\nfrom bisect import bisect_left, bisect_right\nfrom heapq import heappop, heappush, heapify, nlargest, nsmallest\nfrom itertools import groupby, accumulate\nfrom copy import deepcopy\nMOD = 10 ** 9 + 7\nINF = float('inf')\ninput = sys.stdin.readline\nrl = lambda : list(map(int, input().split()))\nrs = lambda : sys.stdin.readline().strip()\nfor _ in range(int(input())):\n\tn = int(input())\n\tA = rl()\n\tif A[0] % 2 == 0:\n\t\tprint('NO')\n\t\tcontinue\n\tflag = True\n\tfor (i, a) in enumerate(A):\n\t\tif a % (i + 2) != 0:\n\t\t\tcontinue\n\t\tpossible = False\n\t\tfor j in range(2, i + 2):\n\t\t\tif a % j != 0:\n\t\t\t\tpossible = True\n\t\t\t\tbreak\n\t\tif not possible:\n\t\t\tflag = False\n\t\t\tbreak\n\tprint('YES' if flag else 'NO')\n",
+    "import sys\nimport math\nimport collections\nimport heapq\ndy = [1, 0, -1, 0]\ndx = [0, 1, 0, -1]\na = [0, 2]\nr = lambda : sys.stdin.readline().rstrip()\nMIS = lambda : map(int, r().split())\nt = 3\nwhile 1:\n\tg = math.gcd(a[-1], t)\n\tb = a[-1] * t // g\n\ta.append(b)\n\tif b >= 1000000000:\n\t\tbreak\n\tt += 1\nfor _ in range(int(r())):\n\tN = int(r())\n\tL = list(MIS())\n\tflag = 1\n\tfor i in range(min(N, len(a) - 1)):\n\t\tif L[i] % a[i + 1] == 0:\n\t\t\tflag = 0\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "def getint():\n\treturn [int(i) for i in input().split()]\n\ndef get():\n\treturn int(input())\n\ndef getstr():\n\treturn [i for i in input().split()]\n\ndef S():\n\tfor test in range(int(input())):\n\t\tsolve()\nimport math\nimport itertools as it\nimport bisect\nimport time\nimport collections as ct\n\ndef solve():\n\tn = get()\n\ta = getint()\n\ta = [0] + a\n\tflag = True\n\tcnt = 0\n\tfor i in range(1, n + 1):\n\t\tcnt = 0\n\t\tj = i + 1\n\t\twhile j >= 1:\n\t\t\tif a[i] % j != 0:\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tcnt += 1\n\t\t\tif cnt > i:\n\t\t\t\tflag = False\n\t\t\tj -= 1\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\nS()\n",
+    "from collections import Counter\nfrom math import gcd\nfor _ in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tcur = 2\n\tf = 1\n\tfor i in range(min(n, 23)):\n\t\tif arr[i] % cur == 0:\n\t\t\tf = 0\n\t\tcur = cur * (i + 3) // gcd(cur, i + 3)\n\tif f:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import math\n\ndef f():\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\td = 1\n\tfor i in range(n):\n\t\td = d * (i + 2) // math.gcd(d, i + 2)\n\t\tif a[i] % d == 0:\n\t\t\tprint('NO')\n\t\t\treturn\n\t\tif d > 1000000000.0:\n\t\t\tbreak\n\tprint('YES')\nt = int(input())\nfor i in range(t):\n\tf()\n",
+    "import math\nfrom collections import defaultdict, Counter\nfrom bisect import bisect_left\nfrom sys import stdin\nfrom math import gcd\nfrom functools import reduce\nimport itertools\n\ndef find():\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tfor i in range(n):\n\t\tx = a[i]\n\t\tok = False\n\t\tfor j in range(i + 2, 1, -1):\n\t\t\tif x % j != 0:\n\t\t\t\tok = True\n\t\t\t\tbreak\n\t\tif not ok:\n\t\t\tprint('NO')\n\t\t\treturn\n\tprint('YES')\ninput = stdin.readline\nt = int(input())\nfor _ in range(t):\n\tfind()\n",
+    "import sys\nimport time\nimport os\nfrom io import BytesIO, IOBase\nM = 10 ** 9 + 7\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef inputf():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\n\ndef printf(var):\n\tsys.stdout.write(str(var) + '\\n')\n\ndef get_ints():\n\treturn list(map(int, inputf().split()))\n\ndef get_string():\n\treturn list(map(str, inputf().split()))\nglobal maximum\n\ndef _lis(arr, n):\n\tglobal maximum\n\tif n == 1:\n\t\treturn 1\n\tmaxEndingHere = 1\n\tfor i in range(1, n):\n\t\tres = _lis(arr, i)\n\t\tif arr[i - 1] < arr[n - 1] and res + 1 > maxEndingHere:\n\t\t\tmaxEndingHere = res + 1\n\tmaximum = max(maximum, maxEndingHere)\n\treturn maxEndingHere\n\ndef LIS(arr):\n\tglobal maximum\n\tn = len(arr)\n\tmaximum = 1\n\t_lis(arr, n)\n\treturn maximum\n\ndef binary_search(data, elem):\n\tlow = 0\n\thigh = len(data) - 1\n\twhile low <= high:\n\t\tmiddle = (low + high) // 2\n\t\tif data[middle] == elem:\n\t\t\treturn middle\n\t\telif data[middle] > elem:\n\t\t\thigh = middle - 1\n\t\telse:\n\t\t\tlow = middle + 1\n\treturn middle\n\ndef upper_bound(my_list, key):\n\tlarge = len(my_list) - 1\n\tsmall = 0\n\twhile small <= large:\n\t\tmid = (small + large) // 2\n\t\tif my_list[mid] < key:\n\t\t\tsmall = mid + 1\n\t\telif my_list[mid] > key:\n\t\t\tlarge = mid - 1\n\t\telse:\n\t\t\treturn mid\n\tif my_list[mid] > key:\n\t\treturn mid\n\telse:\n\t\treturn mid + 1\n\ndef lower_bound(my_list, key):\n\tlarge = len(my_list) - 1\n\tsmall = 0\n\twhile small <= large:\n\t\tmid = (small + large) // 2\n\t\tif my_list[mid] < key:\n\t\t\tsmall = mid + 1\n\t\telif my_list[mid] > key:\n\t\t\tlarge = mid - 1\n\t\telse:\n\t\t\treturn mid\n\tif my_list[mid] < key:\n\t\treturn mid\n\telse:\n\t\treturn mid - 1\na = []\n\ndef SieveOfEratosthenes(n):\n\tprime = [True for i in range(n + 1)]\n\tp = 2\n\twhile p * p <= n:\n\t\tif prime[p] == True:\n\t\t\tfor i in range(p * p, n + 1, p):\n\t\t\t\tprime[i] = False\n\t\tp += 1\n\tfor p in range(2, n + 1):\n\t\tif prime[p]:\n\t\t\ta.append(p)\n\ndef roman_number(x):\n\tif x > 15999:\n\t\treturn\n\tvalue = [5000, 4000, 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]\n\tsymbol = ['F', 'MF', 'M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']\n\troman = ''\n\ti = 0\n\twhile x > 0:\n\t\tdiv = x // value[i]\n\t\tx = x % value[i]\n\t\twhile div:\n\t\t\troman += symbol[i]\n\t\t\tdiv -= 1\n\t\ti += 1\n\treturn roman\n\ndef maxSubArraySum(a, size):\n\tmax_so_far = a[0]\n\tmax_ending_here = 0\n\tfor i in range(0, size):\n\t\tmax_ending_here = max_ending_here + a[i]\n\t\tif max_ending_here < 0:\n\t\t\tmax_ending_here = 0\n\t\telif max_so_far < max_ending_here:\n\t\t\tmax_so_far = max_ending_here\n\treturn max_so_far\n\ndef prefixSum(test_list):\n\tres = [sum(test_list[:i + 1]) for i in range(len(test_list))]\n\treturn res\ntestcase = int(inputf())\nfor test in range(0, testcase):\n\tn = int(inputf())\n\ta = get_ints()\n\tavailable = 0\n\tfor i in range(0, n):\n\t\tfor j in range(i + 2, i + 2 - available - 1, -1):\n\t\t\tif a[i] % j != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tprint('NO')\n\t\t\tbreak\n\t\tavailable += 1\n\telse:\n\t\tprint('YES')\n",
+    "import sys\nimport io, os\ninput = sys.stdin.buffer.readline\nt = int(input())\nfor _ in range(t):\n\tn = int(input())\n\tA = list(map(int, input().split()))\n\tflag = True\n\tfor (i, a) in enumerate(A):\n\t\tfor j in range(2, i + 3):\n\t\t\tif a % j != 0:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tflag = False\n\t\t\tbreak\n\t\tcontinue\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\tv = [int(i) for i in input().split()]\n\ts = []\n\tfor i in range(n):\n\t\tiss = True\n\t\ts.append(i + 2)\n\t\tfor j in s:\n\t\t\tif v[i] % j != 0:\n\t\t\t\tiss = False\n\t\t\t\tbreak\n\t\tif iss:\n\t\t\tprint('NO')\n\t\t\tbreak\n\tif not iss:\n\t\tprint('YES')\n",
+    "import sys\ninput = sys.stdin.readline\nt = int(input())\nfor __ in range(t):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\ti = n - 1\n\twhile arr and i >= 0:\n\t\tif arr[i] % (i + 2) != 0:\n\t\t\tdel arr[i]\n\t\t\ti = len(arr)\n\t\ti -= 1\n\tif not arr:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "import math\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tok = 1\n\ti = n - 1\n\twhile i >= 0:\n\t\tif a[i] % (i + 2) == 0:\n\t\t\tok = 0\n\t\t\tfor j in range(i - 1, -1, -1):\n\t\t\t\tif not a[j] % (j + 2) == 0:\n\t\t\t\t\tok = 1\n\t\t\t\t\tbreak\n\t\t\tif ok == 0:\n\t\t\t\tprint('NO')\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\ta = a[:j] + a[j + 1:]\n\t\ti -= 1\n\tif ok != 0:\n\t\tprint('YES')\n",
+    "t = int(input())\nanswers = list()\nfor k in range(t):\n\tn = int(input())\n\tmas = list(map(int, input().split()))\n\tsolved = False\n\tfor i in range(n):\n\t\tif not mas[i] % (i + 2) == 0:\n\t\t\tcontinue\n\t\telse:\n\t\t\tm = 0\n\t\t\tfor j in range(i + 1, 0, -1):\n\t\t\t\tif not mas[i] % j == 0:\n\t\t\t\t\tm = j\n\t\t\t\t\tbreak\n\t\t\tif m == 0:\n\t\t\t\tsolved = True\n\t\t\t\tanswers.append('NO')\n\t\t\t\tbreak\n\tif not solved:\n\t\tanswers.append('YES')\nprint('\\n'.join(answers))\n",
+    "import sys\nimport math\nimport itertools\n\ndef get_line():\n\treturn list(map(int, sys.stdin.readline().strip().split()))\n\ndef in1():\n\treturn int(input())\nfor _ in range(in1()):\n\tn = in1()\n\ta = get_line()\n\ti = n - 1\n\twhile i >= 0:\n\t\tif a[i] % (i + 2) != 0:\n\t\t\ta.pop(i)\n\t\t\ti = len(a) - 1\n\t\telse:\n\t\t\ti -= 1\n\tif len(a) > 0:\n\t\tprint('NO')\n\telse:\n\t\tprint('YES')\n",
+    "import math\nimport sys\ninput = iter(sys.stdin.read().splitlines()).__next__\nprefix_lcm = [2]\nfor i in range(3, 100001):\n\tprefix_lcm.append(i * prefix_lcm[-1] // math.gcd(i, prefix_lcm[-1]))\n\tif prefix_lcm[-1] > 1000000000:\n\t\tbreak\n\ndef solve():\n\tn = int(input())\n\ta = map(int, input().split())\n\tfor (lcm, a_i) in zip(prefix_lcm, a):\n\t\tif a_i % lcm == 0:\n\t\t\treturn 'NO'\n\treturn 'YES'\nt = int(input())\noutput = []\nfor _ in range(t):\n\toutput.append(solve())\nprint(*output, sep='\\n')\n",
+    "import sys\nimport bisect\nfrom bisect import bisect_left as lb\nfrom bisect import bisect_right as rb\ninput_ = lambda : sys.stdin.readline().strip('\\r\\n')\nfrom math import log\nfrom math import gcd\nfrom math import atan2, acos\nfrom random import randint\nsa = lambda : input_()\nsb = lambda : int(input_())\nsc = lambda : input_().split()\nsd = lambda : list(map(int, input_().split()))\nsflo = lambda : list(map(float, input_().split()))\nse = lambda : float(input_())\nsf = lambda : list(input_())\nflsh = lambda : sys.stdout.flush()\nmod = 10 ** 9 + 7\nmod1 = 998244353\ngp = []\ncost = []\ndp = []\nmx = []\nans1 = []\nans2 = []\nspecial = []\nspecnode = []\na = 0\nkthpar = []\n\ndef dfs2(root, par):\n\tif par != -1:\n\t\tdp[root] = dp[par] + 1\n\tfor i in range(1, 20):\n\t\tif kthpar[root][i - 1] != -1:\n\t\t\tkthpar[root][i] = kthpar[kthpar[root][i - 1]][i - 1]\n\tfor child in gp[root]:\n\t\tif child == par:\n\t\t\tcontinue\n\t\tkthpar[child][0] = root\n\t\tdfs(child, root)\nans = 0\na = []\n(n, k) = (0, 0)\nb = []\nvis = []\ntot = 0\ntime = []\ntime1 = []\nadj = []\nmx = -1\neps = 1e-07\nx = 0\npref = []\nlvl = []\n\ndef update_it(bit, i, val):\n\tn = len(bit)\n\twhile i < n:\n\t\tbit[i] += val\n\t\ti += i & -i\n\ndef get_ans(bit, i):\n\tn = len(bit)\n\ttot = 0\n\twhile i > 0:\n\t\ttot += bit[i]\n\t\ti -= i & -i\n\treturn tot\nprime = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]\n\ndef hnbhai(tc):\n\tn = sb()\n\ta = sd()\n\tif a[0] % 2 == 0:\n\t\tprint('NO')\n\t\treturn\n\tx = 0\n\trem = []\n\twhile len(a) > 0:\n\t\tif a[-1] % (len(a) + 1) != 0:\n\t\t\ta.pop()\n\t\t\tcontinue\n\t\twhile len(a) > 0 and a[-1] % (len(a) + 1) == 0:\n\t\t\trem.append(a[-1])\n\t\t\ta.pop()\n\t\tif len(a) == 0:\n\t\t\tprint('NO')\n\t\t\treturn\n\t\ta.pop()\n\t\twhile len(rem) > 0:\n\t\t\ta.append(rem[-1])\n\t\t\trem.pop()\n\tprint('YES')\n\treturn\nfor _ in range(sb()):\n\thnbhai(_ + 1)\n",
+    "from __future__ import division, print_function\nimport math\nimport sys\nimport os\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef I():\n\treturn int(input())\n\ndef lint():\n\treturn list(map(int, input().split()))\n\ndef insr():\n\ts = input().strip()\n\treturn list(s[:len(s)])\n\ndef invr():\n\treturn map(int, input().split())\nimport itertools\nfrom sys import maxsize, stdout, stdin, stderr\nmod = int(1000000000.0 + 7)\nimport sys\n\ndef S():\n\treturn list(map(str, input().strip()))\n\ndef grid(r, c):\n\treturn [lint() for i in range(r)]\nfrom collections import defaultdict, Counter, deque\nimport math\nimport heapq\nfrom heapq import heappop, heappush\nimport bisect\nfrom math import factorial, inf\nfrom itertools import groupby\nfrom itertools import permutations as comb\nmod = 1000000007\nMOD = 998244353\n\ndef gcd(a, b):\n\twhile b:\n\t\ta %= b\n\t\ttmp = a\n\t\ta = b\n\t\tb = tmp\n\treturn a\n\ndef lcm(a, b):\n\treturn a // gcd(a, b) * b\n\ndef check_prime(n):\n\tfor i in range(2, int(n ** (1 / 2)) + 1):\n\t\tif not n % i:\n\t\t\treturn False\n\treturn True\n\ndef primefactors(n):\n\tnum = 0\n\twhile n % 2 == 0:\n\t\tnum += 1\n\t\tn = n / 2\n\tfor i in range(3, int(math.sqrt(n)) + 1, 2):\n\t\twhile n % i == 0:\n\t\t\tnum += 1\n\t\t\tn = n // i\n\tif n > 2:\n\t\tnum += 1\n\treturn num\n\ndef ask(a, b, c):\n\tprint(c, a, b, flush=True)\n\tn = I()\n\treturn n\n\ndef linear_sieve(n):\n\tis_composite = [False] * n\n\tprime = []\n\tfor i in range(2, n):\n\t\tif not is_composite[i]:\n\t\t\tprime.append(i)\n\t\tfor j in prime:\n\t\t\tis_composite[i * j] = True\n\t\t\tif i % prime == 0:\n\t\t\t\tbreak\n\treturn prime\n\ndef dfs(i, p, d):\n\t(a, tmp) = (0, 0)\n\tfor j in d[i]:\n\t\tif j != p:\n\t\t\ta += 1\n\t\t\ttmp += dfs(j, i)\n\tif a == 0:\n\t\treturn 0\n\treturn tmp / a + 1\n\ndef primeFactors(n):\n\tl = []\n\twhile n % 2 == 0:\n\t\tl.append(2)\n\t\tn = n // 2\n\tfor i in range(3, int(math.sqrt(n)) + 1, 2):\n\t\twhile n % i == 0:\n\t\t\tl.append(i)\n\t\t\tn = n // i\n\tif n > 2:\n\t\tl.append(n)\n\treturn l\n\ndef binpow(a, b, c):\n\tres = 1\n\ta = a % c\n\twhile b > 0:\n\t\tif b & 1:\n\t\t\tres = res * a % c\n\t\tb = b >> 1\n\t\ta = a * a % c\n\treturn res\nd = []\nprimes = []\nprim = [0] * (10 ** 5 + 1)\n\ndef sieve(n):\n\tfor i in range(n):\n\t\td.append(i)\n\tfor i in range(2, n):\n\t\tif d[i] == i:\n\t\t\tprim[i] = 1\n\t\t\tprimes.append(i)\n\t\tj = 0\n\t\twhile j < len(primes) and primes[j] <= d[i] and (primes[j] * i < n):\n\t\t\td[i * primes[j]] = primes[j]\n\t\t\tj += 1\n\ndef primeFactors(n):\n\tfactors = []\n\twhile n != 1:\n\t\tfactors.append(d[n])\n\t\tn //= d[n]\n\treturn factors\nt = 1\nt = I()\nfor _ in range(t):\n\tn = I()\n\ts = lint()\n\tflag = True\n\ttmp = 1\n\tfor i in range(n):\n\t\tg = gcd(i + 2, tmp)\n\t\ttmp = tmp * (i + 2) // g\n\t\tif tmp > 1000000000.0:\n\t\t\tbreak\n\t\tif s[i] % 2 == 0 and s[i] % tmp == 0:\n\t\t\tflag = False\n\tif flag:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n",
+    "from sys import stdin, stdout\ninput = stdin.readline\n\ndef go(n):\n\tfor i in range(2, 1000):\n\t\tif n % i:\n\t\t\treturn i\nt = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tans = 'yes'\n\tfor i in range(n):\n\t\tx = go(a[i])\n\t\tp = i + 2\n\t\tif p < x:\n\t\t\tans = 'no'\n\t\t\tbreak\n\tprint(ans)\n",
+    "t = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tyes = True\n\tfor i in range(n):\n\t\tb = 0\n\t\tif a[i] == 1:\n\t\t\tb = 1\n\t\tfor j in range(1, a[i] + 2):\n\t\t\tif a[i] % (j + 1) != 0:\n\t\t\t\tb = j\n\t\t\t\tbreak\n\t\tif b > i + 1:\n\t\t\tyes = False\n\t\t\tbreak\n\tprint('YES' if yes else 'NO')\n",
+    "from math import gcd\nfrom sys import stdin\ninput = stdin.readline\n\ndef lcm(x, y):\n\ta = gcd(x, y)\n\treturn x // a * y\nT = int(input())\ndic = [2]\nx = 2\nfor i in range(10000):\n\tx = lcm(x, i + 3)\n\tdic.append(x)\nfor i in range(T):\n\tN = int(input())\n\tarr = list(map(int, input().split()))\n\tx = 2\n\tfor i in range(min(N, 10000)):\n\t\tif arr[i] % dic[i] == 0:\n\t\t\tprint('NO')\n\t\t\tbreak\n\telse:\n\t\tprint('YES')\n",
+    "from collections import deque, defaultdict, Counter, OrderedDict\nfrom math import ceil, sqrt, hypot, factorial, pi, sin, cos, radians\nfrom heapq import heappush, heappop, heapify, nlargest, nsmallest\nimport os\nimport sys\nfrom itertools import *\nfrom io import BytesIO, IOBase\nimport math\nimport bisect\nfrom math import inf\nimport random\n\ndef inp():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\n\ndef out(var):\n\tsys.stdout.write(str(var))\n\ndef lis():\n\treturn list(map(int, inp().split()))\n\ndef stringlis():\n\treturn list(map(str, inp().split()))\n\ndef sep():\n\treturn map(int, inp().split())\n\ndef strsep():\n\treturn map(str, inp().split())\n\ndef fsep():\n\treturn map(float, inp().split())\n\ndef inpu():\n\treturn int(inp())\nM = 1000000007\n\ndef main():\n\tt = 1\n\tt = int(input())\n\tfor _ in range(t):\n\t\tn = int(input())\n\t\tarr = deque(list(map(int, input().split())))\n\t\tp = 2\n\t\tj = 3\n\t\tfor i in range(n):\n\t\t\tif arr[i] % p == 0:\n\t\t\t\tprint('NO')\n\t\t\t\tbreak\n\t\t\tif p > 10 ** 9:\n\t\t\t\tcontinue\n\t\t\tp = p * j // math.gcd(p, j)\n\t\t\tj += 1\n\t\telse:\n\t\t\tprint('YES')\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\n",
+    "from sys import stdin\ninput = stdin.readline\nfor _ in range(int(input())):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tans = 'YES'\n\tfor i in range(n):\n\t\tfor factor in range(i + 2, 1, -1):\n\t\t\tif l[i] % factor:\n\t\t\t\tbreak\n\t\telse:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\tprint(ans)\n",
+    "import os, sys\nfrom io import BytesIO, IOBase\nfrom types import GeneratorType\nfrom bisect import *\nfrom collections import defaultdict, deque, Counter\nimport math, string\nfrom heapq import *\nfrom operator import add\nfrom itertools import accumulate\nBUFSIZE = 8192\nsys.setrecursionlimit(10 ** 5)\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\timport os\n\t\tself.os = os\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = self.os.read(self._fd, max(self.os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = self.os.read(self._fd, max(self.os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tself.os.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\ninf = float('inf')\nen = lambda x: list(enumerate(x))\nceil_ = lambda a, b: (a + b - 1) // b\nii = lambda : int(input())\nr = lambda : map(int, input().split())\nrr = lambda : list(r())\n\ndef lcm(a, b):\n\treturn a * b // math.gcd(a, b)\n\ndef solve():\n\tn = ii()\n\tarr = rr()\n\tx = 1\n\tfor (i, j) in enumerate(arr, 2):\n\t\tx = lcm(x, i)\n\t\tif x > 10 ** 9:\n\t\t\tbreak\n\t\tif j % x == 0:\n\t\t\tprint('NO')\n\t\t\treturn\n\tprint('YES')\nfor _ in ' ' * ii():\n\tsolve()\n",
+    "def dobicha(strok):\n\tfl = True\n\ti = 1\n\twhile fl:\n\t\tif strok[-i] % (len(strok) - i + 2) != 0:\n\t\t\treturn i\n\t\tif i == len(stro):\n\t\t\tprint('NO')\n\t\t\treturn -1\n\t\ti += 1\nt = int(input())\nfor qwer in range(t):\n\tn = int(input())\n\tstro = list(map(int, input().split()))\n\tfl = True\n\twhile fl:\n\t\tif stro == []:\n\t\t\tprint('YES')\n\t\t\tbreak\n\t\tk = dobicha(stro)\n\t\tif k != -1:\n\t\t\tstro.pop(-k)\n\t\telse:\n\t\t\tfl = False\n",
+    "import sys\nsys.setrecursionlimit(100100)\n\ndef main():\n\tfor _ in range(int(input())):\n\t\t_ = int(input())\n\t\tseq = list(map(int, input().split()))\n\t\tprint(iter_solution(seq))\n\ndef solution(seq: list) -> str:\n\tif not seq:\n\t\treturn 'YES'\n\tfor i in range(len(seq), 0, -1):\n\t\ta = seq[i - 1]\n\t\tif a % (i + 1) != 0:\n\t\t\tdel seq[i - 1]\n\t\t\treturn solution(seq)\n\treturn 'NO'\n\ndef iter_solution(seq: list) -> str:\n\twhile seq:\n\t\tno = True\n\t\tfor i in range(len(seq), 0, -1):\n\t\t\ta = seq[i - 1]\n\t\t\tif a % (i + 1) != 0:\n\t\t\t\tno = False\n\t\t\t\tdel seq[i - 1]\n\t\t\t\tbreak\n\t\tif no and seq:\n\t\t\treturn 'NO'\n\treturn 'YES'\nmain()\n",
+    "from bisect import insort, bisect_right, bisect_left\nfrom sys import stdout, stdin, setrecursionlimit\nfrom heapq import heappush, heappop, heapify\nfrom io import BytesIO, IOBase\nfrom collections import *\nfrom itertools import *\nfrom random import *\nfrom string import *\nfrom queue import *\nfrom math import *\nfrom re import *\nfrom os import *\nfrom operator import truediv\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = read(self._fd, max(fstat(self._fd).st_size, 8192))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = read(self._fd, max(fstat(self._fd).st_size, 8192))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\twrite(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(stdin, stdout) = (IOWrapper(stdin), IOWrapper(stdout))\n(graph, mod, szzz) = ({}, 10 ** 9 + 7, lambda : sorted(zzz()))\n\ndef getStr():\n\treturn input()\n\ndef getInt():\n\treturn int(input())\n\ndef listStr():\n\treturn list(input())\n\ndef getStrs():\n\treturn input().split()\n\ndef isInt(s):\n\treturn '0' <= s[0] <= '9'\n\ndef input():\n\treturn stdin.readline().strip()\n\ndef zzz():\n\treturn [int(i) for i in input().split()]\n\ndef output(answer, end='\\n'):\n\tstdout.write(str(answer) + end)\n\ndef lcd(xnum1, xnum2):\n\treturn xnum1 * xnum2 // gcd(xnum1, xnum2)\n\ndef getPrimes(N=10 ** 5):\n\tSN = int(sqrt(N))\n\tsieve = [i for i in range(N + 1)]\n\tsieve[1] = 0\n\tfor i in sieve:\n\t\tif i > SN:\n\t\t\tbreak\n\t\tif i == 0:\n\t\t\tcontinue\n\t\tfor j in range(2 * i, N + 1, i):\n\t\t\tsieve[j] = 0\n\tprime = [i for i in range(N + 1) if sieve[i] != 0]\n\treturn prime\n\ndef primeFactor(n, prime=getPrimes()):\n\tlst = []\n\tmx = int(sqrt(n)) + 1\n\tfor i in prime:\n\t\tif i > mx:\n\t\t\tbreak\n\t\twhile n % i == 0:\n\t\t\tlst.append(i)\n\t\t\tn //= i\n\tif n > 1:\n\t\tlst.append(n)\n\treturn lst\ndx = [-1, 1, 0, 0, 1, -1, 1, -1]\ndy = [0, 0, 1, -1, 1, -1, -1, 1]\ndaysInMounth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\nnum = getInt()\nfor _ in range(num):\n\tn = getInt()\n\tarr = [0] + zzz()\n\tans = 'YES'\n\tlst = []\n\tfor i in range(1, n + 1):\n\t\tx = arr[i]\n\t\tlst.append(i + 1)\n\t\tok = 0\n\t\tfor j in lst:\n\t\t\tif x % j:\n\t\t\t\tok = 1\n\t\t\t\tbreak\n\t\tif ok == 0:\n\t\t\tans = 'NO'\n\t\t\tbreak\n\tprint(ans)\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tl = [0] + l\n\tf = 0\n\tc = 1\n\tfor i in range(1, n + 1):\n\t\tf = 0\n\t\tfor j in range(i + 1, 1, -1):\n\t\t\tif l[i] % j:\n\t\t\t\tf = 1\n\t\t\t\tbreak\n\t\tc &= f\n\tif c:\n\t\tprint('YES')\n\telse:\n\t\tprint('NO')\n"
+  ],
+  "test_cases": [
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "NO\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 69696969 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 1214 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 1239962790\n8\n5 69 2082 69696 598267 11448847 52549112 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nYES\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n272385530 191890310 576823355 183520469 404011431 1371480877 954291757 278929746 155374934 840594328\n8\n10 73 1379 54012 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n14 7\n10\n384836991 191890310 576823355 563704466 404011431 499208998 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n3\n2\n14 7\n10\n384836991 191890310 576823355 563704466 404011431 499208998 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "NO\nYES\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 3 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 293773442 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6413888 69696969 696969696\n",
+      "output": "NO\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 15674376 782177068 172478243 550654647 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 687972 87299 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 5\n1\n2\n2\n12 7\n10\n384836991 191890310 150164859 782177068 140331224 818008580 954291757 218810659 155374934 840594328\n8\n7 69 109 69696 696969 4437475 64997828 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n2 3 3\n1\n4\n2\n1 7\n10\n741903468 180401125 576823355 293773442 404011431 818008580 1357092696 160449218 193446826 840594328\n8\n4 69 696 35574 696969 6413888 69696969 1095098742\n",
+      "output": "NO\nNO\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 1289917932 954291757 278929746 155374934 1531647833\n8\n5 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n2 2 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 1214 69696 696969 6969696 69696969 696969696\n",
+      "output": "NO\nNO\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n7 73 1379 69130 810285 6969696 31286298 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n2 3 3\n1\n4\n2\n2 7\n10\n741903468 180401125 576823355 293773442 404011431 818008580 1357092696 160449218 193446826 770454770\n8\n4 69 696 35574 696969 7961977 69696969 1095098742\n",
+      "output": "NO\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 404011431 818008580 45387546 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 121405 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n384836991 191890310 576823355 782177068 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 696 2324 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 742 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 342274715 818008580 45387546 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 342274715 818008580 45387546 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 73607518 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 598267 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 598267 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 2082 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 598267 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 1239962790\n8\n6 69 2082 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 278929746 155374934 840594328\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 283154483 1239962790\n8\n6 69 2082 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 576823355 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 986244508 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 1294759135 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 1294759135 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 393345378\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 42143 598267 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 9 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 8761133 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 25856395 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 71223322 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 330688375 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 155374934 840594328\n8\n6 27 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 221647834 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 14 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 515 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 836972864 404011431 818008580 45387546 316623456 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 38632669 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1610 121405 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n384836991 191890310 576823355 782177068 60565154 818008580 954291757 278929746 155374934 1249061595\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 102467897 155374934 840594328\n8\n6 69 696 2324 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 2\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 742 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 13\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 229223092 840594328\n8\n6 69 696 69696 145083 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 94188202 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 2082 26520 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 598267 52452 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 1289917932 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 1239962790\n8\n6 69 2082 69696 598267 11448847 52549112 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 1371480877 954291757 278929746 155374934 840594328\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 283154483 1239962790\n8\n6 69 2888 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 389760466 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 576823355 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 2422 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 350973532 1294759135 183520469 404011431 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 20893801 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n1\n2\n7 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 18656593 818008580 954291757 278929746 155374934 393345378\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 42143 598267 6969696 81359392 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 332638243 155374934 840594328\n8\n6 9 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 6\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 8761133 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 499208998 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n2\n2\n4 7\n10\n384836991 267994331 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "NO\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1 69696 598267 11448847 25856395 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 3 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 71223322 840594328\n8\n7 69 696 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 77953873 836972864 330688375 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 155374934 840594328\n8\n6 27 696 108048 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 221647834 155374934 840594328\n8\n6 69 1379 69696 771299 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 515 69696 696969 6969696 64997828 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 34613607 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 995 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 208602971 840594328\n8\n6 69 1610 121405 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n384836991 191890310 576823355 782177068 60565154 818008580 954291757 278929746 155374934 481983335\n8\n6 69 1379 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 102467897 155374934 840594328\n8\n6 69 696 2324 427942 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 2\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 267 69696 598267 6969696 69696969 1247716912\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n3 13\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1193 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 1839584500 278929746 229223092 840594328\n8\n6 69 696 69696 145083 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 598267 6969696 31286298 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 94188202 155374934 840594328\n8\n2 73 1379 69130 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 159204766 155374934 840594328\n8\n6 69 2082 26520 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 550654647 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 598267 52452 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 1289917932 954291757 278929746 155374934 1531647833\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 278929746 155374934 1239962790\n8\n6 69 2082 69696 598267 11448847 52549112 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 1371480877 954291757 278929746 155374934 840594328\n8\n10 73 1379 54012 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 217704501 283154483 1239962790\n8\n6 69 2888 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n13 11\n10\n384836991 191890310 576823355 183520469 389760466 818008580 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 15 3\n1\n1\n2\n7 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 6\n10\n384836991 191890310 576823355 782177068 18656593 818008580 954291757 278929746 155374934 393345378\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 1 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 42143 598267 6969696 81359392 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 332638243 155374934 840594328\n8\n6 9 696 107237 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 6\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 4637868 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n7 7\n10\n384836991 191890310 576823355 563704466 404011431 499208998 954291757 278929746 155374934 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1 69696 598267 11448847 25856395 708779430\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 3 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6413888 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 71223322 840594328\n8\n7 69 696 69696 598267 6969696 69696969 1202215078\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 77953873 836972864 330688375 1124655242 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 1201402471 221647834 155374934 840594328\n8\n6 69 1379 69696 771299 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n12 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 515 69696 696969 6969696 64997828 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 34613607 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1968499203\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n3\n2\n9 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 995 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 7\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 208602971 883858646\n8\n6 69 1610 121405 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n3 13\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 31555 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 485923012 155374934 840594328\n8\n6 69 1193 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 783381495 172478243 818008580 1839584500 278929746 229223092 840594328\n8\n6 69 696 69696 145083 32356 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 1130243 6969696 31286298 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 183520469 404011431 818008580 954291757 94188202 155374934 840594328\n8\n2 73 1379 69130 598267 8990438 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 21149032 155374934 840594328\n8\n6 69 2082 26520 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 550654647 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 687972 52452 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n13 11\n10\n384836991 191890310 576823355 183520469 404011431 1289917932 954291757 278929746 155374934 1531647833\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 473604957 954291757 217704501 283154483 1239962790\n8\n6 69 2888 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 12 3\n1\n1\n2\n7 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 6\n10\n384836991 191890310 576823355 782177068 18656593 818008580 954291757 247073587 155374934 393345378\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 1905851517 332638243 155374934 840594328\n8\n6 9 696 107237 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 6\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 641570374 818008580 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 4637868 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 12\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1 69696 598267 11448847 25856395 708779430\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 3 3\n1\n2\n2\n9 7\n10\n384836991 191890310 576823355 293773442 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6413888 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n404574617 191890310 576823355 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 1214 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 77953873 836972864 330688375 1124655242 954291757 106008208 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 1201402471 221647834 155374934 840594328\n8\n6 69 1379 69696 771299 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n12 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 109 69696 696969 6969696 64997828 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 278929746 34613607 840594328\n8\n6 69 696 49807 598267 6969696 69696969 1968499203\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 6\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 208602971 883858646\n8\n6 69 1610 121405 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 485923012 155374934 840594328\n8\n4 69 1193 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 73 1379 69130 810285 6969696 31286298 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n384836991 336489840 576823355 183520469 404011431 818008580 954291757 94188202 155374934 840594328\n8\n2 73 1379 69130 598267 8990438 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 60565154 818008580 954291757 32375413 155374934 840594328\n8\n6 69 2082 26520 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 550654647 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 687972 87299 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n13 11\n10\n384836991 191890310 618172292 183520469 404011431 1289917932 954291757 278929746 155374934 1531647833\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n7 11\n10\n272385530 191890310 576823355 183520469 404011431 1371480877 954291757 278929746 155374934 840594328\n8\n10 73 1379 54012 598267 6969696 140492898 1145009244\n",
+      "output": "YES\nYES\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 1439425649 76390225 473604957 954291757 217704501 283154483 1239962790\n8\n6 69 2888 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 12 3\n1\n1\n2\n9 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 1905851517 332638243 155374934 840594328\n8\n6 9 696 107237 598267 8295737 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 6\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 641570374 1166615398 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 4637868 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 1\n1\n2\n2\n4 12\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1 69696 598267 11448847 25856395 708779430\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n404574617 191890310 1153374109 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 1214 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 7\n10\n384836991 191890310 77953873 836972864 330688375 1124655242 954291757 106008208 155374934 840594328\n8\n6 69 696 69696 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 714466378 1201402471 221647834 155374934 840594328\n8\n6 69 1379 69696 771299 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 5\n1\n2\n2\n12 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 109 69696 696969 6969696 64997828 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 172478243 818008580 954291757 402371551 34613607 840594328\n8\n6 69 696 49807 598267 6969696 69696969 1968499203\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 6\n10\n384836991 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 208602971 883858646\n8\n6 69 1610 184773 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n3 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 485923012 155374934 840594328\n8\n4 69 1193 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n1\n2\n13 11\n10\n384836991 191890310 618172292 183520469 404011431 1289917932 954291757 278929746 7891735 1531647833\n8\n6 73 1379 69130 598267 6969696 114587927 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 5\n1\n1\n2\n7 11\n10\n272385530 191890310 576823355 183520469 404011431 1371480877 954291757 278929746 155374934 840594328\n8\n10 73 1379 54012 598267 6969696 140492898 1145009244\n",
+      "output": "YES\nYES\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n2 7\n10\n168198284 191890310 576823355 611598706 76390225 473604957 954291757 217704501 283154483 1239962790\n8\n6 69 2888 69696 598267 11448847 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 12 3\n1\n1\n2\n9 11\n10\n384836991 350973532 864163949 183520469 404011431 346664623 954291757 278929746 155374934 927724565\n8\n10 73 1379 69130 598267 3147410 114587927 1145009244\n",
+      "output": "NO\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 6\n1\n2\n2\n7 1\n10\n384836991 191890310 576823355 782177068 641570374 1166615398 954291757 278929746 155374934 840594328\n8\n6 69 696 69696 598267 4637868 69696969 1145009244\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 4 3\n1\n3\n2\n14 7\n10\n384836991 191890310 576823355 563704466 404011431 499208998 954291757 278929746 124571250 840594328\n8\n6 69 1379 69696 598267 6969696 69696969 1145009244\n",
+      "output": "NO\nYES\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 1\n1\n2\n2\n4 12\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 278929746 155374934 840594328\n8\n6 69 1 74758 598267 11448847 25856395 708779430\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n2 3 3\n1\n4\n2\n9 7\n10\n384836991 191890310 576823355 293773442 404011431 818008580 954291757 160449218 155374934 840594328\n8\n4 69 696 69696 696969 6413888 69696969 696969696\n",
+      "output": "NO\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 1\n10\n404574617 191890310 42363987 782177068 404011431 1001139503 954291757 278929746 155374934 840594328\n8\n9 69 1214 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nYES\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n3\n2\n7 7\n10\n384836991 191890310 77953873 836972864 330688375 1124655242 954291757 106008208 155374934 840594328\n8\n6 69 696 69696 269684 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n1\n2\n7 11\n10\n384836991 191890310 576823355 782177068 404011431 714466378 1201402471 221647834 155374934 840594328\n8\n6 69 1379 69696 771299 6969696 69696969 1145009244\n",
+      "output": "YES\nYES\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 5\n1\n2\n2\n12 7\n10\n384836991 191890310 576823355 782177068 140331224 818008580 954291757 160449218 155374934 840594328\n8\n6 69 109 69696 696969 4437475 64997828 696969696\n",
+      "output": "YES\nNO\nNO\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 236012305 818008580 954291757 402371551 34613607 840594328\n8\n6 69 696 49807 598267 6969696 69696969 1968499203\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n4 6\n10\n361284594 191890310 1043032365 782177068 404011431 818008580 954291757 278929746 208602971 883858646\n8\n6 69 1610 184773 598267 6969696 69696969 1145009244\n",
+      "output": "YES\nNO\nNO\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 4 3\n1\n2\n2\n3 4\n10\n384836991 191890310 576823355 1439425649 60565154 818008580 954291757 485923012 155374934 840594328\n8\n4 69 1193 69696 598267 11448847 69696969 141752631\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 8 3\n1\n2\n2\n7 7\n10\n384836991 191890310 15674376 892143751 172478243 550654647 954291757 278929746 405393865 840594328\n8\n6 69 696 69696 687972 87299 69696969 1602686280\n",
+      "output": "YES\nNO\nYES\nNO\nNO\n"
+    },
+    {
+      "input": "5\n3\n1 2 3\n1\n2\n2\n7 7\n10\n384836991 191890310 576823355 782177068 404011431 818008580 954291757 160449218 155374934 840594328\n8\n6 69 696 69696 696969 6969696 69696969 696969696\n",
+      "output": "YES\nNO\nYES\nYES\nNO\n"
+    }
+  ],
+  "extracted_at": "2026-08-23T18:27:46.587970+00:00"
+}

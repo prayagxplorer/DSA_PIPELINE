@@ -1,0 +1,572 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/805/C",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "A few years ago Sajjad left his school and register to another one due to security reasons. Now he wishes to find Amir, one of his schoolmates and good friends.\n\nThere are n schools numerated from 1 to n. One can travel between each pair of them, to do so, he needs to buy a ticket. The ticker between schools i and j costs <image> and can be used multiple times. Help Sajjad to find the minimum cost he needs to pay for tickets to visit all schools. He can start and finish in any school.\n\nInput\n\nThe first line contains a single integer n (1 ≤ n ≤ 105) — the number of schools.\n\nOutput\n\nPrint single integer: the minimum cost of tickets needed to visit all schools.\n\nExamples\n\nInput\n\n2\n\n\nOutput\n\n0\n\n\nInput\n\n10\n\n\nOutput\n\n4\n\nNote\n\nIn the first example we can buy a ticket between the schools that costs <image>.",
+  "difficulty": "EASY",
+  "requested_tags": [
+    "greedy"
+  ],
+  "matched_tags": [
+    "greedy"
+  ],
+  "relaxation_floor": 1,
+  "all_tags": [
+    "greedy",
+    "math",
+    "constructive algorithms"
+  ],
+  "time_limit_seconds": 1.0,
+  "memory_limit_mb": 256.0,
+  "candidate_solutions": [
+    "print(max((int(input()) + 1) // 2 - 1, 0))\n",
+    "n = int(input())\nif n % 2 == 0:\n\tprint(n // 2 - 1)\nelse:\n\tprint(n // 2)\n",
+    "n = int(input())\n(l, r) = (1, n)\ncost = 0\nwhile l < r:\n\tcost += (r + l) % (n + 1)\n\tl += 1\n\tif l == r:\n\t\tbreak\n\tcost += (r + l) % (n + 1)\n\tr -= 1\nprint(cost)\n",
+    "import sys\n\ndef solve():\n\tnum = int(input())\n\tprint((num - 1) // 2)\nsolve()\n",
+    "import sys\n\ndef solve():\n\tn = int(input())\n\tans = (n - 1) // 2\n\tprint(ans)\nsolve()\n",
+    "import sys\nread = lambda : sys.stdin.readline().rstrip()\nreadi = lambda : int(sys.stdin.readline())\nwriteln = lambda x: sys.stdout.write(str(x) + '\\n')\nwrite = lambda x: sys.stdout.write(x)\nN = readi()\nwriteln((N - 1) // 2)\n",
+    "def STR():\n\treturn list(input())\n\ndef INT():\n\treturn int(input())\n\ndef MAP():\n\treturn map(int, input().split())\n\ndef MAP2():\n\treturn map(float, input().split())\n\ndef LIST():\n\treturn list(map(int, input().split()))\n\ndef STRING():\n\treturn input()\nimport string\nimport sys\nfrom heapq import heappop, heappush\nfrom bisect import *\nfrom collections import deque, Counter, defaultdict\nfrom math import *\nfrom itertools import permutations, accumulate\ndx = [-1, 1, 0, 0]\ndy = [0, 0, 1, -1]\nn = INT()\narr = []\nfor i in range(1, n + 1):\n\tarr.append(i)\narr.sort()\nif n % 2 == 0:\n\tm = n // 2\nelse:\n\tm = n // 2 + 1\nsm = []\nlast = -1\nfor i in range(m):\n\tif last == -1:\n\t\tx = arr[i] + arr[n - i - 1]\n\t\tsm.append(x % (n + 1))\n\t\tlast = arr[n - i - 1]\n\telif i != n - i - 1:\n\t\tsm.append((last + arr[i]) % (n + 1))\n\t\tx = arr[i] + arr[n - i - 1]\n\t\tsm.append(x % (n + 1))\n\t\tlast = arr[n - i - 1]\n\telse:\n\t\tsm.append((last + arr[i]) % (n + 1))\nprint(sum(sm))\n",
+    "n = int(input())\nans = 0\nprint(int(n / 2 + n % 2 - 1))\n",
+    "n = int(input())\nk = 1\nc = 0\ni = 1\nj = n\nwhile i < j:\n\tc += (i + j) % (n + 1)\n\tif k % 2 == 1:\n\t\ti += 1\n\telse:\n\t\tj -= 1\n\tk += 1\nprint(c)\n",
+    "def mp():\n\treturn map(int, input().split())\n\ndef lt():\n\treturn list(map(int, input().split()))\n\ndef pt(x):\n\tprint(x)\n\ndef ip():\n\treturn input()\n\ndef it():\n\treturn int(input())\n\ndef sl(x):\n\treturn [t for t in x]\n\ndef spl(x):\n\treturn x.split()\n\ndef aj(liste, item):\n\tliste.append(item)\n\ndef bin(x):\n\treturn '{0:b}'.format(x)\n\ndef listring(l):\n\treturn ' '.join([str(x) for x in l])\n\ndef ptlist(l):\n\tprint(' '.join([str(x) for x in l]))\nn = it()\npt((n - 1) // 2)\n",
+    "def R():\n\treturn map(int, input().split())\n\ndef I():\n\treturn int(input())\n\ndef S():\n\treturn str(input())\n\ndef L():\n\treturn list(R())\nfrom collections import Counter\nimport math\nimport sys\nfrom itertools import permutations\nn = I()\ncur = 1\ncnt = 2\nans = 0\nwhile cnt < n:\n\tif cur < n // 2:\n\t\tcur = n + 1 - cur\n\t\tcnt += 1\n\telif cur == (n + 1) // 2:\n\t\tbreak\n\telse:\n\t\tcur = n + 2 - cur\n\t\tcnt += 1\n\t\tans += 1\nprint(ans)\n",
+    "print((int(input()) + 1) // 2 - 1)\n",
+    "n = int(input())\nprint((n - 1) // 2)\n",
+    "def find(n):\n\treturn (n + 1) // 2 - 1\nprint(find(int(input())))\n",
+    "a = int(input())\nif a % 2 == 0:\n\tprint(a // 2 - 1)\nelse:\n\tprint(a // 2)\n",
+    "n = int(input())\nif n % 2 == 1:\n\tans = (n - 1) // 2\nelse:\n\tans = n // 2 - 1\nprint(ans)\n",
+    "n = int(input())\nsum = 0\nfirst = 1\nlast = n\nflag = True\nwhile first < last:\n\tsum += (first + last) % (n + 1)\n\tif flag == True:\n\t\tflag = False\n\t\tfirst += 1\n\telse:\n\t\tflag = True\n\t\tlast -= 1\nprint(sum)\n",
+    "from sys import stdin, stdout\nn = int(stdin.readline())\nans = n % 2 + (n - 2) // 2\nstdout.write(str(ans))\n",
+    "n = int(input())\nif n == 1 or n == 2:\n\tprint(0)\nelif n % 2 == 0:\n\tprint(n // 2 - 1)\nelse:\n\tprint(n // 2)\n",
+    "from sys import stdin, stdout\n\ndef readint():\n\treturn map(int, stdin.readline().split())\nn = int(input())\na = n // 2\nif n % 2:\n\ta += 1\nprint(a - 1)\n",
+    "import math, string, itertools, collections, re, fractions, array, copy\nimport bisect\nimport heapq\nfrom itertools import chain, dropwhile, permutations, combinations\nfrom collections import deque, defaultdict, OrderedDict, namedtuple, Counter, ChainMap\n\ndef VI():\n\treturn list(map(int, input().split()))\n\ndef I():\n\treturn int(input())\n\ndef LIST(n, m=None):\n\treturn [0] * n if m is None else [[0] * m for i in range(n)]\n\ndef ELIST(n):\n\treturn [[] for i in range(n)]\n\ndef MI(n=None, m=None):\n\tif n is None:\n\t\t(n, m) = VI()\n\tarr = LIST(n)\n\tfor i in range(n):\n\t\tarr[i] = VI()\n\treturn arr\n\ndef MS(n=None, m=None):\n\tif n is None:\n\t\t(n, m) = VI()\n\tarr = LIST(n)\n\tfor i in range(n):\n\t\tarr[i] = input()\n\treturn arr\n\ndef MIT(n=None, m=None):\n\tif n is None:\n\t\t(n, m) = VI()\n\ta = MI(n, m)\n\tarr = LIST(m, n)\n\tfor (i, l) in enumerate(a):\n\t\tfor (j, x) in enumerate(l):\n\t\t\tarr[j][i] = x\n\treturn arr\n\ndef main(info=0):\n\tn = I()\n\tprint((n - 1) // 2)\nmain()\n",
+    "import math\nn = int(input())\nif n == 1:\n\tprint(0)\nelse:\n\tprint(math.ceil(n / 2) - 1)\n",
+    "l = int(input())\nif l % 2 == 0:\n\tprint(l // 2 - 1)\nelse:\n\tprint(l // 2)\n",
+    "x = int(input())\nprint((x - 1) // 2)\n",
+    "from __future__ import division, print_function\nimport os, sys\nfrom io import BytesIO, IOBase\nif sys.version_info[0] < 3:\n\tfrom __builtin__ import xrange as range\n\tfrom future_builtins import ascii, filter, hex, map, oct, zip\n\ndef ii():\n\treturn int(input())\n\ndef si():\n\treturn input()\n\ndef mi():\n\treturn map(int, input().strip().split(' '))\n\ndef msi():\n\treturn map(str, input().strip().split(' '))\n\ndef li():\n\treturn list(mi())\n\ndef dmain():\n\tsys.setrecursionlimit(1000000)\n\tthreading.stack_size(1024000)\n\tthread = threading.Thread(target=main)\n\tthread.start()\nimport sys\ninput = sys.stdin.readline\nscanner = lambda : int(input())\nstring = lambda : input().rstrip()\nget_list = lambda : list(read())\nread = lambda : map(int, input().split())\nget_float = lambda : map(float, input().split())\n\ndef ceil(x):\n\tif x != int(x):\n\t\tx = int(x) + 1\n\treturn x\n\ndef factorial(x, m):\n\tval = 1\n\twhile x > 0:\n\t\tval = val * x % m\n\t\tx -= 1\n\treturn val\n\ndef fact(x):\n\tval = 1\n\twhile x > 0:\n\t\tval *= x\n\t\tx -= 1\n\treturn val\n\ndef swaparr(arr, a, b):\n\ttemp = arr[a]\n\tarr[a] = arr[b]\n\tarr[b] = temp\n\ndef gcd(a, b):\n\tif b == 0:\n\t\treturn a\n\treturn gcd(b, a % b)\n\ndef lcm(a, b):\n\treturn a * b // math.gcd(a, b)\n\ndef is_integer(n):\n\treturn math.ceil(n) == math.floor(n)\n\ndef nCr(n, k):\n\tif k > n:\n\t\treturn 0\n\tif k > n - k:\n\t\tk = n - k\n\tres = 1\n\tfor i in range(k):\n\t\tres = res * (n - i)\n\t\tres = res / (i + 1)\n\treturn int(res)\n\ndef primefs(n):\n\tprimes = {}\n\twhile n % 2 == 0 and n > 0:\n\t\tprimes[2] = primes.get(2, 0) + 1\n\t\tn = n // 2\n\tfor i in range(3, int(n ** 0.5) + 2, 2):\n\t\twhile n % i == 0 and n > 0:\n\t\t\tprimes[i] = primes.get(i, 0) + 1\n\t\t\tn = n // i\n\tif n > 2:\n\t\tprimes[n] = primes.get(n, 0) + 1\n\treturn primes\n\ndef power(x, y, p):\n\tres = 1\n\tx = x % p\n\tif x == 0:\n\t\treturn 0\n\twhile y > 0:\n\t\tif y & 1 == 1:\n\t\t\tres = res * x % p\n\t\ty = y >> 1\n\t\tx = x * x % p\n\treturn res\n\ndef swap(a, b):\n\ttemp = a\n\ta = b\n\tb = temp\n\treturn (a, b)\n\ndef find(x, link):\n\tp = x\n\twhile p != link[p]:\n\t\tp = link[p]\n\twhile x != p:\n\t\tnex = link[x]\n\t\tlink[x] = p\n\t\tx = nex\n\treturn p\n\ndef union(x, y, link, size):\n\tx = find(x, link)\n\ty = find(y, link)\n\tif size[x] < size[y]:\n\t\t(x, y) = swap(x, y)\n\tif x != y:\n\t\tsize[x] += size[y]\n\t\tlink[y] = x\n\ndef sieve(n):\n\tprime = [True for i in range(n + 1)]\n\t(prime[0], prime[1]) = (False, False)\n\tp = 2\n\twhile p * p <= n:\n\t\tif prime[p] == True:\n\t\t\tfor i in range(p * p, n + 1, p):\n\t\t\t\tprime[i] = False\n\t\tp += 1\n\treturn prime\n\ndef phi(n):\n\tresult = n\n\tp = 2\n\twhile p * p <= n:\n\t\tif n % p == 0:\n\t\t\twhile n % p == 0:\n\t\t\t\tn = n // p\n\t\t\tresult = result * (1.0 - 1.0 / float(p))\n\t\tp = p + 1\n\tif n > 1:\n\t\tresult = result * (1.0 - 1.0 / float(n))\n\treturn int(result)\n\ndef is_prime(n):\n\tif n == 0:\n\t\treturn False\n\tif n == 1:\n\t\treturn True\n\tfor i in range(2, int(n ** (1 / 2)) + 1):\n\t\tif not n % i:\n\t\t\treturn False\n\treturn True\n\ndef next_prime(n, primes):\n\twhile primes[n] != True:\n\t\tn += 1\n\treturn n\nMAXN = int(100000.0 + 5)\n\ndef spf_sieve():\n\tspf[1] = 1\n\tfor i in range(2, MAXN):\n\t\tspf[i] = i\n\tfor i in range(4, MAXN, 2):\n\t\tspf[i] = 2\n\tfor i in range(3, ceil(MAXN ** 0.5), 2):\n\t\tif spf[i] == i:\n\t\t\tfor j in range(i * i, MAXN, i):\n\t\t\t\tif spf[j] == j:\n\t\t\t\t\tspf[j] = i\nspf = [0 for i in range(MAXN)]\n\ndef factoriazation(x):\n\tres = []\n\tfor i in range(2, int(x ** 0.5) + 1):\n\t\twhile x % i == 0:\n\t\t\tres.append(i)\n\t\t\tx //= i\n\tif x != 1:\n\t\tres.append(x)\n\treturn res\n\ndef factors(n):\n\tres = []\n\tfor i in range(1, int(n ** 0.5) + 1):\n\t\tif n % i == 0:\n\t\t\tres.append(i)\n\t\t\tres.append(n // i)\n\treturn list(set(res))\n\ndef int_array():\n\treturn list(map(int, input().strip().split()))\n\ndef float_array():\n\treturn list(map(float, input().strip().split()))\n\ndef str_array():\n\treturn input().strip().split()\n\ndef binary_search(low, high, w, h, n):\n\twhile low < high:\n\t\tmid = low + (high - low) // 2\n\t\tif check(mid, w, h, n):\n\t\t\tlow = mid + 1\n\t\telse:\n\t\t\thigh = mid\n\treturn low\n\ndef check(beauty, s, n, count):\n\tpass\nMOD = int(1000000000.0) + 7\nCMOD = 998244353\nINF = float('inf')\nNINF = -float('inf')\nalphs = 'abcdefghijklmnopqrstuvwxyz'\nfrom itertools import permutations\nimport math\nimport bisect as bis\nimport random\nimport sys\nimport collections as collect\n\ndef solve():\n\tn = scanner()\n\tprint((n - 1) // 2)\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nfor i in range(1):\n\tsolve()\n",
+    "n = int(input())\nres = 0\na = 1\nb = n\nc = True\nwhile a < b:\n\tres += (a + b) % (n + 1)\n\tif c == True:\n\t\ta += 1\n\telse:\n\t\tb -= 1\n\tc = not c\nprint(res)\n",
+    "import math\nn = int(input())\nprint(math.ceil((n - 2) / 2))\n",
+    "import sys\nfin = sys.stdin\nfout = sys.stdout\nn = int(fin.readline())\nans = 0\ns = set()\nfor i in range(1, n + 1):\n\ts.add(i)\ncur = 1\ns.discard(1)\nwhile len(s) > 0:\n\tnext = n + 1 - cur\n\tif next not in s:\n\t\tnext -= n\n\t\tnext %= n + 1\n\t\twhile next not in s:\n\t\t\tnext += 1\n\tans += (cur + next) % (n + 1)\n\ts.discard(next)\n\tcur = next\nfout.write(str(ans))\n",
+    "n = int(input())\nimport math\nif n == 1:\n\tprint(0)\nelif n % 2 == 0:\n\tprint(n // 2 - 1)\nelse:\n\tprint(math.floor(n // 2))\n",
+    "n = int(input())\nvis = [0] * n\nans = 0\nfor i in range(n):\n\tif vis[i] == 0:\n\t\tans += 1\n\t\tvis[i] = 1\n\t\tvis[n + 1 - i - 2] = 1\nans -= 1\nprint(ans)\n",
+    "print(str((int(input()) - 1) // 2))\n",
+    "n = int(input())\nprint(n - 1 >> 1)\n",
+    "x = int(input())\nif x % 2 == 0:\n\tprint(int(x / 2 - 1))\nelse:\n\tprint(int(x / 2))\n",
+    "import math\nN = int(input())\nprint(math.ceil(N / 2) - 1)\n",
+    "n = int(input())\nif n % 2 == 0:\n\tprint(n // 2 - 1)\nelif n % 2 != 0:\n\tprint(n // 2)\n",
+    "a = int(input())\nprint((a + 1) // 2 - 1)\n",
+    "a = int(input())\nif a == 1 or a == 2:\n\tprint(0)\nelse:\n\tprint((a - 3) // 2 + 1)\n",
+    "import sys\n\ndef main():\n\tn = int(sys.stdin.readline())\n\tres = int((n - 1) / 2)\n\tprint('%s' % res)\nmain()\n"
+  ],
+  "test_cases": [
+    {
+      "input": "20289\n",
+      "output": "10144"
+    },
+    {
+      "input": "31775\n",
+      "output": "15887"
+    },
+    {
+      "input": "1\n",
+      "output": "0"
+    },
+    {
+      "input": "82801\n",
+      "output": "41400"
+    },
+    {
+      "input": "32866\n",
+      "output": "16432"
+    },
+    {
+      "input": "99996\n",
+      "output": "49997"
+    },
+    {
+      "input": "99997\n",
+      "output": "49998"
+    },
+    {
+      "input": "43670\n",
+      "output": "21834"
+    },
+    {
+      "input": "79227\n",
+      "output": "39613"
+    },
+    {
+      "input": "3\n",
+      "output": "1"
+    },
+    {
+      "input": "86539\n",
+      "output": "43269"
+    },
+    {
+      "input": "5188\n",
+      "output": "2593"
+    },
+    {
+      "input": "99998\n",
+      "output": "49998"
+    },
+    {
+      "input": "100000\n",
+      "output": "49999"
+    },
+    {
+      "input": "4\n",
+      "output": "1"
+    },
+    {
+      "input": "99999\n",
+      "output": "49999"
+    },
+    {
+      "input": "31809\n",
+      "output": "15904"
+    },
+    {
+      "input": "77859\n",
+      "output": "38929"
+    },
+    {
+      "input": "53022\n",
+      "output": "26510"
+    },
+    {
+      "input": "4217\n",
+      "output": "2108"
+    },
+    {
+      "input": "60397\n",
+      "output": "30198"
+    },
+    {
+      "input": "12802\n",
+      "output": "6400"
+    },
+    {
+      "input": "33377\n",
+      "output": "16688"
+    },
+    {
+      "input": "40873\n",
+      "output": "20436"
+    },
+    {
+      "input": "17879\n",
+      "output": "8939"
+    },
+    {
+      "input": "29780\n",
+      "output": "14889\n"
+    },
+    {
+      "input": "1289\n",
+      "output": "644\n"
+    },
+    {
+      "input": "120494\n",
+      "output": "60246\n"
+    },
+    {
+      "input": "59170\n",
+      "output": "29584\n"
+    },
+    {
+      "input": "116591\n",
+      "output": "58295\n"
+    },
+    {
+      "input": "110052\n",
+      "output": "55025\n"
+    },
+    {
+      "input": "1391\n",
+      "output": "695\n"
+    },
+    {
+      "input": "33143\n",
+      "output": "16571\n"
+    },
+    {
+      "input": "6\n",
+      "output": "2\n"
+    },
+    {
+      "input": "79114\n",
+      "output": "39556\n"
+    },
+    {
+      "input": "5301\n",
+      "output": "2650\n"
+    },
+    {
+      "input": "72612\n",
+      "output": "36305\n"
+    },
+    {
+      "input": "101000\n",
+      "output": "50499\n"
+    },
+    {
+      "input": "8\n",
+      "output": "3\n"
+    },
+    {
+      "input": "150380\n",
+      "output": "75189\n"
+    },
+    {
+      "input": "17787\n",
+      "output": "8893\n"
+    },
+    {
+      "input": "16131\n",
+      "output": "8065\n"
+    },
+    {
+      "input": "31981\n",
+      "output": "15990\n"
+    },
+    {
+      "input": "6437\n",
+      "output": "3218\n"
+    },
+    {
+      "input": "37919\n",
+      "output": "18959\n"
+    },
+    {
+      "input": "9029\n",
+      "output": "4514\n"
+    },
+    {
+      "input": "39480\n",
+      "output": "19739\n"
+    },
+    {
+      "input": "1558\n",
+      "output": "778\n"
+    },
+    {
+      "input": "5156\n",
+      "output": "2577\n"
+    },
+    {
+      "input": "9\n",
+      "output": "4\n"
+    },
+    {
+      "input": "18030\n",
+      "output": "9014\n"
+    },
+    {
+      "input": "2106\n",
+      "output": "1052\n"
+    },
+    {
+      "input": "159531\n",
+      "output": "79765\n"
+    },
+    {
+      "input": "93687\n",
+      "output": "46843\n"
+    },
+    {
+      "input": "175733\n",
+      "output": "87866\n"
+    },
+    {
+      "input": "132751\n",
+      "output": "66375\n"
+    },
+    {
+      "input": "65\n",
+      "output": "32\n"
+    },
+    {
+      "input": "43120\n",
+      "output": "21559\n"
+    },
+    {
+      "input": "11\n",
+      "output": "5\n"
+    },
+    {
+      "input": "8271\n",
+      "output": "4135\n"
+    },
+    {
+      "input": "7447\n",
+      "output": "3723\n"
+    },
+    {
+      "input": "5524\n",
+      "output": "2761\n"
+    },
+    {
+      "input": "111000\n",
+      "output": "55499\n"
+    },
+    {
+      "input": "15534\n",
+      "output": "7766\n"
+    },
+    {
+      "input": "17510\n",
+      "output": "8754\n"
+    },
+    {
+      "input": "7267\n",
+      "output": "3633\n"
+    },
+    {
+      "input": "11489\n",
+      "output": "5744\n"
+    },
+    {
+      "input": "3205\n",
+      "output": "1602\n"
+    },
+    {
+      "input": "5414\n",
+      "output": "2706\n"
+    },
+    {
+      "input": "64191\n",
+      "output": "32095\n"
+    },
+    {
+      "input": "587\n",
+      "output": "293\n"
+    },
+    {
+      "input": "8621\n",
+      "output": "4310\n"
+    },
+    {
+      "input": "18\n",
+      "output": "8\n"
+    },
+    {
+      "input": "16\n",
+      "output": "7\n"
+    },
+    {
+      "input": "4932\n",
+      "output": "2465\n"
+    },
+    {
+      "input": "2781\n",
+      "output": "1390\n"
+    },
+    {
+      "input": "41298\n",
+      "output": "20648\n"
+    },
+    {
+      "input": "118\n",
+      "output": "58\n"
+    },
+    {
+      "input": "78436\n",
+      "output": "39217\n"
+    },
+    {
+      "input": "6198\n",
+      "output": "3098\n"
+    },
+    {
+      "input": "1786\n",
+      "output": "892\n"
+    },
+    {
+      "input": "7664\n",
+      "output": "3831\n"
+    },
+    {
+      "input": "110000\n",
+      "output": "54999\n"
+    },
+    {
+      "input": "14\n",
+      "output": "6\n"
+    },
+    {
+      "input": "3440\n",
+      "output": "1719\n"
+    },
+    {
+      "input": "13336\n",
+      "output": "6667\n"
+    },
+    {
+      "input": "2309\n",
+      "output": "1154\n"
+    },
+    {
+      "input": "20350\n",
+      "output": "10174\n"
+    },
+    {
+      "input": "3236\n",
+      "output": "1617\n"
+    },
+    {
+      "input": "8353\n",
+      "output": "4176\n"
+    },
+    {
+      "input": "3014\n",
+      "output": "1506\n"
+    },
+    {
+      "input": "1048\n",
+      "output": "523\n"
+    },
+    {
+      "input": "15578\n",
+      "output": "7788\n"
+    },
+    {
+      "input": "34\n",
+      "output": "16\n"
+    },
+    {
+      "input": "23\n",
+      "output": "11\n"
+    },
+    {
+      "input": "8956\n",
+      "output": "4477\n"
+    },
+    {
+      "input": "5434\n",
+      "output": "2716\n"
+    },
+    {
+      "input": "75937\n",
+      "output": "37968\n"
+    },
+    {
+      "input": "63\n",
+      "output": "31\n"
+    },
+    {
+      "input": "64557\n",
+      "output": "32278\n"
+    },
+    {
+      "input": "35\n",
+      "output": "17\n"
+    },
+    {
+      "input": "2407\n",
+      "output": "1203\n"
+    },
+    {
+      "input": "1308\n",
+      "output": "653\n"
+    },
+    {
+      "input": "2543\n",
+      "output": "1271\n"
+    },
+    {
+      "input": "110100\n",
+      "output": "55049\n"
+    },
+    {
+      "input": "31\n",
+      "output": "15\n"
+    },
+    {
+      "input": "1479\n",
+      "output": "739\n"
+    },
+    {
+      "input": "11037\n",
+      "output": "5518\n"
+    },
+    {
+      "input": "1759\n",
+      "output": "879\n"
+    },
+    {
+      "input": "18365\n",
+      "output": "9182\n"
+    },
+    {
+      "input": "744\n",
+      "output": "371\n"
+    },
+    {
+      "input": "4614\n",
+      "output": "2306\n"
+    },
+    {
+      "input": "1214\n",
+      "output": "606\n"
+    },
+    {
+      "input": "1458\n",
+      "output": "728\n"
+    },
+    {
+      "input": "11210\n",
+      "output": "5604\n"
+    },
+    {
+      "input": "38\n",
+      "output": "18\n"
+    },
+    {
+      "input": "3643\n",
+      "output": "1821\n"
+    },
+    {
+      "input": "7207\n",
+      "output": "3603\n"
+    },
+    {
+      "input": "10110\n",
+      "output": "5054\n"
+    },
+    {
+      "input": "68\n",
+      "output": "33\n"
+    },
+    {
+      "input": "3273\n",
+      "output": "1636\n"
+    },
+    {
+      "input": "3070\n",
+      "output": "1534\n"
+    },
+    {
+      "input": "2056\n",
+      "output": "1027\n"
+    },
+    {
+      "input": "2513\n",
+      "output": "1256\n"
+    },
+    {
+      "input": "010100\n",
+      "output": "5049\n"
+    },
+    {
+      "input": "10\n",
+      "output": "4"
+    },
+    {
+      "input": "2\n",
+      "output": "0"
+    }
+  ],
+  "extracted_at": "2026-08-23T18:26:09.104295+00:00"
+}

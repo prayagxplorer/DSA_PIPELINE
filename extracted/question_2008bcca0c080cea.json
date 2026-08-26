@@ -1,0 +1,510 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/998/D",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "Let's introduce a number system which is based on a roman digits. There are digits I, V, X, L which correspond to the numbers 1, 5, 10 and 50 respectively. The use of other roman digits is not allowed.\n\nNumbers in this system are written as a sequence of one or more digits. We define the value of the sequence simply as the sum of digits in it.\n\nFor example, the number XXXV evaluates to 35 and the number IXI — to 12.\n\nPay attention to the difference to the traditional roman system — in our system any sequence of digits is valid, moreover the order of digits doesn't matter, for example IX means 11, not 9.\n\nOne can notice that this system is ambiguous, and some numbers can be written in many different ways. Your goal is to determine how many distinct integers can be represented by exactly n roman digits I, V, X, L.\n\nInput\n\nThe only line of the input file contains a single integer n (1 ≤ n ≤ 10^9) — the number of roman digits to use.\n\nOutput\n\nOutput a single integer — the number of distinct integers which can be represented using n roman digits exactly.\n\nExamples\n\nInput\n\n1\n\n\nOutput\n\n4\n\n\nInput\n\n2\n\n\nOutput\n\n10\n\n\nInput\n\n10\n\n\nOutput\n\n244\n\nNote\n\nIn the first sample there are exactly 4 integers which can be represented — I, V, X and L.\n\nIn the second sample it is possible to represent integers 2 (II), 6 (VI), 10 (VV), 11 (XI), 15 (XV), 20 (XX), 51 (IL), 55 (VL), 60 (XL) and 100 (LL).",
+  "difficulty": "HARD",
+  "requested_tags": [
+    "dp",
+    "greedy",
+    "brute force",
+    "math"
+  ],
+  "matched_tags": [
+    "dp",
+    "greedy",
+    "brute force",
+    "math"
+  ],
+  "relaxation_floor": 2,
+  "all_tags": [
+    "greedy",
+    "combinatorics",
+    "math",
+    "dp",
+    "brute force"
+  ],
+  "time_limit_seconds": 1.0,
+  "memory_limit_mb": 256.0,
+  "candidate_solutions": [
+    "a = [0, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292]\nn = int(input())\nif n < len(a):\n\tprint(a[n])\nelse:\n\tprint(a[11] + 49 * (n - 11))\n",
+    "n = int(input())\nans = 0\nkol = 0\nma = 0\nif n > 20:\n\tma = (n - 10) * 50\n\tmi = n - 10 + 10 * 50\n\tans = ma - mi + 1\n\tkol = n - 20\n\tn = 20\na = set()\nfor i in range(n + 1):\n\tfor j in range(n - i + 1):\n\t\tfor u in range(n - i - j + 1):\n\t\t\tz = n - i - j - u\n\t\t\tch = i + j * 5 + u * 10 + z * 50 + kol * 50\n\t\t\tif ch not in a and ch > ma:\n\t\t\t\tans += 1\n\t\t\t\ta.add(ch)\nif ma != 0:\n\tfor i in range(n + 1):\n\t\tfor j in range(n - i + 1):\n\t\t\tfor u in range(n - i - j + 1):\n\t\t\t\tz = n - i - j - u\n\t\t\t\tch = i + j * 5 + u * 10 + z * 50 + kol\n\t\t\t\tif ch not in a and ch < mi:\n\t\t\t\t\tans += 1\n\t\t\t\t\ta.add(ch)\nprint(ans)\n",
+    "n = int(input())\nif n < 12:\n\tprint([1, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292][n])\nelse:\n\tprint(n * 50 - n - 247)\n",
+    "non_representable = {1: 46, 2: 89, 3: 128, 4: 162, 5: 190, 6: 212, 7: 228, 8: 238, 9: 244, 10: 247}\nn = int(input())\nprint(49 * n + 1 - non_representable.get(n, 248))\n",
+    "def mi():\n\treturn map(int, input().split())\nn = list(mi())[0]\na = [4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292, 341]\nif n >= 13:\n\tprint((n - 11) * 49 + a[10])\nelse:\n\tprint(a[n - 1])\n",
+    "n = int(input())\nl = [1, 3, 6, 10, 15, 21, 27, 33, 39, 43, 46, 48]\nif n < 12:\n\tprint(sum(l[:n + 1]))\nelse:\n\tprint(sum(l) + 49 * (n - 11))\n",
+    "from itertools import combinations_with_replacement as cwr\n\ndef compute_lt12(n):\n\tchars = 'IVXL'\n\tnums = [1, 5, 10, 50]\n\tnum_map = {c: n for (c, n) in zip(chars, nums)}\n\tsum_set = set()\n\tfor comb in cwr(chars, n):\n\t\tsum_set.add(sum((num_map[c] for c in comb)))\n\treturn len(sum_set)\n\ndef main():\n\tn = int(input())\n\tif n < 12:\n\t\tprint(compute_lt12(n))\n\telse:\n\t\tprint(292 + 49 * (n - 11))\nmain()\n",
+    "def solve(n):\n\ts = set()\n\tfor i in range(0, n + 1):\n\t\tfor v in range(0, n - i + 1):\n\t\t\tfor x in range(0, n - i - v + 1):\n\t\t\t\tl = n - i - v - x\n\t\t\t\ts.add(i + v * 5 + x * 10 + l * 50)\n\treturn len(s)\nn = int(input())\nif n < 11:\n\tprint(solve(n))\nelse:\n\tprint(49 * n - 247)\n",
+    "def ceildiv(a, b):\n\treturn -(-a // b)\n\ndef test_ceildiv():\n\tassert ceildiv(6, 3) == 2\n\tassert ceildiv(7, 3) == 3\n\tassert ceildiv(5, 3) == 2\n\ndef brute_force(n, m):\n\tnumbers = set()\n\tmax_c = min(n, m // 49)\n\tfor c in range(max_c + 1):\n\t\t_49c = 49 * c\n\t\tmax_b = min(n - c, (m - _49c) // 9, 48)\n\t\tfor b in range(max_b + 1):\n\t\t\t_9b_49c = 9 * b + _49c\n\t\t\tmax_a = min(n - b - c, (m - _9b_49c) // 4, 8)\n\t\t\tfor a in range(max_a + 1):\n\t\t\t\tnumbers.add(4 * a + _9b_49c)\n\tassert 0 in numbers\n\tfor x in (4, 9, 49):\n\t\tif m // x <= n:\n\t\t\tassert m - m % 49 in numbers\n\treturn len(numbers)\n\ndef brute_force_range(n, l, u):\n\tnumbers = set()\n\tmin_c = max(0, ceildiv(l - 9 * n, 40))\n\tmax_c = min(n, u // 49)\n\tfor c in range(min_c, max_c + 1):\n\t\t_49c = 49 * c\n\t\tmin_b = max(0, ceildiv(l - 4 * n - 45 * c, 5))\n\t\tmax_b = min(n - c, (u - _49c) // 9, 48)\n\t\tfor b in range(min_b, max_b + 1):\n\t\t\t_9b_49c = 9 * b + _49c\n\t\t\tmin_a = max(0, ceildiv(l - _9b_49c, 4))\n\t\t\tmax_a = min(n - b - c, (u - _9b_49c) // 4, 8)\n\t\t\tfor a in range(min_a, max_a + 1):\n\t\t\t\tnumbers.add(4 * a + _9b_49c)\n\tif numbers:\n\t\tassert min(numbers) >= l\n\t\tassert max(numbers) <= u\n\treturn len(numbers)\n\ndef test_brute_force_range():\n\tfor (u, l) in ((60, 80), (104, 599), (200, 777)):\n\t\tfor n in (10, 13, 15, 17, 20):\n\t\t\tassert brute_force_range(n, u, l) == brute_force(n, l) - brute_force(n, u - 1)\nX = 12\nY = 24\n\ndef solid_interval(n):\n\tassert n >= X\n\treturn (Y, 49 * (n - X) + Y + 49)\n\ndef test_solid_interval():\n\tfor n in (X, X + 1, 100, 200, 300, 1000, 5000):\n\t\t(begin, end) = solid_interval(n)\n\t\tassert brute_force_range(n, begin, end - 1) == end - begin\n\ndef main():\n\tn = int(input())\n\tif n < X:\n\t\tresult = brute_force(n, 49 * n)\n\telse:\n\t\t(begin, end) = solid_interval(n)\n\t\tassert begin < end < 49 * n\n\t\tresult = sum((brute_force_range(n, 0, begin - 1), end - begin, brute_force_range(n, end, 49 * n)))\n\tprint(result)\nmain()\n",
+    "numset = set()\n\ndef num(now, n):\n\tif n == 1:\n\t\tnumset.add(now + 1)\n\t\tnumset.add(now + 5)\n\t\tnumset.add(now + 10)\n\t\tnumset.add(now + 50)\n\telse:\n\t\tnum(now + 1, n - 1)\n\t\tnum(now + 5, n - 1)\n\t\tnum(now + 10, n - 1)\n\t\tnum(now + 50, n - 1)\nn = int(input())\nif n < 11:\n\tnum(0, n)\n\tprint(len(numset))\nelse:\n\tprint(292 + 49 * (n - 11))\n",
+    "def check(n, b, c):\n\tfor tb in range(0, 9):\n\t\tfor tc in range(0, min(n - tb + 1, 9)):\n\t\t\ts1 = 9 * b + 4 * c\n\t\t\ts2 = 9 * tb + 4 * tc\n\t\t\tif s1 > s2 and (s1 - s2) % 49 == 0:\n\t\t\t\treturn False\n\treturn True\n\ndef main():\n\tn = int(input())\n\tans = 0\n\tfor b in range(0, min(n + 1, 9)):\n\t\tfor c in range(0, min(n - b + 1, 9)):\n\t\t\tif check(n, b, c):\n\t\t\t\tans += n - b - c + 1\n\tprint(ans)\nexit(main())\n",
+    "arr = []\nfor i in range(1, 15):\n\tdict1 = {}\n\tfor j in range(0, i + 1):\n\t\tfor k in range(0, i + 1):\n\t\t\tfor l in range(0, i + 1):\n\t\t\t\tif j + k + l <= i:\n\t\t\t\t\tz = j * 50 + k * 10 + l * 5 + (i - j - k - l)\n\t\t\t\t\tdict1[z] = 1\n\tarr.append(len(dict1))\nn = int(input())\nif n < 15:\n\tprint(arr[n - 1])\nelse:\n\tprint(arr[-1] + (n - 14) * 49)\n",
+    "ans = [1, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292, 341, 390, 439]\nn = int(input())\nif n < 12:\n\tprint(ans[n])\nelse:\n\tprint(292 + (n - 11) * 49)\n",
+    "import operator as op\nfrom functools import reduce\n\ndef ncr(n, r):\n\tr = min(r, n - r)\n\tnumer = reduce(op.mul, range(n, n - r, -1), 1)\n\tdenom = reduce(op.mul, range(1, r + 1), 1)\n\treturn numer // denom\nN = int(input())\nans = 0\nfor b in range(9):\n\tfor c in range(9):\n\t\tif b + c > N or (b >= 5 and c >= 1):\n\t\t\tcontinue\n\t\tans += ncr(N - b - c + 1, 1)\nprint(ans)\n",
+    "from collections import defaultdict\n\nclass DisjointRangeUnion:\n\n\tdef __init__(self):\n\t\tself.ranges = list()\n\n\tdef add(self, begin, end):\n\t\tnew_ranges = list()\n\t\tfor (b, e) in self.ranges:\n\t\t\tif begin <= e and b <= end:\n\t\t\t\tbegin = min(b, begin)\n\t\t\t\tend = max(e, end)\n\t\t\telse:\n\t\t\t\tnew_ranges.append((b, e))\n\t\tnew_ranges.append((begin, end))\n\t\tself.ranges = new_ranges\n\n\tdef count(self):\n\t\treturn sum((e - b for (b, e) in self.ranges))\n\n\tdef __repr__(self):\n\t\treturn repr(self.ranges)\n\ndef test_dru():\n\tdru = DisjointRangeUnion()\n\tdru.add(0, 5)\n\tassert dru.count() == 5, dru\n\tdru.add(3, 8)\n\tassert dru.count() == 8, dru\n\tdru.add(20, 23)\n\tassert dru.count() == 8 + 3, dru\n\tdru.add(8, 20)\n\tassert dru.count() == 23, dru\n\ndef main():\n\tn = int(input())\n\tremainders = defaultdict(DisjointRangeUnion)\n\tfor a in range(min(9, n + 1)):\n\t\tfor b in range(min(49, n - a + 1)):\n\t\t\tvalue = 4 * a + 9 * b\n\t\t\t(begin, rem) = divmod(value, 49)\n\t\t\tend = begin + (n - a - b)\n\t\t\tremainders[rem].add(begin, end + 1)\n\tprint(sum((ranges.count() for ranges in remainders.values())))\nmain()\n",
+    "from collections import defaultdict\nn = int(input())\nif n > 11:\n\tprint(292 + 49 * (n - 11))\nelse:\n\td = defaultdict(list)\n\tfor L in range(n + 1):\n\t\tfor X in range(n + 1 - L):\n\t\t\tfor V in range(n + 1 - X - L):\n\t\t\t\tI = n - X - V - L\n\t\t\t\ts = L * 50 + X * 10 + V * 5 + I\n\t\t\t\td[s].append((L, X, V, I))\n\tprint(len(d))\n",
+    "ans = 0\n\ndef solve(nn, su, ans):\n\tif nn == n:\n\t\ts.add(su)\n\t\tans += 1\n\t\treturn\n\tsolve(nn + 1, su + 1, ans)\n\tsolve(nn + 1, su + 5, ans)\n\tsolve(nn + 1, su + 10, ans)\n\tsolve(nn + 1, su + 50, ans)\ns = set()\nn = int(input())\nif n <= 13:\n\tsolve(0, 0, ans)\n\tprint(len(s))\nelse:\n\tprint(292 + 49 * (n - 11))\n",
+    "from itertools import combinations, permutations\nfrom collections import defaultdict\n\ndef zeror():\n\treturn 0\n\ndef solution(n):\n\tsol = []\n\tfor i in range(n + 1):\n\t\tfor v in range(n + 1):\n\t\t\tfor x in range(n + 1):\n\t\t\t\tfor l in range(n + 1):\n\t\t\t\t\tif i + v + x + l == n:\n\t\t\t\t\t\tsol.append(i + v * 5 + x * 10 + l * 50)\n\treturn len(set(sol))\n\ndef main():\n\tn = int(input())\n\tif n <= 11:\n\t\tprint(solution(n))\n\telse:\n\t\tprint(solution(11) + (n - 11) * 49)\nmain()\n",
+    "n = int(input())\nN = [0, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292, 341]\nif n < 13:\n\tprint(N[n])\nelse:\n\tprint(N[12] + 49 * (n - 12))\n",
+    "n = int(input())\nans = 0\nprecomp = [0, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244]\nif n <= 10:\n\tprint(precomp[n])\n\texit()\nfor i in range(9):\n\tans += n - i + 1\nfor i in range(1, 9):\n\tfor j in range(5):\n\t\tans += n - i - j + 1\nprint(ans)\n",
+    "from sys import setrecursionlimit\nsetrecursionlimit(10 ** 9)\nn = int(input())\ns = set()\narr = [1, 5, 10, 50]\n\ndef comb(num, digit):\n\tglobal n\n\tif digit == n:\n\t\ts.add(num)\n\telse:\n\t\tfor i in range(4):\n\t\t\tcomb(num + arr[i], digit + 1)\nif n <= 12:\n\tcomb(0, 0)\n\tprint(len(s))\nelse:\n\tprint(49 * n - 247)\n",
+    "n = int(input().strip())\nR1 = [4, 9, 49]\n\ndef get_after_slow(k, T=0):\n\tdp = [k + 1 for _ in range(49 * k + 1)]\n\tdp[0] = 0\n\tfor i in range(1, 49 * k + 1):\n\t\tfor R in R1:\n\t\t\tif i >= R:\n\t\t\t\tdp[i] = min(dp[i], dp[i - R] + 1)\n\treturn len(dp) - T - dp[T:].count(k + 1)\n\ndef get_fast(k):\n\tif k <= 20:\n\t\treturn get_after_slow(k)\n\telse:\n\t\treturn (k - 19) * 49 - 12 + get_after_slow(20, 49)\nprint(get_fast(n))\n",
+    "n = int(input())\nans = [1, 4, 10, 20, 35, 56, 83, 116, 155, 198, 244, 292, 341]\nif n <= 12:\n\tprint(ans[n])\nelse:\n\tprint(49 * n - 247)\n",
+    "def answer(n):\n\tsums = set()\n\tfor d1 in range(n + 1):\n\t\tfor d5 in range(n + 1 - d1):\n\t\t\tfor d10 in range(n + 1 - d1 - d5):\n\t\t\t\td50 = n - d1 - d5 - d10\n\t\t\t\tsums.add(d1 * 1 + d5 * 5 + d10 * 10 + d50 * 50)\n\treturn len(sums)\nanswers = [answer(x) for x in range(31)]\nn = int(input())\nif n < len(answers):\n\tanswer = answers[n]\nelse:\n\tgrowth = answers[30] - answers[29]\n\tanswer = answers[29] + (n - 29) * growth\nprint(answer)\n"
+  ],
+  "test_cases": [
+    {
+      "input": "111199\n",
+      "output": "5448504\n"
+    },
+    {
+      "input": "1000\n",
+      "output": "48753\n"
+    },
+    {
+      "input": "10000\n",
+      "output": "489753\n"
+    },
+    {
+      "input": "11\n",
+      "output": "292\n"
+    },
+    {
+      "input": "244\n",
+      "output": "11709\n"
+    },
+    {
+      "input": "1000000000\n",
+      "output": "48999999753\n"
+    },
+    {
+      "input": "14\n",
+      "output": "439\n"
+    },
+    {
+      "input": "55\n",
+      "output": "2448\n"
+    },
+    {
+      "input": "2000\n",
+      "output": "97753\n"
+    },
+    {
+      "input": "116\n",
+      "output": "5437\n"
+    },
+    {
+      "input": "20\n",
+      "output": "733\n"
+    },
+    {
+      "input": "6\n",
+      "output": "83\n"
+    },
+    {
+      "input": "600000000\n",
+      "output": "29399999753\n"
+    },
+    {
+      "input": "198\n",
+      "output": "9455\n"
+    },
+    {
+      "input": "12\n",
+      "output": "341\n"
+    },
+    {
+      "input": "999999999\n",
+      "output": "48999999704\n"
+    },
+    {
+      "input": "100\n",
+      "output": "4653\n"
+    },
+    {
+      "input": "83\n",
+      "output": "3820\n"
+    },
+    {
+      "input": "13\n",
+      "output": "390\n"
+    },
+    {
+      "input": "8\n",
+      "output": "155\n"
+    },
+    {
+      "input": "150\n",
+      "output": "7103\n"
+    },
+    {
+      "input": "4\n",
+      "output": "35\n"
+    },
+    {
+      "input": "35\n",
+      "output": "1468\n"
+    },
+    {
+      "input": "709000900\n",
+      "output": "34741043853\n"
+    },
+    {
+      "input": "1200\n",
+      "output": "58553\n"
+    },
+    {
+      "input": "292\n",
+      "output": "14061\n"
+    },
+    {
+      "input": "9\n",
+      "output": "198\n"
+    },
+    {
+      "input": "100000000\n",
+      "output": "4899999753\n"
+    },
+    {
+      "input": "3\n",
+      "output": "20\n"
+    },
+    {
+      "input": "101232812\n",
+      "output": "4960407541\n"
+    },
+    {
+      "input": "5\n",
+      "output": "56\n"
+    },
+    {
+      "input": "5000\n",
+      "output": "244753\n"
+    },
+    {
+      "input": "7\n",
+      "output": "116\n"
+    },
+    {
+      "input": "500000000\n",
+      "output": "24499999753\n"
+    },
+    {
+      "input": "56\n",
+      "output": "2497\n"
+    },
+    {
+      "input": "9999999\n",
+      "output": "489999704\n"
+    },
+    {
+      "input": "155\n",
+      "output": "7348\n"
+    },
+    {
+      "input": "134707\n",
+      "output": "6600396\n"
+    },
+    {
+      "input": "1100\n",
+      "output": "53653\n"
+    },
+    {
+      "input": "17\n",
+      "output": "586\n"
+    },
+    {
+      "input": "255\n",
+      "output": "12248\n"
+    },
+    {
+      "input": "1000000100\n",
+      "output": "49000004653\n"
+    },
+    {
+      "input": "89\n",
+      "output": "4114\n"
+    },
+    {
+      "input": "3891\n",
+      "output": "190412\n"
+    },
+    {
+      "input": "201\n",
+      "output": "9602\n"
+    },
+    {
+      "input": "22\n",
+      "output": "831\n"
+    },
+    {
+      "input": "15\n",
+      "output": "488\n"
+    },
+    {
+      "input": "753689004\n",
+      "output": "36930760949\n"
+    },
+    {
+      "input": "157\n",
+      "output": "7446\n"
+    },
+    {
+      "input": "33\n",
+      "output": "1370\n"
+    },
+    {
+      "input": "1517731607\n",
+      "output": "74368848496\n"
+    },
+    {
+      "input": "101\n",
+      "output": "4702\n"
+    },
+    {
+      "input": "52\n",
+      "output": "2301\n"
+    },
+    {
+      "input": "23\n",
+      "output": "880\n"
+    },
+    {
+      "input": "36\n",
+      "output": "1517\n"
+    },
+    {
+      "input": "219\n",
+      "output": "10484\n"
+    },
+    {
+      "input": "54\n",
+      "output": "2399\n"
+    },
+    {
+      "input": "357895503\n",
+      "output": "17536879400\n"
+    },
+    {
+      "input": "41\n",
+      "output": "1762\n"
+    },
+    {
+      "input": "21\n",
+      "output": "782\n"
+    },
+    {
+      "input": "16\n",
+      "output": "537\n"
+    },
+    {
+      "input": "100001000\n",
+      "output": "4900048753\n"
+    },
+    {
+      "input": "89307055\n",
+      "output": "4376045448\n"
+    },
+    {
+      "input": "24\n",
+      "output": "929\n"
+    },
+    {
+      "input": "3435\n",
+      "output": "168068\n"
+    },
+    {
+      "input": "733753181\n",
+      "output": "35953905622\n"
+    },
+    {
+      "input": "59\n",
+      "output": "2644\n"
+    },
+    {
+      "input": "4312251\n",
+      "output": "211300052\n"
+    },
+    {
+      "input": "106\n",
+      "output": "4947\n"
+    },
+    {
+      "input": "28\n",
+      "output": "1125\n"
+    },
+    {
+      "input": "257068\n",
+      "output": "12596085\n"
+    },
+    {
+      "input": "1110\n",
+      "output": "54143\n"
+    },
+    {
+      "input": "25\n",
+      "output": "978\n"
+    },
+    {
+      "input": "203\n",
+      "output": "9700\n"
+    },
+    {
+      "input": "1000001100\n",
+      "output": "49000053653\n"
+    },
+    {
+      "input": "88\n",
+      "output": "4065\n"
+    },
+    {
+      "input": "5915\n",
+      "output": "289588\n"
+    },
+    {
+      "input": "268\n",
+      "output": "12885\n"
+    },
+    {
+      "input": "38\n",
+      "output": "1615\n"
+    },
+    {
+      "input": "344581682\n",
+      "output": "16884502171\n"
+    },
+    {
+      "input": "238\n",
+      "output": "11415\n"
+    },
+    {
+      "input": "29\n",
+      "output": "1174\n"
+    },
+    {
+      "input": "507921316\n",
+      "output": "24888144237\n"
+    },
+    {
+      "input": "001\n",
+      "output": "4\n"
+    },
+    {
+      "input": "97\n",
+      "output": "4506\n"
+    },
+    {
+      "input": "47\n",
+      "output": "2056\n"
+    },
+    {
+      "input": "263\n",
+      "output": "12640\n"
+    },
+    {
+      "input": "80\n",
+      "output": "3673\n"
+    },
+    {
+      "input": "591333944\n",
+      "output": "28975363009\n"
+    },
+    {
+      "input": "19\n",
+      "output": "684\n"
+    },
+    {
+      "input": "42\n",
+      "output": "1811\n"
+    },
+    {
+      "input": "110001000\n",
+      "output": "5390048753\n"
+    },
+    {
+      "input": "90283358\n",
+      "output": "4423884295\n"
+    },
+    {
+      "input": "4519\n",
+      "output": "221184\n"
+    },
+    {
+      "input": "762592880\n",
+      "output": "37367050873\n"
+    },
+    {
+      "input": "102\n",
+      "output": "4751\n"
+    },
+    {
+      "input": "2996787\n",
+      "output": "146842316\n"
+    },
+    {
+      "input": "209\n",
+      "output": "9994\n"
+    },
+    {
+      "input": "119397\n",
+      "output": "5850206\n"
+    },
+    {
+      "input": "0110\n",
+      "output": "5143\n"
+    },
+    {
+      "input": "18\n",
+      "output": "635\n"
+    },
+    {
+      "input": "246\n",
+      "output": "11807\n"
+    },
+    {
+      "input": "1000001000\n",
+      "output": "49000048753\n"
+    },
+    {
+      "input": "72\n",
+      "output": "3281\n"
+    },
+    {
+      "input": "11188\n",
+      "output": "547965\n"
+    },
+    {
+      "input": "249\n",
+      "output": "11954\n"
+    },
+    {
+      "input": "65\n",
+      "output": "2938\n"
+    },
+    {
+      "input": "684857025\n",
+      "output": "33557993978\n"
+    },
+    {
+      "input": "362\n",
+      "output": "17491\n"
+    },
+    {
+      "input": "50\n",
+      "output": "2203\n"
+    },
+    {
+      "input": "1\n",
+      "output": "4\n"
+    },
+    {
+      "input": "2\n",
+      "output": "10\n"
+    },
+    {
+      "input": "10\n",
+      "output": "244\n"
+    }
+  ],
+  "extracted_at": "2026-08-23T18:28:22.439394+00:00"
+}
