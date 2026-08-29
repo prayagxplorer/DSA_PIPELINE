@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+*.env
+
+# Large/regenerable dataset -- recreate with prepare_dataset.py
+extraction/taco_candidates/
+
+# Generated per-run outputs 
+extraction/extracted/
+sandbox/sandbox_report.json
+sandbox/mock_registry.json
+
+# Shared state 
+# stop tracking once real DB insert replaces them
+# extraction/used_questions.json
+# taco/problem_registry.json
+
+# IDE
+.vscode/
+.idea/"extraction/taco_candidates/" 
+"extraction/__pycache__/" 
+"sandbox/__pycache__/" 
+".env" 
+".venv/" 
