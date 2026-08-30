@@ -10,6 +10,7 @@ venv/
 
 # Large/regenerable dataset -- recreate with prepare_dataset.py
 extraction/taco_candidates/
+taco_candidates/
 
 # Generated per-run outputs 
 extraction/extracted/
