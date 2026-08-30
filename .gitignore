@@ -4,6 +4,9 @@ __pycache__/
 .venv/
 venv/
 
+# Node.js dependencies (install with npm install)
+node_modules/
+
 # Secrets
 .env
 *.env
