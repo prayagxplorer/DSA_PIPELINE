@@ -16,6 +16,7 @@ taco_candidates/
 extraction/extracted/
 sandbox/sandbox_report.json
 sandbox/mock_registry.json
+enriched/
 
 # Shared state 
 # stop tracking once real DB insert replaces them
