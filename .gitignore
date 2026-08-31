@@ -8,3 +8,7 @@ node_modules/
 # Generated extraction data and local processing state
 extracted/
 used_questions.json
+
+# Local secrets and database configuration
+.env
+*.env
