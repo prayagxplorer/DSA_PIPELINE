@@ -3,3 +3,8 @@ taco_candidates/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+node_modules/
+
+# Generated extraction data and local processing state
+extracted/
+used_questions.json
