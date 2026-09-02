@@ -6,14 +6,33 @@ from pathlib import Path
 from db_schema import ProblemInsertRow, Difficulty
 from pydantic import ValidationError
 
-SANDBOX_DIR = (Path(__file__).parent / "../sandbox").resolve()
+EXTRACTION_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = EXTRACTION_DIR.parent
+SANDBOX_DIR = PROJECT_DIR / "sandbox"
+EXTRACT_SCRIPT = EXTRACTION_DIR / "extract.py"
+DATASET_PATH = PROJECT_DIR / "taco_candidates"
+USED_QUESTIONS_PATH = EXTRACTION_DIR / "used_questions.json"
+EXTRACTED_DIR = PROJECT_DIR / "extracted"
+
 sys.path.insert(0, str(SANDBOX_DIR))
 from run_sandbox import evaluate_question
 
-extracted_dir = Path("extracted")
+extracted_dir = EXTRACTED_DIR
 before = set(extracted_dir.glob("*.json")) if extracted_dir.exists() else set()
 
-result = subprocess.run([sys.executable, "extract.py"])
+result = subprocess.run(
+    [
+        sys.executable,
+        str(EXTRACT_SCRIPT),
+        "--dataset-path",
+        str(DATASET_PATH),
+        "--used-questions-path",
+        str(USED_QUESTIONS_PATH),
+        "--output-directory",
+        str(EXTRACTED_DIR),
+    ],
+    cwd=PROJECT_DIR,
+)
 if result.returncode != 0:
     sys.exit(result.returncode)
 

@@ -1,9 +1,4 @@
-"""Enrich a temporary sandbox report with a Groq title, constraints, and hints.
-
-The input path is deliberately fixed while the sandbox-to-enrichment handoff is
-being set up. The LangGraph flow and report I/O remain separate so this can be
-changed to directory discovery later without changing the LLM logic.
-"""
+"""Enrich a sandbox report with a Groq title, constraints, and hints."""
 
 from __future__ import annotations
 
@@ -23,9 +18,6 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-# Temporary handoff: use directory discovery here once sandbox reports have a
-# permanent home. Until then, this is the user-supplied reference report.
-REPORT_PATH = Path("/home/daemon_bash/Downloads/report.json")
 ENRICHED_DIRECTORY = REPOSITORY_ROOT / "enriched"
 ENVIRONMENT_PATH = REPOSITORY_ROOT / ".env"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
@@ -438,26 +430,41 @@ def print_summary(enriched_count: int, skipped_count: int, failures: list[tuple[
         print(f"  FAILED {question_id}: {reason}")
 
 
+def prompt_for_report_path() -> Path:
+    """Ask the operator for the sandbox report JSON to enrich."""
+
+    entered_path = input("Path to the sandbox report JSON: ").strip()
+    if not entered_path:
+        raise ValueError("A report JSON path is required")
+    return Path(entered_path).expanduser().resolve()
+
+
 def main() -> int:
     """Run the temporary single-report enrichment stage and print a batch summary."""
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     load_dotenv(ENVIRONMENT_PATH)
+    try:
+        report_path = prompt_for_report_path()
+    except (EOFError, ValueError) as error:
+        print(f"Error: {error}")
+        return 1
+    output_directory = ENRICHED_DIRECTORY
 
     enriched_count = 0
     skipped_count = 0
     failures: list[tuple[str, str]] = []
-    used_titles, enriched_question_ids = load_existing_enrichment(ENRICHED_DIRECTORY)
+    used_titles, enriched_question_ids = load_existing_enrichment(output_directory)
 
     try:
-        report = read_report(REPORT_PATH)
+        report = read_report(report_path)
         question_id = report.get("question_id")
         if not isinstance(question_id, str) or not question_id.strip():
             raise ValueError("sandbox report is missing a non-empty question_id")
         get_question_text(report)
-        output_path = output_path_for_report(REPORT_PATH, ENRICHED_DIRECTORY)
+        output_path = output_path_for_report(report_path, output_directory)
     except (OSError, ValueError, json.JSONDecodeError) as error:
-        failures.append((str(REPORT_PATH), str(error)))
+        failures.append((str(report_path), str(error)))
         print_summary(enriched_count, skipped_count, failures)
         return 1
 

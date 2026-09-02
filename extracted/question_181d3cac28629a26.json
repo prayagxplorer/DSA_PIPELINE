@@ -1,0 +1,375 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/75/D",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "Ahmed and Mostafa used to compete together in many programming contests for several years. Their coach Fegla asked them to solve one challenging problem, of course Ahmed was able to solve it but Mostafa couldn't.\n\nThis problem is similar to a standard problem but it has a different format and constraints.\n\nIn the standard problem you are given an array of integers, and you have to find one or more consecutive elements in this array where their sum is the maximum possible sum.\n\nBut in this problem you are given n small arrays, and you will create one big array from the concatenation of one or more instances of the small arrays (each small array could occur more than once). The big array will be given as an array of indexes (1-based) of the small arrays, and the concatenation should be done in the same order as in this array. Then you should apply the standard problem mentioned above on the resulting big array.\n\nFor example let's suppose that the small arrays are {1, 6, -2}, {3, 3} and {-5, 1}. And the indexes in the big array are {2, 3, 1, 3}. So the actual values in the big array after formatting it as concatenation of the small arrays will be {3, 3, -5, 1, 1, 6, -2, -5, 1}. In this example the maximum sum is 9.\n\nCan you help Mostafa solve this problem?\n\nInput\n\nThe first line contains two integers n and m, n is the number of the small arrays (1 ≤ n ≤ 50), and m is the number of indexes in the big array (1 ≤ m ≤ 250000). Then follow n lines, the i-th line starts with one integer l which is the size of the i-th array (1 ≤ l ≤ 5000), followed by l integers each one will be greater than or equal -1000 and less than or equal 1000. The last line contains m integers which are the indexes in the big array, and you should concatenate the small arrays in the same order, and each index will be greater than or equal to 1 and less than or equal to n.\n\nThe small arrays are numbered from 1 to n in the same order as given in the input. Some of the given small arrays may not be used in big array.\n\nNote, that the array is very big. So if you try to build it straightforwardly, you will probably get time or/and memory limit exceeded.\n\nOutput\n\nPrint one line containing the maximum sum in the big array after formatting it as described above. You must choose at least one element for the sum, i. e. it cannot be empty.\n\nPlease, do not use %lld specificator to write 64-bit integers in C++. It is preferred to use cout (also you may use %I64d).\n\nExamples\n\nInput\n\n3 4\n3 1 6 -2\n2 3 3\n2 -5 1\n2 3 1 3\n\n\nOutput\n\n9\n\n\nInput\n\n6 1\n4 0 8 -3 -10\n8 3 -2 -5 10 8 -9 -5 -4\n1 0\n1 -3\n3 -8 5 6\n2 9 6\n1\n\n\nOutput\n\n8",
+  "difficulty": "HARD",
+  "requested_tags": [
+    "greedy",
+    "math",
+    "implementation"
+  ],
+  "matched_tags": [
+    "greedy",
+    "math",
+    "implementation"
+  ],
+  "relaxation_floor": 3,
+  "all_tags": [
+    "data structures",
+    "greedy",
+    "math",
+    "implementation",
+    "dp",
+    "trees"
+  ],
+  "time_limit_seconds": 2.0,
+  "memory_limit_mb": 256.0,
+  "candidate_solutions": [
+    "import sys\nfrom array import array\n\ndef input():\n\treturn sys.stdin.buffer.readline().decode('utf-8')\n\ndef prepare(n, *a):\n\tacc = 0\n\tsub_max = -10 ** 9\n\tleft_min = 0\n\tleft_max = 0\n\t(lmin2, lmax2) = (0, -10 ** 9)\n\tfor (i, x) in enumerate(a):\n\t\tacc += x\n\t\tsub_max = max(sub_max, acc - left_min)\n\t\tleft_min = min(left_min, acc)\n\t\tleft_max = max(left_max, acc)\n\t\tif i > 0:\n\t\t\tlmax2 = max(lmax2, acc)\n\t\tif i < n - 1:\n\t\t\tlmin2 = min(lmin2, acc)\n\treturn (left_min, left_max, acc, sub_max, lmin2, lmax2)\n(n, m) = map(int, input().split())\nsmall_a = [(0, 0, 0, 0, 0, 0)]\nfor _ in range(n):\n\tsmall_a.append(prepare(*map(int, input().split())))\nindexes = tuple(map(int, input().split()))\n(left_min, _, acc, ans, left_min2, _) = small_a[indexes[0]]\nfor i in indexes[1:]:\n\tans = max(ans, small_a[i][3], acc + small_a[i][1] - left_min2, acc + small_a[i][5] - left_min)\n\tleft_min2 = min(left_min, acc + small_a[i][4])\n\tleft_min = min(left_min, acc + small_a[i][0])\n\tacc += small_a[i][2]\nprint(ans)\n",
+    "import os\nfrom io import BytesIO, IOBase\nimport sys\n\ndef main():\n\t(n, m) = map(int, input().split())\n\ta = []\n\tfor i in range(n):\n\t\tb = list(map(int, input().split()))\n\t\t(pma, sma, su, su1) = (-1001, -1001, 0, 0)\n\t\tfor j in range(1, len(b)):\n\t\t\t(su, su1) = (su + b[j], su1 + b[-j])\n\t\t\tpma = max(pma, su)\n\t\t\tsma = max(sma, su1)\n\t\t(su, ma) = (0, max(b[1:]))\n\t\tfor j in range(1, len(b)):\n\t\t\tsu = su + b[j]\n\t\t\tma = max(ma, su)\n\t\t\tif su < 0:\n\t\t\t\tsu = 0\n\t\ta.append((pma, ma, sma, su1))\n\tans = [-1001, -1001, -1001, 0]\n\tfor i in input().split():\n\t\tz = a[int(i) - 1]\n\t\tans[0] = max(ans[0], ans[3] + z[0])\n\t\tans[1] = max(ans[1], ans[2] + z[0], z[1])\n\t\tans[2] = max(z[2], z[3] + ans[2])\n\t\tans[3] += z[3]\n\tprint(max(ans))\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\n",
+    "(n, m) = map(int, input().split())\nl = []\nd = {}\ne = {}\nfor i in range(n):\n\tl = list(map(int, input().split()))\n\ta = l[1]\n\tb = sum(l) - l[0]\n\tc = l[-1]\n\tx = l[1]\n\tfor j in range(2, len(l)):\n\t\tx += l[j]\n\t\ta = max(a, x)\n\tx = l[-1]\n\tfor j in range(len(l) - 2, 0, -1):\n\t\tx += l[j]\n\t\tc = max(c, x)\n\td[i + 1] = [a, b, c]\n\ta = l[1]\n\tb = 0\n\tfor j in range(1, len(l)):\n\t\tb += l[j]\n\t\ta = max(a, b)\n\t\tif b < 0:\n\t\t\tb = 0\n\te[i + 1] = a\ndp = [[0, 0, 0] for i in range(m)]\nl = list(map(int, input().split()))\nans = 0\nfor i in range(m - 1, -1, -1):\n\tif i == m - 1:\n\t\tdp[i][0] = d[l[i]][0]\n\t\tdp[i][1] = d[l[i]][1]\n\t\tdp[i][2] = d[l[i]][2]\n\t\tans = max(max(dp[i][1], dp[i][0]), dp[i][2])\n\t\tans = max(ans, e[l[i]])\n\telse:\n\t\tdp[i][0] = d[l[i]][0]\n\t\tdp[i][1] = d[l[i]][1] + max(max(0, dp[i + 1][0]), dp[i + 1][1])\n\t\tdp[i][2] = d[l[i]][2] + max(max(0, dp[i + 1][0]), dp[i + 1][1])\n\t\tans = max(ans, dp[i][0])\n\t\tans = max(ans, dp[i][1])\n\t\tans = max(ans, dp[i][2])\n\t\tans = max(ans, e[l[i]])\nprint(ans)\n",
+    "def get_best(arr):\n\t(ans, now) = (-(1 << 64), 0)\n\tfor i in arr:\n\t\tnow += i\n\t\tans = max(ans, now)\n\t\tif now < 0:\n\t\t\tnow = 0\n\treturn ans\n\ndef compute(arr):\n\t(ans, now) = (-(1 << 64), 0)\n\tfor i in arr:\n\t\tnow += i\n\t\tans = max(ans, now)\n\treturn ans\n(n, m) = map(int, input().split())\nvals = []\n(suffix, prefix, summation, best) = ([0] * n, [0] * n, [0] * n, [0] * n)\nfor i in range(n):\n\tarr = list(map(int, input().split()))[1:]\n\tsummation[i] = sum(arr)\n\tsuffix[i] = compute(list(reversed(arr)))\n\tprefix[i] = compute(arr)\n\tbest[i] = get_best(arr)\n\tvals.append(arr)\nidx = list(map(lambda x: int(x) - 1, input().split()))\nf = [[0 for x in range(m + 1)] for p in range(2)]\nf[0][m] = -(1 << 64)\ni = m - 1\nwhile i >= 0:\n\tcur = idx[i]\n\tf[0][i] = max(max(f[0][i + 1], best[cur]), suffix[cur] + f[1][i + 1])\n\tf[1][i] = max(prefix[cur], summation[cur] + f[1][i + 1])\n\ti -= 1\nprint(f[0][0])\n",
+    "i = input().split()\nN = int(i[0])\nM = int(i[1])\narrList = []\nleftMax = []\nrightMax = []\nlistTotal = []\nrightSum = []\nfor i in range(N):\n\tinputList = [int(x) for x in input().split()]\n\tlist = inputList[1:inputList[0] + 1]\n\tlistTotal.append(0)\n\tleftMax.append(-999999)\n\trightMax.append(-999999)\n\trightSum.append(-999999)\n\trightIter = 0\n\tfor j in list:\n\t\tlistTotal[i] += j\n\t\trightIter += j\n\t\tleftMax[i] = max(leftMax[i], listTotal[i])\n\t\trightSum[i] = max(rightSum[i], rightIter)\n\t\trightIter = 0 if rightIter < 0 else rightIter\n\trightMax[i] = rightIter\n\tarrList.append(list)\nidxOrder = [int(x) for x in input().split()][0:M]\nmaxSum = -99999999\ncurrMax = 0\nfor i in idxOrder:\n\tbestTot = max(maxSum, rightSum[i - 1])\n\tbestSum = max(currMax + leftMax[i - 1], currMax + listTotal[i - 1])\n\tmaxSum = max(bestSum, bestTot)\n\tcurrMax = max(currMax + listTotal[i - 1], rightMax[i - 1])\nprint(maxSum)\n",
+    "import sys\nzz = 1\nsys.setrecursionlimit(10 ** 5)\nif zz:\n\tinput = sys.stdin.readline\nelse:\n\tsys.stdin = open('input.txt', 'r')\n\tsys.stdout = open('all.txt', 'w')\ndi = [[-1, 0], [1, 0], [0, 1], [0, -1]]\n\ndef fori(n):\n\treturn [fi() for i in range(n)]\n\ndef inc(d, c, x=1):\n\td[c] = d[c] + x if c in d else x\n\ndef ii():\n\treturn input().rstrip()\n\ndef li():\n\treturn [int(xx) for xx in input().split()]\n\ndef fli():\n\treturn [float(x) for x in input().split()]\n\ndef comp(a, b):\n\tif a > b:\n\t\treturn 2\n\treturn 2 if a == b else 0\n\ndef gi():\n\treturn [xx for xx in input().split()]\n\ndef gtc(tc, ans):\n\tprint('Case #' + str(tc) + ':', ans)\n\ndef cil(n, m):\n\treturn n // m + int(n % m > 0)\n\ndef fi():\n\treturn int(input())\n\ndef pro(a):\n\treturn reduce(lambda a, b: a * b, a)\n\ndef swap(a, i, j):\n\t(a[i], a[j]) = (a[j], a[i])\n\ndef si():\n\treturn list(input().rstrip())\n\ndef mi():\n\treturn map(int, input().split())\n\ndef gh():\n\tsys.stdout.flush()\n\ndef isvalid(i, j, n, m):\n\treturn 0 <= i < n and 0 <= j < m\n\ndef bo(i):\n\treturn ord(i) - ord('a')\n\ndef graph(n, m):\n\tfor i in range(m):\n\t\t(x, y) = mi()\n\t\ta[x].append(y)\n\t\ta[y].append(x)\nt = 1\nuu = t\nwhile t > 0:\n\tt -= 1\n\t(n, m) = mi()\n\tpm = [0] * n\n\tsm = [0] * n\n\ts = [0] * n\n\tans = [0] * n\n\tfor i in range(n):\n\t\ta = li()\n\t\tp = a[0]\n\t\ta = a[1:]\n\t\tmaxi = -10 ** 18\n\t\tc = 0\n\t\tfor j in range(p - 1, -1, -1):\n\t\t\tc += a[j]\n\t\t\tmaxi = max(maxi, c)\n\t\tsm[i] = maxi\n\t\ts[i] = c\n\t\tmaxi = -10 ** 18\n\t\tc = 0\n\t\tfor j in range(p):\n\t\t\tc += a[j]\n\t\t\tmaxi = max(maxi, c)\n\t\tpm[i] = maxi\n\t\tc = 0\n\t\tmaxi = -10 ** 18\n\t\tfor j in a:\n\t\t\tif j > c + j:\n\t\t\t\tc = j\n\t\t\telse:\n\t\t\t\tc += j\n\t\t\tmaxi = max(maxi, c)\n\t\tans[i] = maxi\n\tb = li()\n\tmaxi = -10 ** 18\n\tc = 0\n\tfor i in b:\n\t\tmaxi = max([maxi, c + pm[i - 1], ans[i - 1]])\n\t\tif sm[i - 1] > c + s[i - 1]:\n\t\t\tc = sm[i - 1]\n\t\telse:\n\t\t\tc += s[i - 1]\n\t\tmaxi = max(maxi, c)\n\t\tif c < 0:\n\t\t\tc = 0\n\tprint(maxi)\n"
+  ],
+  "test_cases": [
+    {
+      "input": "4 8\n8 0 3 -9 -10 0 -1 6 -4\n3 -10 -7 2\n10 6 -2 -9 0 -7 -4 -7 7 -1 2\n3 -5 1 -4\n1 1 1 1 4 4 3 3\n",
+      "output": "14"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 1 1 1\n6 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "3"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 1 1 1\n6 1 1 1 -1 -1 -1\n1 2\n",
+      "output": "6"
+    },
+    {
+      "input": "2 2\n6 0 0 0 0 0 0\n6 0 0 0 0 0 0\n1 2\n",
+      "output": "0"
+    },
+    {
+      "input": "2 2\n11 -1 -1 -1 -1 10 -1 -1 -1 -1 -1 -1\n10 -1 -1 -1 10 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "11"
+    },
+    {
+      "input": "14 14\n6 -1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 -1\n1 2 3 4 5 6 7 8 9 10 11 12 13 14\n",
+      "output": "82"
+    },
+    {
+      "input": "3 6\n3 -1 -1 -1\n4 -2 -2 -2 -2\n5 -3 -3 -3 -3 -3\n1 2 3 1 2 3\n",
+      "output": "-1"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -10 10 8 -7 -10\n2 4 1\n",
+      "output": "24"
+    },
+    {
+      "input": "1 1\n1 0\n1\n",
+      "output": "0"
+    },
+    {
+      "input": "7 3\n7 -9 -6 0 -6 -5 1 -9\n9 4 4 3 -6 -4 8 4 5 -6\n1 -4\n7 -3 -9 -9 1 -4 8 7\n2 6 3\n7 0 -5 -5 -2 -8 2 -1\n8 4 1 6 -7 -2 10 -8 -2\n3 1 5\n",
+      "output": "9"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 1 0 -1\n6 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "1"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 -1 -1 -1\n6 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "-1"
+    },
+    {
+      "input": "3 1\n7 4 8 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -6 9\n2\n",
+      "output": "11"
+    },
+    {
+      "input": "7 7\n2 -8 -7\n5 2 -10 10 -2 4\n7 10 -8 9 8 9 -10 -3\n6 0 6 -9 9 -6 -9\n4 -6 -9 10 -6\n3 -8 4 10\n7 -1 -3 10 -8 -6 -3 6\n4 5 4 6 6 1 7\n",
+      "output": "20"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 -1 -1 -1\n6 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "0"
+    },
+    {
+      "input": "2 1\n2 -4 -6\n5 6 8 3 5 -2\n1\n",
+      "output": "-4"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 -1 -1 -1\n6 1 1 1 -1 -1 -1\n1 2\n",
+      "output": "3"
+    },
+    {
+      "input": "1 1\n1 1\n1\n",
+      "output": "1"
+    },
+    {
+      "input": "6 9\n8 -10 10 3 4 -9 0 3 9\n4 9 2 -1 6\n3 -10 -10 -5\n7 10 -6 7 1 -8 3 4\n8 -8 9 3 -1 0 1 -7 -7\n1 -4\n3 2 3 2 4 4 1 1 1\n",
+      "output": "68"
+    },
+    {
+      "input": "1 1\n1 -1\n1\n",
+      "output": "-1"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -5 4 -8 -4 0 -1\n9 2 5 -10 4 -10 -2 6 5 10\n3 6 4 6\n",
+      "output": "19"
+    },
+    {
+      "input": "2 2\n11 -1 -1 -1 -1 10 -1 -1 -2 -1 -1 -1\n10 -1 -1 -1 10 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "10\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -10 9 8 -7 -10\n2 4 1\n",
+      "output": "23\n"
+    },
+    {
+      "input": "7 3\n7 -9 -6 0 -6 -5 1 -9\n9 4 1 3 -6 -4 8 4 5 -6\n1 -4\n7 -3 -9 -9 1 -4 8 7\n2 6 3\n7 0 -5 -5 -2 -8 2 -1\n8 4 1 6 -7 -2 10 -8 -2\n3 1 5\n",
+      "output": "9\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 1 0 -1\n6 -2 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "1\n"
+    },
+    {
+      "input": "3 1\n7 4 7 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -6 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 -1 -1 -1\n6 -1 -2 -1 -1 -1 -1\n1 2\n",
+      "output": "0\n"
+    },
+    {
+      "input": "2 1\n2 -4 -6\n5 6 8 3 5 -3\n1\n",
+      "output": "-4\n"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -5 0 -8 -4 0 -1\n9 2 5 -10 4 -10 -2 6 5 10\n3 6 4 6\n",
+      "output": "19\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -4 -5 10 8 -9 -5 -4\n1 0\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -17 11 8 -7 -10\n2 4 1\n",
+      "output": "25\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 15 -2\n1 -2\n1 -10\n5 -17 11 8 -7 -10\n2 4 1\n",
+      "output": "30\n"
+    },
+    {
+      "input": "4 3\n6 3 8 -5 4 15 -2\n1 -2\n1 -10\n5 -17 11 8 -7 -10\n2 4 1\n",
+      "output": "27\n"
+    },
+    {
+      "input": "4 8\n8 0 3 -9 -10 0 -1 4 -4\n3 -10 -7 2\n10 6 -2 -9 0 -7 -4 -7 7 -1 2\n3 -5 1 -4\n1 1 1 1 4 4 3 3\n",
+      "output": "14\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 1 1 1\n6 -1 -1 -1 -2 -1 -1\n1 2\n",
+      "output": "3\n"
+    },
+    {
+      "input": "2 2\n6 -2 -1 -1 1 1 1\n6 1 1 1 -1 -1 -1\n1 2\n",
+      "output": "6\n"
+    },
+    {
+      "input": "14 14\n6 -1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 2 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 1\n6 1 1 1 1 1 -1\n1 2 3 4 5 6 7 8 9 10 11 12 13 14\n",
+      "output": "83\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 19 -2\n1 -2\n1 -10\n5 -10 10 8 -7 -10\n2 4 1\n",
+      "output": "33\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 -1 -1 -2\n6 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "-1\n"
+    },
+    {
+      "input": "7 7\n2 -8 -7\n5 2 -10 10 -2 4\n7 10 -8 9 8 13 -10 -3\n6 0 6 -9 9 -6 -9\n4 -6 -9 10 -6\n3 -8 4 10\n7 -1 -3 10 -8 -6 -3 6\n4 5 4 6 6 1 7\n",
+      "output": "20\n"
+    },
+    {
+      "input": "6 9\n8 -10 10 3 4 -9 0 3 9\n4 9 2 -1 6\n3 -10 -10 -5\n7 10 -6 7 1 -8 3 0\n8 -8 9 3 -1 0 1 -7 -7\n1 -4\n3 2 3 2 4 4 1 1 1\n",
+      "output": "60\n"
+    },
+    {
+      "input": "3 4\n3 1 6 -2\n2 4 3\n2 -5 1\n2 3 1 3\n",
+      "output": "10\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -17 9 8 -7 -10\n2 4 1\n",
+      "output": "23\n"
+    },
+    {
+      "input": "7 3\n7 -9 -6 0 -6 -5 1 -9\n9 4 1 3 -6 -4 8 4 5 -6\n1 -4\n7 -3 -9 -3 1 -4 8 7\n2 6 3\n7 0 -5 -5 -2 -8 2 -1\n8 4 1 6 -7 -2 10 -8 -2\n3 1 5\n",
+      "output": "9\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 1 0 -1\n6 -2 -1 -2 -1 -1 -1\n1 2\n",
+      "output": "1\n"
+    },
+    {
+      "input": "3 1\n7 4 7 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -4 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -5 0 -8 -4 0 -1\n9 2 5 -10 4 -10 0 6 5 10\n3 6 4 6\n",
+      "output": "19\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -4 -5 15 8 -9 -5 -4\n1 0\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 -1\n6 -2 -1 -2 -1 -1 -1\n1 2\n",
+      "output": "1\n"
+    },
+    {
+      "input": "3 1\n7 4 7 2 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -4 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -4 -5 15 8 -9 -5 -4\n1 1\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 -1\n6 -2 -1 -2 -1 -1 -1\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "3 1\n7 4 7 2 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 6 -4 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -17\n8 3 -4 -5 15 8 -9 -5 -4\n1 1\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 0\n6 -2 -1 -2 -1 -1 -1\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -17\n8 4 -4 -5 15 8 -9 -5 -4\n1 1\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 0\n6 -2 -1 -2 -1 -2 -1\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -17\n8 4 -4 -5 15 8 -9 -5 -4\n1 1\n1 -3\n3 -8 5 6\n2 9 6\n2\n",
+      "output": "23\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 0\n6 -2 -1 -2 -1 -2 -2\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "2 2\n6 -1 -4 0 1 0 0\n6 -2 -1 -2 -1 -2 -2\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "2 2\n6 -1 -4 0 1 0 0\n6 -2 -1 -2 -1 -2 -4\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "2 2\n6 0 0 0 0 0 0\n6 0 0 0 0 0 -1\n1 2\n",
+      "output": "0\n"
+    },
+    {
+      "input": "3 6\n3 -1 -1 0\n4 -2 -2 -2 -2\n5 -3 -3 -3 -3 -3\n1 2 3 1 2 3\n",
+      "output": "0\n"
+    },
+    {
+      "input": "7 3\n7 -9 -6 0 -6 -7 1 -9\n9 4 4 3 -6 -4 8 4 5 -6\n1 -4\n7 -3 -9 -9 1 -4 8 7\n2 6 3\n7 0 -5 -5 -2 -8 2 -1\n8 4 1 6 -7 -2 10 -8 -2\n3 1 5\n",
+      "output": "9\n"
+    },
+    {
+      "input": "3 1\n7 4 8 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 6 10 -6 3 -6 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 -1 -1 -1 -1\n6 1 1 1 -1 -1 -2\n1 2\n",
+      "output": "3\n"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -5 4 -12 -4 0 -1\n9 2 5 -10 4 -10 -2 6 5 10\n3 6 4 6\n",
+      "output": "19\n"
+    },
+    {
+      "input": "2 2\n11 -1 -1 -1 -1 10 -2 -1 -2 -1 -1 -1\n10 -1 -1 -1 10 -1 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "10\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -4 9 8 -7 -10\n2 4 1\n",
+      "output": "23\n"
+    },
+    {
+      "input": "3 1\n7 4 7 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -6 16\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "2 1\n2 -4 -10\n5 6 8 3 5 -3\n1\n",
+      "output": "-4\n"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -5 0 -8 -4 0 -1\n9 2 5 -10 4 -6 -2 6 5 10\n3 6 4 6\n",
+      "output": "19\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -4 -5 10 8 -9 -2 -4\n1 0\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 -2\n1 -10\n5 -15 9 8 -7 -10\n2 4 1\n",
+      "output": "23\n"
+    },
+    {
+      "input": "7 3\n7 -9 -6 0 -6 -5 1 -9\n9 4 1 3 -6 -4 8 4 5 -6\n1 -4\n7 -3 -9 -3 1 -4 8 7\n2 6 3\n7 0 -5 -5 -2 -8 2 -1\n8 4 1 6 -13 -2 10 -8 -2\n3 1 5\n",
+      "output": "9\n"
+    },
+    {
+      "input": "2 2\n6 -1 -1 0 1 -1 -1\n6 -2 -1 -2 -1 -1 -1\n1 2\n",
+      "output": "1\n"
+    },
+    {
+      "input": "3 1\n7 4 1 1 -7 -9 -8 -9\n10 5 -5 -5 -9 -1 7 4 -1 -4 4\n8 -7 7 4 10 -6 3 -4 9\n2\n",
+      "output": "11\n"
+    },
+    {
+      "input": "9 4\n4 8 -2 -10 6\n10 -4 9 6 -2 -8 6 7 2 -6 2\n8 -10 1 9 9 -10 2 -10 -9\n7 3 -10 -10 -6 3 -7 0\n5 -4 -8 2 -5 2\n1 -3\n4 -9 0 7 -4\n7 4 -3 0 -8 -4 0 -1\n9 2 5 -10 4 -10 0 6 5 10\n3 6 4 6\n",
+      "output": "19\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -4 -5 15 8 -9 -5 -4\n1 -1\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8\n"
+    },
+    {
+      "input": "4 3\n6 6 8 -5 4 10 -2\n1 0\n1 -10\n5 -17 11 8 -7 -10\n2 4 1\n",
+      "output": "25\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 -1\n6 -2 -1 -1 -1 -1 -1\n1 2\n",
+      "output": "1\n"
+    },
+    {
+      "input": "2 2\n6 -1 -2 0 1 0 -1\n6 -2 0 -2 -1 -1 -1\n1 1\n",
+      "output": "1\n"
+    },
+    {
+      "input": "6 1\n4 0 8 -3 -10\n8 3 -2 -5 10 8 -9 -5 -4\n1 0\n1 -3\n3 -8 5 6\n2 9 6\n1\n",
+      "output": "8"
+    },
+    {
+      "input": "3 4\n3 1 6 -2\n2 3 3\n2 -5 1\n2 3 1 3\n",
+      "output": "9"
+    }
+  ],
+  "extracted_at": "2026-09-02T16:41:57.330999+00:00"
+}
