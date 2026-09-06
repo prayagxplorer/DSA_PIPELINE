@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-
+TECH_STACK.md
 # Secrets
 .env
 *.env
@@ -16,7 +16,7 @@ taco_candidates/
 extraction/extracted/
 sandbox/sandbox_report.json
 sandbox/mock_registry.json
-enriched/
+
 
 # Shared state 
 # stop tracking once real DB insert replaces them
@@ -30,3 +30,4 @@ enriched/
 "sandbox/__pycache__/" 
 ".env" 
 ".venv/" 
+
