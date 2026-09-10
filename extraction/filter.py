@@ -12,7 +12,14 @@ taco = load_dataset("BAAI/TACO", token=token, trust_remote_code=True)
 
 NUMBER_PATTERN = re.compile(r"[-+]?\d*\.?\d+")
 
+IMAGE_TAG_PATTERN = re.compile(r"<image>", re.IGNORECASE)
 
+
+def has_no_image_block(row):
+    question_text = row.get("question")
+    if question_text is None:
+        return True  # nothing to check, doesn't disqualify
+    return not IMAGE_TAG_PATTERN.search(question_text)
 
 def has_solution(row):
     raw = row["solutions"]
@@ -72,6 +79,8 @@ def passes_all_filters(row, min_test_cases=10):
     sols = ast.literal_eval(row["solutions"])
     if not python_solutions_only(sols):
         return False
+    if not has_no_image_block(row):        # <- new
+        return False
     return True
 
 def keep_only_python_solutions(row):
@@ -87,4 +96,4 @@ filtered = filtered.map(keep_only_python_solutions)
 for split in filtered.keys():
     print(f"{split}: kept {len(filtered[split])}/{len(taco[split])}")
 
-filtered.save_to_disk("taco_candidates")
+filtered.save_to_disk("taco_candidates_filtered")

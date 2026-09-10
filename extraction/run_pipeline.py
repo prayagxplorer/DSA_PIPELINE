@@ -10,7 +10,7 @@ EXTRACTION_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = EXTRACTION_DIR.parent
 SANDBOX_DIR = PROJECT_DIR / "sandbox"
 EXTRACT_SCRIPT = EXTRACTION_DIR / "extract.py"
-DATASET_PATH = PROJECT_DIR / "taco_candidates"
+DATASET_PATH = PROJECT_DIR / "taco_candidates_filtered"
 USED_QUESTIONS_PATH = EXTRACTION_DIR / "used_questions.json"
 EXTRACTED_DIR = PROJECT_DIR / "extracted"
 
@@ -68,7 +68,10 @@ if report.overall_pass:
     except ValueError:
         print(f"Invalid difficulty '{difficulty_input}'.")
         sys.exit(1)
-
+    import inspect
+    import db_schema
+    print("Loading ProblemInsertRow from:", inspect.getfile(db_schema.ProblemInsertRow))
+    print(inspect.getsource(db_schema.ProblemInsertRow.test_cases_well_formed))
     try:
         problem_row = ProblemInsertRow(
             title=report.title or report.question_id,

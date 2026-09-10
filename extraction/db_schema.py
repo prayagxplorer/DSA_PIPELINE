@@ -68,7 +68,7 @@ class ProblemInsertRow(BaseModel):
     @classmethod
     def test_cases_well_formed(cls, v):
         for case in v:
-            if "input" not in case or "output" not in case:
+            if "stdin" not in case or "expected_output" not in case:
                 raise ValueError(f"test case missing input/output keys: {case}")
         return v
 

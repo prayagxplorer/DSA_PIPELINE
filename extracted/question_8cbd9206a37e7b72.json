@@ -1,0 +1,577 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/8/B",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "The whole world got obsessed with robots,and to keep pace with the progress, great Berland's programmer Draude decided to build his own robot. He was working hard at the robot. He taught it to walk the shortest path from one point to another, to record all its movements, but like in many Draude's programs, there was a bug — the robot didn't always walk the shortest path. Fortunately, the robot recorded its own movements correctly. Now Draude wants to find out when his robot functions wrong. Heh, if Draude only remembered the map of the field, where he tested the robot, he would easily say if the robot walked in the right direction or not. But the field map was lost never to be found, that's why he asks you to find out if there exist at least one map, where the path recorded by the robot is the shortest.\n\nThe map is an infinite checkered field, where each square is either empty, or contains an obstruction. It is also known that the robot never tries to run into the obstruction. By the recorded robot's movements find out if there exist at least one such map, that it is possible to choose for the robot a starting square (the starting square should be empty) such that when the robot moves from this square its movements coincide with the recorded ones (the robot doesn't run into anything, moving along empty squares only), and the path from the starting square to the end one is the shortest.\n\nIn one movement the robot can move into the square (providing there are no obstrutions in this square) that has common sides with the square the robot is currently in.\n\nInput\n\nThe first line of the input file contains the recording of the robot's movements. This recording is a non-empty string, consisting of uppercase Latin letters L, R, U and D, standing for movements left, right, up and down respectively. The length of the string does not exceed 100.\n\nOutput\n\nIn the first line output the only word OK (if the above described map exists), or BUG (if such a map does not exist).\n\nExamples\n\nInput\n\nLLUUUR\n\n\nOutput\n\nOK\n\n\nInput\n\nRRUULLDD\n\n\nOutput\n\nBUG",
+  "difficulty": "MEDIUM",
+  "requested_tags": [
+    "graphs"
+  ],
+  "matched_tags": [
+    "graphs"
+  ],
+  "relaxation_floor": 1,
+  "all_tags": [
+    "graphs",
+    "implementation",
+    "constructive algorithms"
+  ],
+  "time_limit_seconds": 2.0,
+  "memory_limit_mb": 64.0,
+  "candidate_solutions": [
+    "__author__ = 'runekri3'\n\ndef cells_touching(cell_1, cell_2):\n\tabs_x = abs(cell_1[0] - cell_2[0])\n\tif abs_x > 1:\n\t\treturn False\n\tabs_y = abs(cell_1[1] - cell_2[1])\n\tif abs_y > 1:\n\t\treturn False\n\tif not (abs_x == 1 and abs_y == 1):\n\t\treturn True\nmovements = input()\ntotal_movements = len(movements)\ncur_cell = [0, 0]\nvisited_cells = [(0, 0)]\nlast_movement = ''\nbug = False\nfor movement in movements:\n\tif movement == 'U':\n\t\tcur_cell[1] += 1\n\telif movement == 'D':\n\t\tcur_cell[1] -= 1\n\telif movement == 'R':\n\t\tcur_cell[0] += 1\n\telse:\n\t\tcur_cell[0] -= 1\n\tfor visited_cell in visited_cells[:-1]:\n\t\tif cells_touching(cur_cell, visited_cell):\n\t\t\tbug = True\n\t\t\tbreak\n\tvisited_cells.append(tuple(cur_cell))\nif bug:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "s = input()\n(x, y) = (0, 0)\nvisited = set()\nvisited.add((x, y))\nfor i in range(len(s)):\n\tprev = (x, y)\n\tif s[i] == 'U':\n\t\ty += 1\n\telif s[i] == 'D':\n\t\ty -= 1\n\telif s[i] == 'R':\n\t\tx += 1\n\telse:\n\t\tx -= 1\n\tif (x, y) in visited:\n\t\tprint('BUG')\n\t\texit()\n\tneighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]\n\tfor n in neighbors:\n\t\tif n != prev and n in visited:\n\t\t\tprint('BUG')\n\t\t\texit()\n\tvisited.add((x, y))\nprint('OK')\n",
+    "s = input()\nd = {'U': (0, 1), 'D': (0, -1), 'L': (-1, 0), 'R': (1, 0)}\np = [(0, 0)]\nfor x in s:\n\ta = p[-1]\n\tb = d[x]\n\tc = (a[0] + b[0], a[1] + b[1])\n\tz = 0\n\tfor y in d.values():\n\t\tif (c[0] + y[0], c[1] + y[1]) in p:\n\t\t\tz += 1\n\tif z != 1 or c in p:\n\t\tprint('BUG')\n\t\texit()\n\tp.append(c)\nprint('OK')\n",
+    "def f():\n\t(t, r, s) = ([(0, 0)], [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)], set())\n\tfor i in input():\n\t\tif i == 'L':\n\t\t\tr = [(x - 1, y) for (x, y) in r]\n\t\telif i == 'R':\n\t\t\tr = [(x + 1, y) for (x, y) in r]\n\t\telif i == 'D':\n\t\t\tr = [(x, y - 1) for (x, y) in r]\n\t\telse:\n\t\t\tr = [(x, y + 1) for (x, y) in r]\n\t\tif any((i in s for i in r[1:])):\n\t\t\treturn 0\n\t\ts.add(t[-1])\n\t\tt.append(r[0])\n\treturn 1\nprint('BOUKG'[f()::2])\n",
+    "from collections import deque\n\ndef main():\n\tpos = (0, 0)\n\ts = input()\n\tn = len(s)\n\tmoves = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}\n\tsafe = set()\n\tfor c in s:\n\t\t(dx, dy) = moves[c]\n\t\tpos = (pos[0] + dx, pos[1] + dy)\n\t\tsafe.add(pos)\n\tgoal = pos\n\tpos = (0, 0)\n\tq = deque([pos])\n\tlvl = 0\n\tdist = -1\n\tvis = set([pos])\n\twhile q:\n\t\tif dist != -1:\n\t\t\tbreak\n\t\tsz = len(q)\n\t\tfor _ in range(sz):\n\t\t\tcur = q.popleft()\n\t\t\tif cur == goal:\n\t\t\t\tdist = lvl\n\t\t\t\tbreak\n\t\t\tfor (_, v) in moves.items():\n\t\t\t\t(dx, dy) = v\n\t\t\t\tnpos = (cur[0] + dx, cur[1] + dy)\n\t\t\t\tif npos in safe and npos not in vis:\n\t\t\t\t\tvis.add(npos)\n\t\t\t\t\tq.append(npos)\n\t\tlvl += 1\n\tprint('OK' if dist == n else 'BUG')\nmain()\n",
+    "import bisect\nfrom itertools import accumulate\nimport os\nimport sys\nimport math\nfrom decimal import *\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\n\ndef input():\n\treturn sys.stdin.readline().rstrip('\\r\\n')\n\ndef isPrime(n):\n\tif n <= 1:\n\t\treturn False\n\tif n <= 3:\n\t\treturn True\n\tif n % 2 == 0 or n % 3 == 0:\n\t\treturn False\n\ti = 5\n\twhile i * i <= n:\n\t\tif n % i == 0 or n % (i + 2) == 0:\n\t\t\treturn False\n\t\ti = i + 6\n\treturn True\n\ndef SieveOfEratosthenes(n):\n\tprime = []\n\tprimes = [True for i in range(n + 1)]\n\tp = 2\n\twhile p * p <= n:\n\t\tif primes[p] == True:\n\t\t\tprime.append(p)\n\t\t\tfor i in range(p * p, n + 1, p):\n\t\t\t\tprimes[i] = False\n\t\tp += 1\n\treturn prime\ns = input()\nn = 205\na = [[0 for i in range(n)] for j in range(n)]\n(x, y) = (101, 101)\na[x][y] = 1\nres = 0\nfor c in s:\n\tif c == 'L':\n\t\tx -= 1\n\telif c == 'U':\n\t\ty -= 1\n\telif c == 'D':\n\t\ty += 1\n\telse:\n\t\tx += 1\n\tif a[x][y] or a[x - 1][y] + a[x + 1][y] + a[x][y - 1] + a[x][y + 1] > 1:\n\t\tres = 1\n\t\tbreak\n\ta[x][y] = 1\nprint(res and 'BUG' or 'OK')\n",
+    "def add_point(p1, p2):\n\treturn (p1[0] + p2[0], p1[1] + p2[1])\nd = {'R': (1, 0), 'L': (-1, 0), 'U': (0, -1), 'D': (0, 1)}\n(x, y) = (0, 0)\na = set()\nb = set((d[i] for i in d))\np = input().strip()\nres = 'OK'\nfor i in p:\n\t(x, y) = add_point((x, y), d[i])\n\tif (x, y) in a:\n\t\tres = 'BUG'\n\t\tbreak\n\ta = a.union(b)\n\tb = set((add_point((x, y), d[j]) for j in d))\nif (x, y) == (0, 0):\n\tres = 'BUG'\nprint(res)\n",
+    "from sys import stdin\ns = stdin.readline().strip()\nmt = [[False for i in range(300)] for j in range(300)]\ni = 150\nj = 150\nflag = True\nmt[150][150] = True\nfor k in range(len(s)):\n\t(i1, j1) = (i, j)\n\tif s[k] == 'L':\n\t\ti -= 1\n\telif s[k] == 'R':\n\t\ti += 1\n\telif s[k] == 'U':\n\t\tj += 1\n\telse:\n\t\tj -= 1\n\tif mt[i][j] == True:\n\t\tflag = False\n\t\tbreak\n\tmt[i][j] = True\n\tif (i1 != i + 1 or j1 != j) and mt[i + 1][j]:\n\t\tflag = False\n\t\tbreak\n\tif (i1 != i - 1 or j1 != j) and mt[i - 1][j]:\n\t\tflag = False\n\t\tbreak\n\tif (i1 != i or j1 != j + 1) and mt[i][1 + j]:\n\t\tflag = False\n\t\tbreak\n\tif (i1 != i or j1 != j - 1) and mt[i][j - 1]:\n\t\tflag = False\n\t\tbreak\nif flag:\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "def main():\n\tmoves = input()\n\tvisited = set()\n\tx = y = 0\n\tlast = (x, y)\n\tfor m in moves:\n\t\tif m == 'L':\n\t\t\tx -= 1\n\t\telif m == 'R':\n\t\t\tx += 1\n\t\telif m == 'U':\n\t\t\ty += 1\n\t\telse:\n\t\t\ty -= 1\n\t\tcurr = (x, y)\n\t\tfor pos in (curr, (x - 1, y), (x + 1, y), (x, y + 1), (x, y - 1)):\n\t\t\tif pos in visited:\n\t\t\t\tprint('BUG')\n\t\t\t\treturn\n\t\tvisited.add(last)\n\t\tlast = curr\n\tprint('OK')\nmain()\n",
+    "s = input()\nn = 205\na = [[0 for i in range(n)] for j in range(n)]\n(x, y) = (101, 101)\na[x][y] = 1\nres = 0\nfor c in s:\n\tif c == 'L':\n\t\tx -= 1\n\telif c == 'U':\n\t\ty -= 1\n\telif c == 'D':\n\t\ty += 1\n\telse:\n\t\tx += 1\n\tif a[x][y] or a[x - 1][y] + a[x + 1][y] + a[x][y - 1] + a[x][y + 1] > 1:\n\t\tres = 1\n\t\tbreak\n\ta[x][y] = 1\nprint(res and 'BUG' or 'OK')\n",
+    "def main():\n\tpath = input()\n\tcoordinate = [[0 for i in range(2)] for j in range(len(path) + 1)]\n\tleft = 0\n\tright = 0\n\tup = 0\n\tdown = 0\n\tfor direction in path:\n\t\tif direction == 'U':\n\t\t\tup += 1\n\t\telif direction == 'R':\n\t\t\tright += 1\n\t\telif direction == 'D':\n\t\t\tdown += 1\n\t\telif direction == 'L':\n\t\t\tleft += 1\n\tallDirections = [left, up, down, right]\n\twhile 0 in allDirections:\n\t\tallDirections.remove(0)\n\tif len(allDirections) >= 3:\n\t\tminDirection = min(allDirections)\n\t\ti = minDirection + 1\n\t\trepeatingSequences = []\n\t\twhile i < len(path):\n\t\t\tcurrentSet = set(path[i - minDirection - 1:i])\n\t\t\tif len(currentSet) == 1:\n\t\t\t\trepeatingSequences.append(path[i])\n\t\t\t\ti += minDirection + 1\n\t\t\telse:\n\t\t\t\ti += 1\n\t\tif len(set(repeatingSequences)) == 3:\n\t\t\tprint('BUG')\n\t\t\treturn\n\tfor i in range(2, len(path)):\n\t\tif path[i] != path[i - 1] and path[i] != path[i - 2] and (path[i - 1] != path[i - 2]):\n\t\t\tprint('BUG')\n\t\t\treturn\n\tfor i in range(0, len(path)):\n\t\tif i == 0:\n\t\t\tif path[i] == 'U':\n\t\t\t\tcoordinate[i + 1][0] = 0\n\t\t\t\tcoordinate[i + 1][1] = 1\n\t\t\telif path[i] == 'R':\n\t\t\t\tcoordinate[i + 1][0] = 1\n\t\t\t\tcoordinate[i + 1][1] = 0\n\t\t\telif path[i] == 'D':\n\t\t\t\tcoordinate[i + 1][0] = 0\n\t\t\t\tcoordinate[i + 1][1] = -1\n\t\t\telif path[i] == 'L':\n\t\t\t\tcoordinate[i + 1][0] = -1\n\t\t\t\tcoordinate[i + 1][1] = 0\n\t\telif path[i] == 'U':\n\t\t\tcoordinate[i + 1][0] = coordinate[i][0]\n\t\t\tcoordinate[i + 1][1] += 1 + coordinate[i][1]\n\t\telif path[i] == 'R':\n\t\t\tcoordinate[i + 1][1] = coordinate[i][1]\n\t\t\tcoordinate[i + 1][0] += 1 + coordinate[i][0]\n\t\telif path[i] == 'D':\n\t\t\tcoordinate[i + 1][0] = coordinate[i][0]\n\t\t\tcoordinate[i + 1][1] += -1 + coordinate[i][1]\n\t\telif path[i] == 'L':\n\t\t\tcoordinate[i + 1][1] = coordinate[i][1]\n\t\t\tcoordinate[i + 1][0] += -1 + coordinate[i][0]\n\tcoordinateSet = list(set(map(tuple, coordinate)))\n\tif len(coordinate) == len(coordinateSet):\n\t\tprint('OK')\n\telse:\n\t\tprint('BUG')\nmain()\n",
+    "from collections import Counter\n(i, j, p, s) = (0, 0, {(0, 0)}, input())\nfor ch in s:\n\ti += [0, 0, -1, 1]['LRUD'.index(ch)]\n\tj += [-1, 1, 0, 0]['LRUD'.index(ch)]\n\tp.add((i, j))\nc = Counter((((x - 1, y) in p) + ((x + 1, y) in p) + ((x, y - 1) in p) + ((x, y + 1) in p) for (x, y) in p))\nprint('OK' if c[1] == 2 and c[2] == len(s) - 1 else 'BUG')\n",
+    "def main():\n\twalk = {'L': (0, -1), 'U': (-1, 0), 'R': (0, +1), 'D': (+1, 0)}\n\tback = {'L': 'R', 'R': 'L', 'U': 'D', 'D': 'U'}\n\n\tdef update(pos, d):\n\t\treturn (pos[0] + walk[d][0], pos[1] + walk[d][1])\n\n\tdef check(path):\n\t\tvis = set()\n\t\tpos = (0, 0)\n\t\tvis.add(pos)\n\t\tfor c in path:\n\t\t\tpos = update(pos, c)\n\t\t\tif pos in vis:\n\t\t\t\treturn False\n\t\t\tfor nei in 'LURD':\n\t\t\t\tif nei != back[c] and update(pos, nei) in vis:\n\t\t\t\t\treturn False\n\t\t\tvis.add(pos)\n\t\treturn True\n\tpath = input()\n\tprint('OK' if check(path) else 'BUG')\nmain()\n",
+    "import math, sys, bisect, heapq\nfrom collections import defaultdict, Counter, deque\nfrom itertools import groupby, accumulate\nint1 = lambda x: int(x) - 1\ninput = iter(sys.stdin.buffer.read().decode().splitlines()).__next__\nilele = lambda : map(int, input().split())\nalele = lambda : list(map(int, input().split()))\nilelec = lambda : map(int1, input().split())\nalelec = lambda : list(map(int1, input().split()))\n\ndef list2d(a, b, c):\n\treturn [[c] * b for i in range(a)]\n\ndef list3d(a, b, c, d):\n\treturn [[[d] * c for j in range(b)] for i in range(a)]\n\ndef Y(c):\n\tprint(['NO', 'YES'][c])\n\ndef y(c):\n\tprint(['no', 'yes'][c])\n\ndef Yy(c):\n\tprint(['No', 'Yes'][c])\nA = [(0, 0)]\nS = input()\nif len(S) == 1:\n\tprint('OK')\n\texit(0)\n\ndef check(A, B):\n\t(x, y) = B\n\tif len(A) >= 2:\n\t\tfor (i, j) in A[:-1]:\n\t\t\tif (x, y) in [(i + 1, j), (i - 1, j), (i, j - 1), (i, j + 1)]:\n\t\t\t\treturn True\n\treturn False\n(x, y) = (0, 0)\nfor i in S:\n\tif i == 'L':\n\t\tx -= 1\n\telif i == 'R':\n\t\tx += 1\n\telif i == 'U':\n\t\ty += 1\n\telse:\n\t\ty -= 1\n\tif (x, y) in A:\n\t\tprint('BUG')\n\t\texit(0)\n\tif check(A, (x, y)):\n\t\tprint('BUG')\n\t\texit(0)\n\tA.append((x, y))\nprint('OK')\n",
+    "import sys\n\ndef main():\n\tsteps = input()\n\tmp = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}\n\t(x, y) = (0, 0)\n\tst = set([(x, y)])\n\tfor ch in steps:\n\t\t(dx, dy) = mp[ch]\n\t\t(x, y) = (x + dx, y + dy)\n\t\tfor (cdx, cdy) in list(mp.values()) + [(0, 0)]:\n\t\t\t(nx, ny) = (x + cdx, y + cdy)\n\t\t\tif (nx, ny) != (x - dx, y - dy) and (nx, ny) in st:\n\t\t\t\tprint('BUG')\n\t\t\t\tsys.exit(0)\n\t\tst.add((x, y))\n\tprint('OK')\nmain()\n",
+    "import os.path\nfrom math import gcd, floor, ceil\nfrom collections import *\nimport sys\nmod = 1000000007\nINF = float('inf')\n\ndef st():\n\treturn list(sys.stdin.readline().strip())\n\ndef li():\n\treturn list(map(int, sys.stdin.readline().split()))\n\ndef mp():\n\treturn map(int, sys.stdin.readline().split())\n\ndef inp():\n\treturn int(sys.stdin.readline())\n\ndef pr(n):\n\treturn sys.stdout.write(str(n) + '\\n')\n\ndef prl(n):\n\treturn sys.stdout.write(str(n) + ' ')\nif os.path.exists('input.txt'):\n\tsys.stdin = open('input.txt', 'r')\n\tsys.stdout = open('output.txt', 'w')\ns = st()\n(a, b) = (0, 0)\nx = set()\nf = 0\nfor i in s:\n\tx.add((a, b))\n\tif i == 'U':\n\t\ta -= 1\n\tif i == 'D':\n\t\ta += 1\n\tif i == 'L':\n\t\tb -= 1\n\tif i == 'R':\n\t\tb += 1\n\tif (a, b) in x:\n\t\tf = 1\n\t\tbreak\n\tc = 0\n\tif (a - 1, b) in x:\n\t\tc += 1\n\tif (a + 1, b) in x:\n\t\tc += 1\n\tif (a, b - 1) in x:\n\t\tc += 1\n\tif (a, b + 1) in x:\n\t\tc += 1\n\tif c > 1:\n\t\tf = 1\n\t\tbreak\npr('OK' if f == 0 else 'BUG')\n",
+    "m = [[0] * 205 for i in range(205)]\ni = 0\nj = 0\ns = input()\nd = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}\nm[0][0] = 1\nfor move in s:\n\ti += d[move][0]\n\tj += d[move][1]\n\tif m[i][j]:\n\t\tprint('BUG')\n\t\tbreak\n\tm[i][j] = 1\n\tif m[i - 1][j] + m[i + 1][j] + m[i][j - 1] + m[i][j + 1] > 1:\n\t\tprint('BUG')\n\t\tbreak\nelse:\n\tprint('OK')\n",
+    "def CF_8B():\n\tcur = [0, 0]\n\tpath = set((0, 0))\n\tfor step in input():\n\t\tlast = tuple(cur[:])\n\t\tif step == 'L':\n\t\t\tcur[0] -= 1\n\t\telif step == 'R':\n\t\t\tcur[0] += 1\n\t\telif step == 'U':\n\t\t\tcur[1] += 1\n\t\telse:\n\t\t\tcur[1] -= 1\n\t\tif (cur[0] + 1, cur[1]) in path or (cur[0] - 1, cur[1]) in path or (cur[0], cur[1] + 1) in path or ((cur[0], cur[1] - 1) in path):\n\t\t\tprint('BUG')\n\t\t\treturn\n\t\telse:\n\t\t\tpath.add(last)\n\tprint('OK')\n\treturn\nCF_8B()\n",
+    "at = (0, 0)\np = [at]\nmoves = input()\nfuncs = {'L': lambda _: (_[0] - 1, _[1]), 'R': lambda _: (_[0] + 1, _[1]), 'D': lambda _: (_[0], _[1] - 1), 'U': lambda _: (_[0], _[1] + 1)}\nfor move in moves:\n\tat = funcs[move](at)\n\tp.append(at)\nok = True\nfor i in range(len(moves) + 1):\n\tfor j in range(len(moves) + 1):\n\t\tif abs(i - j) > 1 and abs(p[i][0] - p[j][0]) + abs(p[i][1] - p[j][1]) < 2:\n\t\t\tok = False\nprint('OK' if ok else 'BUG')\n",
+    "class CodeforcesTask8BSolution:\n\n\tdef __init__(self):\n\t\tself.result = ''\n\t\tself.movements = ''\n\n\tdef read_input(self):\n\t\tself.movements = input()\n\n\tdef process_task(self):\n\t\tcmap = [[0 for x in range(203)] for y in range(203)]\n\t\tposx = 101\n\t\tposy = 101\n\t\tcmap[posy][posx] = 3\n\t\tif not cmap[posy][posx + 1]:\n\t\t\tcmap[posy][posx + 1] += 1\n\t\tif not cmap[posy][posx - 1]:\n\t\t\tcmap[posy][posx - 1] += 1\n\t\tif not cmap[posy + 1][posx]:\n\t\t\tcmap[posy + 1][posx] += 1\n\t\tif not cmap[posy - 1][posx]:\n\t\t\tcmap[posy - 1][posx] += 1\n\t\tvalid = True\n\t\tfor m in self.movements:\n\t\t\tif m == 'U':\n\t\t\t\tposy -= 1\n\t\t\telif m == 'D':\n\t\t\t\tposy += 1\n\t\t\telif m == 'L':\n\t\t\t\tposx -= 1\n\t\t\telse:\n\t\t\t\tposx += 1\n\t\t\tif cmap[posy][posx] > 1:\n\t\t\t\tvalid = False\n\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tcmap[posy][posx] = 3\n\t\t\t\tcmap[posy][posx + 1] += 1\n\t\t\t\tcmap[posy][posx - 1] += 1\n\t\t\t\tcmap[posy + 1][posx] += 1\n\t\t\t\tcmap[posy - 1][posx] += 1\n\t\tif valid:\n\t\t\tself.result = 'OK'\n\t\telse:\n\t\t\tself.result = 'BUG'\n\n\tdef get_result(self):\n\t\treturn self.result\nSolution = CodeforcesTask8BSolution()\nSolution.read_input()\nSolution.process_task()\nprint(Solution.get_result())\n",
+    "a = {'L': (-1, 0), 'U': (0, 1), 'R': (1, 0), 'D': (0, -1)}\nps = [(0, 0)]\nfor c in input():\n\toffs = a[c]\n\tnow = ps[-1]\n\tnew = (now[0] + offs[0], now[1] + offs[1])\n\tk = 0\n\tfor t in a.values():\n\t\tif (new[0] + t[0], new[1] + t[1]) in ps:\n\t\t\tk += 1\n\tif new in ps or k > 1:\n\t\tprint('BUG')\n\t\texit()\n\tps.append(new)\nprint('OK')\n",
+    "string = input()\ngeo_map = [[0] * 201 for i in range(201)]\nx = 100\ny = 100\ngeo_map[x][y] = 1\noptimal_check = 0\nstate = True\nfor c in string:\n\toptimal_check = 0\n\tif c == 'R':\n\t\tx += 1\n\telif c == 'L':\n\t\tx -= 1\n\telif c == 'U':\n\t\ty += 1\n\telif c == 'D':\n\t\ty -= 1\n\tif geo_map[x][y] == 1:\n\t\tprint('BUG')\n\t\tstate = False\n\t\tbreak\n\telse:\n\t\tgeo_map[x][y] = 1\n\tif geo_map[x + 1][y] == 1:\n\t\toptimal_check += 1\n\tif geo_map[x - 1][y] == 1:\n\t\toptimal_check += 1\n\tif geo_map[x][y + 1] == 1:\n\t\toptimal_check += 1\n\tif geo_map[x][y - 1] == 1:\n\t\toptimal_check += 1\n\tif optimal_check >= 2:\n\t\tprint('BUG')\n\t\tstate = False\n\t\tbreak\nif state:\n\tprint('OK')\n",
+    "p = (0, 0)\nv = {p}\n\ndef left():\n\treturn (p[0] - 1, p[1])\n\ndef right():\n\treturn (p[0] + 1, p[1])\n\ndef up():\n\treturn (p[0], p[1] + 1)\n\ndef down():\n\treturn (p[0], p[1] - 1)\nfor x in input():\n\tif x == 'L':\n\t\tp = left()\n\t\ts = {p, left(), up(), down()}\n\telif x == 'R':\n\t\tp = right()\n\t\ts = {p, right(), up(), down()}\n\telif x == 'U':\n\t\tp = up()\n\t\ts = {p, left(), right(), up()}\n\telif x == 'D':\n\t\tp = down()\n\t\ts = {p, left(), right(), down()}\n\tif any((x in v for x in s)):\n\t\tprint('BUG')\n\t\tbreak\n\tv.add(p)\nelse:\n\tprint('OK')\n",
+    "s = input()\nm = [[0] * 201 for i in range(201)]\nx = y = 100\nm[100][100] = 1\nd = {'U': [1, 0], 'D': [-1, 0], 'R': [0, 1], 'L': [0, -1]}\nz = {'U': 'D', 'D': 'U', 'L': 'R', 'R': 'L'}\no = {i: [d[j] for j in 'UDRL' if j != z[i]] for i in 'UDRL'}\nfor i in s:\n\tx += d[i][0]\n\ty += d[i][1]\n\tm[x][y] = 1\n\tfor k in o[i]:\n\t\tif m[x + k[0]][y + k[1]]:\n\t\t\tprint('BUG')\n\t\t\tbreak\n\telse:\n\t\tcontinue\n\tbreak\nelse:\n\tif len(s) - 1 and z[s[0]] == s[1]:\n\t\tprint('BUG')\n\telse:\n\t\tprint('OK')\n",
+    "path = input()\n\ndef moves(c, pos):\n\tif pos == 'R':\n\t\treturn (c[0] + 1, c[1])\n\tif pos == 'L':\n\t\treturn (c[0] - 1, c[1])\n\tif pos == 'U':\n\t\treturn (c[0], c[1] + 1)\n\tif pos == 'D':\n\t\treturn (c[0], c[1] - 1)\n\ndef correct(path):\n\tl = list(path)\n\tc = (0, 0)\n\tp = None\n\tall = set()\n\tall.add(c)\n\tfor i in range(len(l)):\n\t\tn = moves(c, l[i])\n\t\tif n == p:\n\t\t\treturn False\n\t\tp = c\n\t\tc = n\n\t\tall.add(c)\n\t\tflag = 0\n\t\tmov = ['R', 'L', 'U', 'D']\n\t\tfor i in range(len(mov)):\n\t\t\tif moves(c, mov[i]) in all:\n\t\t\t\tflag += 1\n\t\tif flag > 1:\n\t\t\treturn False\n\treturn True\nif correct(path):\n\tprint('OK')\n\texit()\nelse:\n\tprint('BUG')\n\texit()\n",
+    "import sys\npath = input()\nvisited = set()\n\ndef move(s, x, y):\n\tif i == 'L':\n\t\tx -= 1\n\telif i == 'R':\n\t\tx += 1\n\telif i == 'U':\n\t\ty += 1\n\telse:\n\t\ty -= 1\n\treturn (x, y)\n(x, y) = (0, 0)\nstart = (x, y)\nparent = (x, y)\nvisited.add(start)\nfor i in path:\n\tparent = (x, y)\n\t(x, y) = move(i, x, y)\n\tif (x, y) in visited:\n\t\tprint('BUG')\n\t\tsys.exit()\n\telse:\n\t\tfor i in 'LRUD':\n\t\t\tcheck = move(i, x, y)\n\t\t\tif check != parent and check in visited:\n\t\t\t\tprint('BUG')\n\t\t\t\tsys.exit()\n\tvisited.add((x, y))\nprint('OK')\n",
+    "def find_Baddie(x, y):\n\tglobal visited\n\tcount = 0\n\tif visited[(y - 1) % (2 * n + 1)][x]:\n\t\tcount += 1\n\tif visited[(y + 1) % (2 * n + 1)][x]:\n\t\tcount += 1\n\tif visited[y][(x + 1) % (2 * n + 1)]:\n\t\tcount += 1\n\tif visited[y][(x - 1) % (2 * n + 1)]:\n\t\tcount += 1\n\treturn count > 1\nmoves = list(input())\nn = len(moves)\nvisited = [[False] * (2 * n + 1) for _ in range(2 * n + 1)]\nvisited[n][n] = True\ncurr_pos_x = curr_pos_y = n\ncollision_detected = False\ncurr_move_num = 0\nwhile not collision_detected and curr_move_num < n:\n\tmove = moves[curr_move_num]\n\tif move == 'R':\n\t\tcurr_pos_x += 1\n\telif move == 'L':\n\t\tcurr_pos_x -= 1\n\telif move == 'U':\n\t\tcurr_pos_y += 1\n\telse:\n\t\tcurr_pos_y -= 1\n\tif find_Baddie(curr_pos_x, curr_pos_y):\n\t\tbreak\n\tcollision_detected = visited[curr_pos_y][curr_pos_x] == True\n\tvisited[curr_pos_y][curr_pos_x] = True\n\tcurr_move_num += 1\nif collision_detected or curr_move_num < n:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "s = input()\nx = 0\ny = 0\nd = dict()\nd[x, y] = -1\nf = 0\nfor j in range(len(s)):\n\tif s[j] == 'L':\n\t\tx += -1\n\telif s[j] == 'R':\n\t\tx += 1\n\telif s[j] == 'U':\n\t\ty += 1\n\telse:\n\t\ty += -1\n\tif (x, y) in d.keys():\n\t\tf = 1\n\t\tbreak\n\telif (x - 1, y) in d.keys() and j - d[x - 1, y] > 1:\n\t\tf = 1\n\t\tbreak\n\telif (x + 1, y) in d.keys() and j - d[x + 1, y] > 1:\n\t\tf = 1\n\t\tbreak\n\telif (x, y + 1) in d.keys() and j - d[x, y + 1] > 1:\n\t\tf = 1\n\t\tbreak\n\telif (x, y - 1) in d.keys() and j - d[x, y - 1] > 1:\n\t\tf = 1\n\t\tbreak\n\td[x, y] = j\nif f == 1:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "v = {(0, 0)}\nx = y = 0\nok = 1\nfor i in input().strip():\n\tif i == 'L':\n\t\tx -= 1\n\tif i == 'R':\n\t\tx += 1\n\tif i == 'U':\n\t\ty += 1\n\tif i == 'D':\n\t\ty -= 1\n\tif (x, y) in v:\n\t\tok = 0\n\tv.add((x, y))\n\tif (x - 1, y) in v and i != 'R':\n\t\tok = 0\n\tif (x + 1, y) in v and i != 'L':\n\t\tok = 0\n\tif (x, y - 1) in v and i != 'U':\n\t\tok = 0\n\tif (x, y + 1) in v and i != 'D':\n\t\tok = 0\n\tif not ok:\n\t\tbreak\nprint('OK' if ok else 'BUG')\n",
+    "import os\nimport sys\nfrom io import BytesIO, IOBase\nimport math\nfrom decimal import *\nfrom collections import defaultdict, deque\nimport heapq\ngetcontext().prec = 25\nabcd = 'abcdefghijklmnopqrstuvwxyz'\nMOD = pow(10, 9) + 7\nBUFSIZE = 8192\nfrom bisect import bisect_left, bisect_right\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\ns = input()\na = [[0, 0]]\nans = 'OK'\nc = [0, 0]\nfor i in s:\n\tif i == 'L':\n\t\tc[0] -= 1\n\t\tif [c[0] - 1, c[1]] in a or [c[0], c[1] - 1] in a or [c[0], c[1] + 1] in a:\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\telif i == 'R':\n\t\tc[0] += 1\n\t\tif [c[0] + 1, c[1]] in a or [c[0], c[1] - 1] in a or [c[0], c[1] + 1] in a:\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\telif i == 'D':\n\t\tc[1] -= 1\n\t\tif [c[0] - 1, c[1]] in a or [c[0] + 1, c[1]] in a or [c[0], c[1] - 1] in a:\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\telif i == 'U':\n\t\tc[1] += 1\n\t\tif [c[0] - 1, c[1]] in a or [c[0] + 1, c[1]] in a or [c[0], c[1] + 1] in a:\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\tif c in a:\n\t\tans = 'BUG'\n\t\tbreak\n\ta.append(c.copy())\nprint(ans)\n",
+    "def check(l):\n\tglobal i\n\treturn l in squares and squares.index(l) != i\ninp = input()\n(x, y) = (0, 0)\nsquares = [[x, y]]\nfor i in range(len(inp)):\n\tif inp[i] == 'L':\n\t\tx -= 1\n\telif inp[i] == 'R':\n\t\tx += 1\n\telif inp[i] == 'U':\n\t\ty += 1\n\telif inp[i] == 'D':\n\t\ty -= 1\n\tif [x, y] == [0, 0] or check([x + 1, y]) or check([x - 1, y]) or check([x, y + 1]) or check([x, y - 1]):\n\t\tprint('BUG')\n\t\texit()\n\tsquares.append([x, y])\nprint('OK')\n",
+    "def no():\n\tprint('BUG')\n\tquit()\nm = input()\n(a, b) = (0, 0)\nd = {}\nd[a, b] = 0\nfor (ii, i) in enumerate(m):\n\tif i == 'R':\n\t\tb += 1\n\tif i == 'L':\n\t\tb -= 1\n\tif i == 'U':\n\t\ta += 1\n\tif i == 'D':\n\t\ta -= 1\n\tif (a, b) in d:\n\t\tno()\n\tif (a, b + 1) in d:\n\t\tif d[a, b + 1] + 1 < ii:\n\t\t\tno()\n\tif (a, b - 1) in d:\n\t\tif d[a, b - 1] + 1 < ii:\n\t\t\tno()\n\tif (a + 1, b) in d:\n\t\tif d[a + 1, b] + 1 < ii:\n\t\t\tno()\n\tif (a - 1, b) in d:\n\t\tif d[a - 1, b] + 1 < ii:\n\t\t\tno()\n\td[a, b] = ii\nif abs(a) + abs(b) <= 1 and len(m) > 1:\n\tno()\nprint('OK')\n",
+    "__author__ = 'Darren'\n\ndef solve():\n\trecord = set()\n\tcurrent_pos = [0, 0]\n\tfor move in input():\n\t\tlast_pos = tuple(current_pos)\n\t\tif move == 'L':\n\t\t\tcurrent_pos[0] -= 1\n\t\telif move == 'R':\n\t\t\tcurrent_pos[0] += 1\n\t\telif move == 'U':\n\t\t\tcurrent_pos[1] += 1\n\t\telse:\n\t\t\tcurrent_pos[1] -= 1\n\t\tif test(current_pos, record):\n\t\t\trecord.add(last_pos)\n\t\telse:\n\t\t\tprint('BUG')\n\t\t\treturn\n\tprint('OK')\n\ndef test(position, record):\n\treturn not ((position[0] + 1, position[1]) in record or (position[0] - 1, position[1]) in record or (position[0], position[1] + 1) in record or ((position[0], position[1] - 1) in record))\nsolve()\n",
+    "def neighbors(pos: tuple) -> set:\n\treturn {(pos[0] + 1, pos[1]), (pos[0] - 1, pos[1]), (pos[0], pos[1] + 1), (pos[0], pos[1] - 1)}\npath = input()\ncurrent_pos = (0, 0)\nhas_shorter_paths = set((0, 0))\nfor direction in path:\n\tif direction == 'R':\n\t\tnew_pos = (current_pos[0] + 1, current_pos[1])\n\telif direction == 'L':\n\t\tnew_pos = (current_pos[0] - 1, current_pos[1])\n\telif direction == 'U':\n\t\tnew_pos = (current_pos[0], current_pos[1] + 1)\n\telif direction == 'D':\n\t\tnew_pos = (current_pos[0], current_pos[1] - 1)\n\tif new_pos in has_shorter_paths:\n\t\tprint('BUG')\n\t\tbreak\n\thas_shorter_paths |= neighbors(current_pos)\n\tcurrent_pos = new_pos\nelse:\n\tprint('OK')\n",
+    "s = input()\nif len(s) == 1:\n\tprint('OK')\nelif 'UD' in s or 'DU' in s or 'LR' in s or ('RL' in s):\n\tprint('BUG')\nelse:\n\tvisited = [[False] * 203 for i in range(203)]\n\t(x, y) = (100, 100)\n\tvisited[x][y] = True\n\tdone = 0\n\tfor (i, c) in enumerate(s):\n\t\tif i > 0:\n\t\t\tif last != 'R' and visited[x - 1][y] or (last != 'L' and visited[x + 1][y]) or (last != 'U' and visited[x][y - 1]) or (last != 'D' and visited[x][y + 1]):\n\t\t\t\tprint('BUG')\n\t\t\t\tdone = 1\n\t\t\t\tbreak\n\t\tif c == 'R':\n\t\t\tx += 1\n\t\telif c == 'L':\n\t\t\tx -= 1\n\t\telif c == 'U':\n\t\t\ty += 1\n\t\telse:\n\t\t\ty -= 1\n\t\tvisited[x][y] = True\n\t\tlast = c\n\tif done == 0 and (last != 'R' and visited[x - 1][y] or (last != 'L' and visited[x + 1][y]) or (last != 'U' and visited[x][y - 1]) or (last != 'D' and visited[x][y + 1])):\n\t\tprint('BUG')\n\t\tdone = 1\n\tif done == 0:\n\t\tprint('OK')\n",
+    "s = input()\n(x, y) = (0, 0)\nused = set()\nused.add((x, y))\nbo = 0\nfor e in s:\n\tif e == 'L':\n\t\tx += 1\n\telif e == 'R':\n\t\tx -= 1\n\telif e == 'U':\n\t\ty += 1\n\telse:\n\t\ty -= 1\n\ta = (x - 1, y) in used\n\tb = (x + 1, y) in used\n\tc = (x, y - 1) in used\n\td = (x, y + 1) in used\n\tif a + b + c + d > 1:\n\t\tbo = 1\n\tif (x, y) in used:\n\t\tbo = 1\n\tused.add((x, y))\nprint('OK' if not bo else 'BUG')\n",
+    "def t(p, r):\n\treturn not ((p[0] + 1, p[1]) in r or (p[0] - 1, p[1]) in r or (p[0], p[1] + 1) in r or ((p[0], p[1] - 1) in r))\n\ndef solve():\n\tpath = set()\n\tcur = [0, 0]\n\tfor move in input():\n\t\tlp = tuple(cur)\n\t\tif move == 'L':\n\t\t\tcur[0] -= 1\n\t\telif move == 'R':\n\t\t\tcur[0] += 1\n\t\telif move == 'U':\n\t\t\tcur[1] += 1\n\t\telse:\n\t\t\tcur[1] -= 1\n\t\tif t(cur, path):\n\t\t\tpath.add(lp)\n\t\telse:\n\t\t\tprint('BUG')\n\t\t\treturn\n\tprint('OK')\nsolve()\n",
+    "s = input().strip()\nstart = (0, 0)\nMap = [(0, 0)]\ngraph = {}\nnum = {}\nnum[start] = 0\nx = 0\ny = 0\nfor t in s:\n\tif t == 'U':\n\t\ty += 1\n\telif t == 'D':\n\t\ty -= 1\n\telif t == 'L':\n\t\tx -= 1\n\telse:\n\t\tx += 1\n\tMap.append((x, y))\ngoal = Map[-1]\nfor m in Map:\n\tgraph[m] = set()\n\tfor n in Map:\n\t\tif m != n and (abs(m[0] - n[0]) == 1 and m[1] == n[1] or (abs(m[1] - n[1]) == 1 and m[0] == n[0])):\n\t\t\tgraph[m].add(n)\n(visited, queue) = (set(), [start])\nwhile queue:\n\tvertex = queue.pop(0)\n\tif vertex == goal:\n\t\tbreak\n\tif vertex not in visited:\n\t\tvisited.add(vertex)\n\t\tfor item in graph[vertex] - visited:\n\t\t\tnum[item] = num[vertex] + 1\n\t\t\tqueue.append(item)\nif len(s) > num[goal]:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "s = input()\na = set()\na.add((0, 0))\nx = 0\ny = 0\ndx = [-1, 0, 1, 0, 0]\ndy = [0, 1, 0, -1, 0]\nd = {'L': 0, 'U': 1, 'R': 2, 'D': 3}\nb = False\nfor i in s:\n\tx += dx[d[i]]\n\ty += dy[d[i]]\n\tc = 0\n\tfor j in range(5):\n\t\tif (x + dx[j], y + dy[j]) in a:\n\t\t\tc += 1\n\tif c > 1:\n\t\tb = True\n\t\tbreak\n\ta.add((x, y))\nprint(['OK', 'BUG'][b])\n",
+    "s = input()\ng = [[0 for i in range(206)] for j in range(206)]\nx = 102\ny = 102\ns = s + '0'\ni = 0\nwhile s[i]:\n\tg[x][y] = 1\n\tif s[i] == 'L':\n\t\tx -= 1\n\telif s[i] == 'R':\n\t\tx += 1\n\telif s[i] == 'U':\n\t\ty += 1\n\telif s[i] == 'D':\n\t\ty -= 1\n\tif g[x][y] + g[x - 1][y] + g[x + 1][y] + g[x][y - 1] + g[x][y + 1] > 1:\n\t\tbreak\n\ti += 1\nif s[i] != '0':\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "import os, sys\nfrom io import BytesIO, IOBase\n\ndef main():\n\tarr = [[0] * 500 for _ in range(500)]\n\tarr[0][0] = 1\n\t(a, b) = (0, 0)\n\tfor i in input().strip():\n\t\t(x, y) = (a, b)\n\t\ta += (i == 'R') - (i == 'L')\n\t\tb += (i == 'U') - (i == 'D')\n\t\tif arr[a][b]:\n\t\t\treturn 'BUG'\n\t\t(arr[x + 1][y], arr[x - 1][y], arr[x][y + 1], arr[x][y - 1]) = (1, 1, 1, 1)\n\treturn 'OK'\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nprint(main())\n",
+    "a = input()\nb = [[0, 0]]\nx = 0\ny = 0\nz = 1\nfor i in range(len(a)):\n\tif a[i] == 'R':\n\t\tx += 1\n\t\tif [x, y] in b or [x + 1, y] in b or [x, y + 1] in b or ([x, y - 1] in b):\n\t\t\tz = 0\n\t\t\tbreak\n\tif a[i] == 'L':\n\t\tx -= 1\n\t\tif [x, y] in b or [x - 1, y] in b or [x, y + 1] in b or ([x, y - 1] in b):\n\t\t\tz = 0\n\t\t\tbreak\n\tif a[i] == 'U':\n\t\ty += 1\n\t\tif [x, y] in b or [x + 1, y] in b or [x, y + 1] in b or ([x - 1, y] in b):\n\t\t\tz = 0\n\t\t\tbreak\n\tif a[i] == 'D':\n\t\ty -= 1\n\t\tif [x, y] in b or [x + 1, y] in b or [x - 1, y] in b or ([x, y - 1] in b):\n\t\t\tz = 0\n\t\t\tbreak\n\tb.append([x, y])\nif z == 1:\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "def judge(x, y):\n\tglobal m\n\tif m[x][y] == 0:\n\t\treturn 1\n\treturn 0\n\ndef bfs():\n\tglobal dest\n\tq = []\n\tq.append([100, 100, 0])\n\tiq = 1\n\ti = 0\n\tvis = set()\n\tvis.add((100, 100))\n\twhile i <= iq - 1:\n\t\tx = q[i][0]\n\t\ty = q[i][1]\n\t\tdep = q[i][2]\n\t\tif x == dest[0] and y == dest[1]:\n\t\t\treturn dep\n\t\telse:\n\t\t\tif judge(x + 1, y) == 1 and (x + 1, y) not in vis:\n\t\t\t\tq.append([x + 1, y, dep + 1])\n\t\t\t\tiq += 1\n\t\t\t\tvis.add((x + 1, y))\n\t\t\tif judge(x - 1, y) == 1 and (x - 1, y) not in vis:\n\t\t\t\tq.append([x - 1, y, dep + 1])\n\t\t\t\tiq += 1\n\t\t\t\tvis.add((x - 1, y))\n\t\t\tif judge(x, y + 1) == 1 and (x, y + 1) not in vis:\n\t\t\t\tq.append([x, y + 1, dep + 1])\n\t\t\t\tiq += 1\n\t\t\t\tvis.add((x, y + 1))\n\t\t\tif judge(x, y - 1) == 1 and (x, y - 1) not in vis:\n\t\t\t\tq.append([x, y - 1, dep + 1])\n\t\t\t\tiq += 1\n\t\t\t\tvis.add((x, y - 1))\n\t\ti += 1\nmove = input()\nm = []\ndest = [100, 100]\nfor i in range(210):\n\tm.append([])\n\tfor j in range(210):\n\t\tm[i].append(1)\nm[100][100] = 0\nfor i in move:\n\tif i == 'U':\n\t\tdest[1] += 1\n\tif i == 'D':\n\t\tdest[1] -= 1\n\tif i == 'L':\n\t\tdest[0] -= 1\n\tif i == 'R':\n\t\tdest[0] += 1\n\tm[dest[0]][dest[1]] = 0\nif bfs() == len(move):\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "s = input()\nx = 0\ny = 0\nk2 = ['00']\np = 0\nm = 0\nfor i in range(len(s)):\n\tm = 0\n\tif s[i] == 'L':\n\t\tx -= 1\n\telif s[i] == 'R':\n\t\tx += 1\n\telif s[i] == 'U':\n\t\ty += 1\n\telif s[i] == 'D':\n\t\ty -= 1\n\tif str(x) + str(y) in k2:\n\t\tp += 1\n\t\tbreak\n\tk2.append(str(x) + str(y))\n\tif str(x - 1) + str(y) in k2:\n\t\tm += 1\n\tif str(x + 1) + str(y) in k2:\n\t\tm += 1\n\tif str(x) + str(y - 1) in k2:\n\t\tm += 1\n\tif str(x) + str(y + 1) in k2:\n\t\tm += 1\n\tif m > 1:\n\t\tp += 1\nif p == 0:\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "s = input()\nx = 0\ny = 0\nvisited = set()\nvisited.add('0 0')\nres = True\nprev = [0, 0]\ndirs = [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]\nfor c in s:\n\tif c == 'L':\n\t\tx -= 1\n\telif c == 'R':\n\t\tx += 1\n\telif c == 'U':\n\t\ty += 1\n\telif c == 'D':\n\t\ty -= 1\n\tfor dir in dirs:\n\t\tif x + dir[0] == prev[0] and y + dir[1] == prev[1]:\n\t\t\tcontinue\n\t\tpos = str(x + dir[0]) + ' ' + str(y + dir[1])\n\t\tif pos in visited:\n\t\t\tres = False\n\t\t\tbreak\n\tprev = [x, y]\n\tvisited.add(str(x) + ' ' + str(y))\nif res:\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "def main():\n\tpath = input()\n\tif isValid(path):\n\t\tprint('OK')\n\telse:\n\t\tprint('BUG')\n\ndef isValid(s):\n\tpositions = set()\n\tprev = None\n\tcurrent = (0, 0)\n\tpositions.add(current)\n\tfor c in s:\n\t\tif c == 'L':\n\t\t\tnext = left(current)\n\t\telif c == 'R':\n\t\t\tnext = right(current)\n\t\telif c == 'U':\n\t\t\tnext = up(current)\n\t\telif c == 'D':\n\t\t\tnext = down(current)\n\t\telse:\n\t\t\tassert False\n\t\tif next == prev:\n\t\t\treturn False\n\t\tprev = current\n\t\tcurrent = next\n\t\tpositions.add(current)\n\t\tcount = 0\n\t\tif left(current) in positions:\n\t\t\tcount += 1\n\t\tif right(current) in positions:\n\t\t\tcount += 1\n\t\tif up(current) in positions:\n\t\t\tcount += 1\n\t\tif down(current) in positions:\n\t\t\tcount += 1\n\t\tif count > 1:\n\t\t\treturn False\n\treturn True\n\ndef left(point):\n\treturn (point[0] - 1, point[1])\n\ndef right(point):\n\treturn (point[0] + 1, point[1])\n\ndef up(point):\n\treturn (point[0], point[1] + 1)\n\ndef down(point):\n\treturn (point[0], point[1] - 1)\nmain()\n",
+    "import sys\nmoves = sys.stdin.readline()\ngrid = []\nfor i in range(500):\n\tgrid.append([])\n\tfor j in range(500):\n\t\tgrid[i].append(0)\n(curx, cury) = (250, 250)\nfor move in moves:\n\tif grid[curx][cury] != 0:\n\t\tprint('BUG')\n\t\tsys.exit(0)\n\tgrid[curx][cury] = 1\n\tif move == 'R':\n\t\tgrid[curx][cury + 1] = 1\n\t\tgrid[curx - 1][cury] = 1\n\t\tgrid[curx][cury - 1] = 1\n\t\tcurx += 1\n\tif move == 'L':\n\t\tgrid[curx][cury + 1] = 1\n\t\tgrid[curx + 1][cury] = 1\n\t\tgrid[curx][cury - 1] = 1\n\t\tcurx -= 1\n\tif move == 'U':\n\t\tgrid[curx + 1][cury] = 1\n\t\tgrid[curx - 1][cury] = 1\n\t\tgrid[curx][cury - 1] = 1\n\t\tcury += 1\n\tif move == 'D':\n\t\tgrid[curx + 1][cury] = 1\n\t\tgrid[curx - 1][cury] = 1\n\t\tgrid[curx][cury + 1] = 1\n\t\tcury -= 1\nprint('OK')\n",
+    "import sys\n\ndef left_tile(tile):\n\treturn (tile[0] - 1, tile[1])\n\ndef right_tile(tile):\n\treturn (tile[0] + 1, tile[1])\n\ndef upper_tile(tile):\n\treturn (tile[0], tile[1] + 1)\n\ndef lower_tile(tile):\n\treturn (tile[0], tile[1] - 1)\n\ndef nearby_tiles(tile, move):\n\tif move == 'L':\n\t\treturn {upper_tile(tile), lower_tile(tile), right_tile(tile)}\n\telif move == 'R':\n\t\treturn {upper_tile(tile), lower_tile(tile), left_tile(tile)}\n\telif move == 'U':\n\t\treturn {left_tile(tile), lower_tile(tile), right_tile(tile)}\n\telse:\n\t\treturn {left_tile(tile), upper_tile(tile), right_tile(tile)}\n\ndef is_shortest_path(robot_path, change_position):\n\treached_tiles = set()\n\tposition = (0, 0)\n\treached_tiles.update([position])\n\tfor move in robot_path:\n\t\treached_tiles.update(nearby_tiles(position, move))\n\t\tposition = change_position[move](position)\n\t\tif position in reached_tiles:\n\t\t\treturn False\n\t\treached_tiles.update([position])\n\treturn True\n\ndef main(sinp=sys.stdin, sout=sys.stdout):\n\trobot_path = sinp.readline().strip()\n\tchange_position = {'L': left_tile, 'R': right_tile, 'U': upper_tile, 'D': lower_tile}\n\tresult = 'OK' if is_shortest_path(robot_path, change_position) else 'BUG'\n\tsout.write(result)\nmain()\n",
+    "s = input()\nfield = [[0] * (3 * len(s)) for i in range(3 * len(s))]\nwhen = [[-2] * (3 * len(s)) for i in range(3 * len(s))]\nfield[0][0] = 1\nwhen[0][0] = -1\n(x, y) = (0, 0)\nfor i in range(len(s)):\n\tc = s[i]\n\tif c == 'R':\n\t\tx += 1\n\tif c == 'L':\n\t\tx -= 1\n\tif c == 'U':\n\t\ty += 1\n\tif c == 'D':\n\t\ty -= 1\n\tfield[x][y] += 1\n\tif field[x][y] > 1:\n\t\tprint('BUG')\n\t\texit()\n\twhen[x][y] = i\nfor i in range(-len(s), len(s) + 1):\n\tfor j in range(-len(s), len(s) + 1):\n\t\tif when[i][j] == -2:\n\t\t\tcontinue\n\t\tif when[i][j] + 1 < max((when[i + 1][j], when[i - 1][j], when[i][j + 1], when[i][j - 1])):\n\t\t\tprint('BUG')\n\t\t\texit()\nprint('OK')\n",
+    "g = {}\n(x, y) = (0, 0)\ns = input()\n\ndef add_edge(x, y, xn, yn):\n\tp1 = str(x) + '^' + str(y)\n\tp2 = str(xn) + '^' + str(yn)\n\tg[p1] = [p2] if p1 not in g else g[p1] + [p2]\n\tg[p2] = [p1] if p2 not in g else g[p2] + [p1]\nsteps = 0\nfor m in s:\n\t(xn, yn) = (x, y)\n\tif m == 'U':\n\t\tyn += 1\n\tif m == 'D':\n\t\tyn -= 1\n\tif m == 'R':\n\t\txn += 1\n\tif m == 'L':\n\t\txn -= 1\n\tadd_edge(x, y, xn, yn)\n\t(x, y) = (xn, yn)\n\tsteps += 1\nfor any in g:\n\t(fx, fy) = map(int, any.split('^'))\n\tnearby = [str(fx + 1) + '^' + str(fy), str(fx - 1) + '^' + str(fy), str(fx) + '^' + str(fy - 1), str(fx) + '^' + str(fy + 1)]\n\tfor ne in range(4):\n\t\tnear = nearby[ne]\n\t\tif near in g:\n\t\t\t(nearx, neary) = map(int, near.split('^'))\n\t\t\tadd_edge(fx, fy, nearx, neary)\n(fx, fy) = (x, y)\nx = -1 * x + 100 if x < 0 else x\ny = -1 * y + 100 if y < 0 else y\nfrom collections import deque\nd = deque(['0^0'])\nvisited = [[False] * 201 for i in range(201)]\nlevels = [[-1] * 201 for i in range(201)]\nvisited[0][0] = True\nlevels[0][0] = 0\nwhile d:\n\tnext = d.popleft()\n\t(nextx, nexty) = map(int, [k for k in next.split('^')])\n\tnextx = nextx * -1 + 100 if nextx < 0 else nextx\n\tnexty = nexty * -1 + 100 if nexty < 0 else nexty\n\tfor ea in g[next]:\n\t\t(eax, eay) = map(int, [k for k in ea.split('^')])\n\t\teax = eax * -1 + 100 if eax < 0 else eax\n\t\teay = -1 * eay + 100 if eay < 0 else eay\n\t\tif not visited[eax][eay]:\n\t\t\tvisited[eax][eay] = True\n\t\t\td.append(ea)\n\t\t\tlevels[eax][eay] = levels[nextx][nexty] + 1\nif fx ** 2 + fy ** 2 == 1 and steps != 1:\n\tprint('BUG')\n\tquit()\nif levels[x][y] == steps:\n\tprint('OK')\n\tquit()\nprint('BUG')\n",
+    "squares = [[0, 0]]\nx = y = 0\ncheck = True\n\ndef readInput(direction, x, y):\n\tif direction == 'R':\n\t\treturn [x + 1, y]\n\telif direction == 'L':\n\t\treturn [x - 1, y]\n\telif direction == 'U':\n\t\treturn [x, y + 1]\n\telif direction == 'D':\n\t\treturn [x, y - 1]\npath = input()\nfor d in path:\n\tprev_square = [x, y]\n\tif not check:\n\t\tbreak\n\t(x, y) = readInput(d, x, y)\n\tif [x, y] in squares:\n\t\tcheck = False\n\t\tbreak\n\tfor direct in 'RLUD':\n\t\tadjacent = readInput(direct, x, y)\n\t\tif adjacent != prev_square:\n\t\t\tif adjacent in squares:\n\t\t\t\tcheck = False\n\t\t\t\tbreak\n\tsquares.append([x, y])\nif check:\n\tprint('OK')\nelse:\n\tprint('BUG')\n",
+    "import os\nimport sys\ndebug = True\nif debug and os.path.exists('input.in'):\n\tinput = open('input.in', 'r').readline\nelse:\n\tdebug = False\n\tinput = sys.stdin.readline\n\ndef inp():\n\treturn int(input())\n\ndef inlt():\n\treturn list(map(int, input().split()))\n\ndef insr():\n\ts = input()\n\treturn s[:len(s) - 1]\n\ndef invr():\n\treturn map(int, input().split())\ntest_count = 1\nif debug:\n\ttest_count = inp()\nfor t in range(test_count):\n\tif debug:\n\t\tprint('Test Case #', t + 1)\n\tmoves = input().strip()\n\tlocations = set()\n\tcurrX = 0\n\tcurrY = 0\n\tlocations.add((0, 0))\n\tans = 'OK'\n\tfor x in moves:\n\t\tlast = (currX, currY)\n\t\tif x == 'L':\n\t\t\tcurrX -= 1\n\t\telif x == 'R':\n\t\t\tcurrX += 1\n\t\telif x == 'D':\n\t\t\tcurrY -= 1\n\t\telse:\n\t\t\tcurrY += 1\n\t\tcurr = (currX, currY)\n\t\tif curr in locations or ((currX - 1, currY) != last and (currX - 1, currY) in locations) or ((currX + 1, currY) != last and (currX + 1, currY) in locations) or ((currX, currY + 1) != last and (currX, currY + 1) in locations) or ((currX, currY - 1) != last and (currX, currY - 1) in locations):\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\t\tlocations.add(curr)\n\tprint(ans)\n",
+    "word = input()\nd = {}\n(curx, cury) = (0, 0)\n(prevx, prevy) = (0, 0)\nd[0, 0] = 1\nf = 0\nfor i in word:\n\tif i == 'L':\n\t\tcurx -= 1\n\telif i == 'R':\n\t\tcurx += 1\n\telif i == 'D':\n\t\tcury -= 1\n\telse:\n\t\tcury += 1\n\tt = (curx, cury)\n\tif t in d:\n\t\tf = 1\n\t\tbreak\n\telse:\n\t\td[t] = 1\nl = ['RUL', 'RDL', 'LUR', 'LDR', 'DLU', 'DRU', 'ULD', 'URD']\nm = []\nm += l\nfor i in range(2, 26):\n\tfor j in l:\n\t\tcur = ''\n\t\tfor k in j:\n\t\t\tcur += k * i\n\t\tif 'L' not in cur:\n\t\t\tcur += 'L' * (i - 1)\n\t\telif 'R' not in cur:\n\t\t\tcur += 'R' * (i - 1)\n\t\telif 'U' not in cur:\n\t\t\tcur += 'U' * (i - 1)\n\t\telif 'D' not in cur:\n\t\t\tcur += 'D' * (i - 1)\n\t\tm.append(cur)\nfor i in m:\n\tif i in word:\n\t\tf = 1\n\t\tbreak\nif f == 1:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "from collections import namedtuple\nPos = namedtuple('Pos', 'x y')\ns = input()\ng = {}\n\ndef add(last, pos):\n\tif last not in g:\n\t\tg[last] = set()\n\tg[last].add(pos)\n\tif pos not in g:\n\t\tg[pos] = set()\n\tg[pos].add(last)\nstart = Pos(100, 100)\nlast = start\nok = True\nfor ch in s:\n\tpos = Pos(0, 0)\n\tif ch == 'L':\n\t\tpos = Pos(last.x - 1, last.y)\n\telif ch == 'R':\n\t\tpos = Pos(last.x + 1, last.y)\n\telif ch == 'U':\n\t\tpos = Pos(last.x, last.y - 1)\n\telif ch == 'D':\n\t\tpos = Pos(last.x, last.y + 1)\n\tif pos == start:\n\t\tok = False\n\t\tbreak\n\tif pos in g:\n\t\tok = False\n\t\tbreak\n\tp1 = Pos(pos.x - 1, pos.y)\n\tp2 = Pos(pos.x + 1, pos.y)\n\tp3 = Pos(pos.x, pos.y + 1)\n\tp4 = Pos(pos.x, pos.y - 1)\n\n\tdef not_good(pc):\n\t\treturn pc != last and pc in g\n\tif not_good(p1) or not_good(p2) or not_good(p3) or not_good(p4):\n\t\tok = False\n\t\tbreak\n\tadd(last, pos)\n\tlast = pos\nprint('OK' if ok else 'BUG')\n",
+    "a = []\nINF = 300\nk = 300\nfor i in range(k):\n\ta.append([INF] * k)\ncurx = k // 2\ncury = k // 2\nway = input()\na[curx][cury] = 0\na[curx + 1][cury] = 1\na[curx - 1][cury] = 1\na[curx][cury + 1] = 1\na[curx][cury - 1] = 1\nstep = 0\nfor i in way:\n\tif i == 'L':\n\t\tcurx -= 1\n\tif i == 'U':\n\t\tcury += 1\n\tif i == 'R':\n\t\tcurx += 1\n\tif i == 'D':\n\t\tcury -= 1\n\tstep += 1\n\tif a[curx][cury] != step:\n\t\tprint('BUG')\n\t\texit(0)\n\telse:\n\t\ta[curx][cury] = min(step, a[curx][cury])\n\t\ta[curx + 1][cury] = min(step + 1, a[curx + 1][cury])\n\t\ta[curx - 1][cury] = min(step + 1, a[curx - 1][cury])\n\t\ta[curx][cury + 1] = min(step + 1, a[curx][cury + 1])\n\t\ta[curx][cury - 1] = min(step + 1, a[curx][cury - 1])\nprint('OK')\n",
+    "tAdd = lambda p, q: (p[0] + q[0], p[1] + q[1])\ndirection = {'U': (0, -1), 'R': (1, 0), 'D': (0, 1), 'L': (-1, 0)}\npath = input()\npos = (0, 0)\nvisited = set()\nbug = False\nfor d in path:\n\tnextp = tAdd(pos, direction[d])\n\tif not visited.isdisjoint([tAdd(nextp, direction[d]) for d in direction]):\n\t\tbug = True\n\t\tbreak\n\tvisited.add(pos)\n\tpos = nextp\nprint('BUG' if bug else 'OK')\n",
+    "def adjacent(move):\n\treturn [move, (move[0], move[1] - 1), (move[0], move[1] + 1), (move[0] - 1, move[1]), (move[0] + 1, move[1])]\nmoves = [(0, 0)]\ninp = input()\nfor move in inp:\n\tif move == 'R':\n\t\tmoves.append((moves[-1][0] + 1, moves[-1][1]))\n\telif move == 'L':\n\t\tmoves.append((moves[-1][0] - 1, moves[-1][1]))\n\telif move == 'U':\n\t\tmoves.append((moves[-1][0], moves[-1][1] + 1))\n\telif move == 'D':\n\t\tmoves.append((moves[-1][0], moves[-1][1] - 1))\ngoon = True\nfor move in moves:\n\tposs = adjacent(move)\n\tfor loc in poss:\n\t\tif loc in moves[moves.index(move) + 2:]:\n\t\t\tprint('BUG')\n\t\t\tgoon = False\n\t\t\tbreak\n\tif not goon:\n\t\tbreak\nif goon:\n\tprint('OK')\n",
+    "record_of_movements = input()\n(x, y) = (0, 0)\nd_movement = {'L': (0, -1), 'R': (0, 1), 'U': (1, 0), 'D': (-1, 0)}\nd = {(x, y): ''}\nbug = False\nfor move in record_of_movements:\n\ttemp = (x, y)\n\tx += d_movement[move][0]\n\ty += d_movement[move][1]\n\tif (x, y) not in d:\n\t\tfor step in d_movement:\n\t\t\tif (x + d_movement[step][0], y + d_movement[step][1]) != temp and (x + d_movement[step][0], y + d_movement[step][1]) in d:\n\t\t\t\tbug = True\n\t\t\t\tbreak\n\telse:\n\t\tbug = True\n\tif bug:\n\t\tbreak\n\td[x, y] = ''\nif bug:\n\tprint('BUG')\nelse:\n\tprint('OK')\n",
+    "def main():\n\tmoves = input()\n\tx = y = 0\n\tans = 0\n\tcoords = [[0, 0]]\n\tfor i in moves:\n\t\tif i == 'L':\n\t\t\tx += 1\n\t\telif i == 'R':\n\t\t\tx -= 1\n\t\telif i == 'U':\n\t\t\ty += 1\n\t\telif i == 'D':\n\t\t\ty -= 1\n\t\tl = r = u = d = 0\n\t\tif [x - 1, y] in coords:\n\t\t\tl = 1\n\t\tif [x + 1, y] in coords:\n\t\t\tr = 1\n\t\tif [x, y + 1] in coords:\n\t\t\tu = 1\n\t\tif [x, y - 1] in coords:\n\t\t\td = 1\n\t\tif l + r + u + d > 1:\n\t\t\tans = 1\n\t\tif [x, y] in coords:\n\t\t\tans = 1\n\t\tcoords.append([x, y])\n\tprint('OK' if ans == 0 else 'BUG')\nmain()\n",
+    "moves = input()\nfield = set()\nans = None\nx = 0\ny = 0\nlast = (x, y)\nfor i in moves:\n\tif i == 'R':\n\t\tx += 1\n\telif i == 'L':\n\t\tx -= 1\n\telif i == 'U':\n\t\ty += 1\n\telse:\n\t\ty -= 1\n\tcurr = (x, y)\n\tfor ii in (curr, (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):\n\t\tif ii in field:\n\t\t\tans = 'BUG'\n\tfield.add(last)\n\tlast = curr\nif ans:\n\tprint(ans)\nelse:\n\tprint('OK')\n",
+    "import sys, os, io\nimport math, bisect, operator\n(inf, mod) = (float('inf'), 10 ** 9 + 7)\nfrom itertools import groupby, accumulate\nfrom heapq import heapify, heappop, heappush\nfrom collections import deque, Counter, defaultdict\nI = lambda : int(sys.stdin.buffer.readline())\nNeo = lambda : list(map(int, sys.stdin.buffer.readline().split()))\ns = input()\nd = defaultdict(int)\n(i, j) = (0, 0)\nd[0, 0] = 1\nfor c in s:\n\t(x, y) = (i, j)\n\tif c == 'L':\n\t\tj -= 1\n\telif c == 'R':\n\t\tj += 1\n\telif c == 'U':\n\t\ti -= 1\n\telse:\n\t\ti += 1\n\tA = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1), (i, j)]\n\tfor (p, q) in A:\n\t\tif (p, q) in d and (p, q) != (x, y):\n\t\t\tprint('BUG')\n\t\t\texit()\n\td[i, j] = 1\nprint('OK')\n",
+    "d = [[0, 1], [0, -1], [1, 0], [-1, 0], [0, 0]]\npath = input()\nvis = []\ncur = [0, 0]\nf = True\nfor p in path:\n\tprev = cur\n\tif p == 'L':\n\t\tindex = 0\n\telif p == 'R':\n\t\tindex = 1\n\telif p == 'U':\n\t\tindex = 2\n\telse:\n\t\tindex = 3\n\tcur = [cur[0] + d[index][0], cur[1] + d[index][1]]\n\tif cur in vis:\n\t\tf = False\n\t\tprint('BUG')\n\t\tbreak\n\tfor (dx, dy) in d:\n\t\tvis.append([prev[0] + dx, prev[1] + dy])\nif f:\n\tprint('OK')\n",
+    "import sys\n\ndef fastio():\n\tfrom io import StringIO\n\tfrom atexit import register\n\tglobal input\n\tsys.stdin = StringIO(sys.stdin.read())\n\tinput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\tsys.stdout = StringIO()\n\tregister(lambda : sys.__stdout__.write(sys.stdout.getvalue()))\nfastio()\nINF = 10 ** 20\nMOD = 10 ** 9 + 7\nI = lambda : list(map(int, input().split()))\nfrom math import gcd\nfrom math import ceil\nfrom collections import defaultdict as dd, Counter\nfrom bisect import bisect_left as bl, bisect_right as br\ns = input()\nd = set()\ncur = [0, 0]\nans = 'OK'\nd.add(tuple(cur))\nprev = tuple(cur)\nfor i in s:\n\tif i == 'D':\n\t\tcur[1] -= 1\n\telif i == 'U':\n\t\tcur[1] += 1\n\telif i == 'L':\n\t\tcur[0] -= 1\n\telse:\n\t\tcur[0] += 1\n\tif tuple(cur) in d:\n\t\tans = 'BUG'\n\t\tbreak\n\tfor i in [[-1, 0], [1, 0], [0, -1], [0, 1]]:\n\t\tx = cur[0] + i[0]\n\t\ty = cur[1] + i[1]\n\t\tif (x, y) in d and (x, y) != prev:\n\t\t\tans = 'BUG'\n\t\t\tbreak\n\tt = tuple(cur)\n\tprev = t\n\td.add(tuple(cur))\nprint(ans)\n"
+  ],
+  "test_cases": [
+    {
+      "input": "DDUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLLLLLLLRRRRDDDDDDDUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULLDLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUURURLRLLLLULLRLRURLULRLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDRLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRRRRRRRRRRDDDDDDDDDDDDDDDDDDDRRRRRRRRRRRRRRRRRRRUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLLUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDLLLLLLLDDDDDDDRRRRRRRUUUUUURRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDLLLDDDRRRUURRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "L\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LUUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRUULLD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLLLLLLLLLLLLLLLRUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDLLLLDDDDRRRRUUURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDLLDDRRURRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LUUUULLLLDDDDRRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULURL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DLURUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDRDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLDDLDLLDDDLLLDLLLLLUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UURUURRUUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DRDRD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RURRRRLURRRURRUURRRRRRRRDDULULRRURRRDRRRRRRRRRRLDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRRRURRURUURRRRRDDDDLDDDRDDDDLLDLL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDUUUUUUUUUUUURRRRRRRRRRRRRLLLLLLLLLLLLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUURDLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUULLLLRDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULULL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LRUD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLDDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RLRRRRRDRRDRRRRDLRRRRRRRDLRLDDLRRRRLDLDRDRRRRDRDRDRDLRRURRLRRRRDRRRRRRRRLDDRLRRDRRRRRRRDRDRLDRDDDRDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDLDRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDDDDDDDDDDDDDDLLLLLLLLLLLLLLLLLLLLLLLLRRRRRRRRRRRRRRRRRRRRRRRRRRRUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDRDDLDDDDDDDRDDLD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRRUUULLLDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "R\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDDDDDDDLLLLLLLLLLLDDDDDDDDDDDRRRRRRRRRRRUUUUUUUUUURRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRRRRRRRRRRURLLLLLLLLLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUURDRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLDLLLLLRRRRDDLDDDDUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRDDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RULDLLUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUULURLRLLLRULLRLRURLULRLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDRRL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDULR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDUUULLLLDDDURRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRULU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LUD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUURRUURUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RLRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDLRRRRRRRRRRDRRRURRLULUDDRRRRRRRRUURRURRRULRRRRUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLLLLRRRRRRRRRRRRRUUUUUUUUUUUUDDDDDDDDDDDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UDULLLLRDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LURD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLRDRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRLDRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDDRDDDDDDDLDDRDDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "URD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULLU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DRDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLRURRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDLLUURR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RUUULL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LRRDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLUDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRRRUDDDLLLLUUUDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URLLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UDRLLLLUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRDRLDLD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDRD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "URLUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DULLULUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLUULRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUURULD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLDLLDDDDRDDDLDDDDRRRRRUURURRURRRRRU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDRDDDRDLRDRDRRRRRRRDRRLRDDLRRRRRRRRDRRRRLRRURRLDRDRDRDRRRRDRDLDLRRRRLDDLRLDRRRRRRRLDRRRRDRRDRRRRRLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUUUUDDDDLDDRRRRLLLLLDLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RULULLDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUULURLRLRLRULLRLRURLULLLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DURL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRRDLRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLUURR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRLRLDDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULRUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UDLLULUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UURRLULLULLLULRURLRLLURLRLRLRULUULULRRRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLDLUUDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULRL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRUULLDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLUUUR\n",
+      "output": "OK\n"
+    }
+  ],
+  "extracted_at": "2026-09-03T16:24:07.382365+00:00"
+}
