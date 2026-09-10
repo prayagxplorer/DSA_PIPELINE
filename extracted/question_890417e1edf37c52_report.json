@@ -1,43 +1,22 @@
 {
   "question_id": "https://codeforces.com/problemset/problem/871/A",
-  "source": "codeforces",
   "title": null,
-  "question_text": "You are given several queries. In the i-th query you are given a single positive integer ni. You are to represent ni as a sum of maximum possible number of composite summands and print this maximum number, or print -1, if there are no such splittings.\n\nAn integer greater than 1 is composite, if it is not prime, i.e. if it has positive divisors not equal to 1 and the integer itself.\n\nInput\n\nThe first line contains single integer q (1 ≤ q ≤ 105) — the number of queries.\n\nq lines follow. The (i + 1)-th line contains single integer ni (1 ≤ ni ≤ 109) — the i-th query.\n\nOutput\n\nFor each query print the maximum possible number of summands in a valid splitting to composite summands, or -1, if there are no such splittings.\n\nExamples\n\nInput\n\n1\n12\n\n\nOutput\n\n3\n\n\nInput\n\n2\n6\n8\n\n\nOutput\n\n1\n2\n\n\nInput\n\n3\n1\n2\n3\n\n\nOutput\n\n-1\n-1\n-1\n\nNote\n\n12 = 4 + 4 + 4 = 4 + 8 = 6 + 6 = 12, but the first splitting has the maximum possible number of summands.\n\n8 = 4 + 4, 6 can't be split into several composite summands.\n\n1, 2, 3 are less than any composite number, so they do not have valid splittings.",
-  "difficulty": "EASY",
-  "requested_tags": [
+  "description": "You are given several queries. In the i-th query you are given a single positive integer ni. You are to represent ni as a sum of maximum possible number of composite summands and print this maximum number, or print -1, if there are no such splittings.\n\nAn integer greater than 1 is composite, if it is not prime, i.e. if it has positive divisors not equal to 1 and the integer itself.\n\nInput\n\nThe first line contains single integer q (1 ≤ q ≤ 105) — the number of queries.\n\nq lines follow. The (i + 1)-th line contains single integer ni (1 ≤ ni ≤ 109) — the i-th query.\n\nOutput\n\nFor each query print the maximum possible number of summands in a valid splitting to composite summands, or -1, if there are no such splittings.\n\nExamples\n\nInput\n\n1\n12\n\n\nOutput\n\n3\n\n\nInput\n\n2\n6\n8\n\n\nOutput\n\n1\n2\n\n\nInput\n\n3\n1\n2\n3\n\n\nOutput\n\n-1\n-1\n-1\n\nNote\n\n12 = 4 + 4 + 4 = 4 + 8 = 6 + 6 = 12, but the first splitting has the maximum possible number of summands.\n\n8 = 4 + 4, 6 can't be split into several composite summands.\n\n1, 2, 3 are less than any composite number, so they do not have valid splittings.",
+  "raw_difficulty": "EASY",
+  "constraints": [],
+  "hints": [],
+  "categories": [
     "dp",
     "math",
     "greedy"
   ],
-  "matched_tags": [
-    "dp",
-    "math",
-    "greedy"
-  ],
-  "relaxation_floor": 2,
-  "all_tags": [
-    "number theory",
-    "greedy",
-    "math",
-    "dp"
-  ],
-  "time_limit_seconds": 2.0,
-  "memory_limit_mb": 256.0,
-  "candidate_solutions": [
-    "t = int(input())\nfor i in range(t):\n\tn = int(input())\n\tif n in [1, 2, 3, 5, 7, 11]:\n\t\tprint(-1)\n\telse:\n\t\tprint(n // 4 - n % 2)\n",
-    "for i in range(int(input())):\n\tnum = int(input())\n\tprint(-1 if num in [1, 2, 3, 5, 7, 11] else (num >> 2) - (num & 1))\n",
-    "n = int(input())\nwhile n:\n\tn -= 1\n\tnum = int(input())\n\tif num % 4 == 0:\n\t\tprint(num // 4)\n\telif num % 4 == 1:\n\t\tprint(num // 4 - 2 + 1 if num // 4 - 2 + 1 > 0 else -1)\n\telif num % 4 == 2:\n\t\tprint(num // 4 if num // 4 > 0 else -1)\n\telif num % 4 == 3:\n\t\tprint(num // 4 - 2 + 1 if num // 4 - 2 > 0 else -1)\n",
-    "def find(n):\n\tif n % 4 == 0:\n\t\treturn n // 4\n\telif n % 4 == 1:\n\t\tif n >= 4 * 2 + 1:\n\t\t\treturn n // 4 - 1\n\t\telse:\n\t\t\treturn -1\n\telif n % 4 == 2:\n\t\tif n > 2:\n\t\t\treturn n // 4\n\t\telse:\n\t\t\treturn -1\n\telif n >= 4 * 3 + 3:\n\t\treturn n // 4 - 1\n\telse:\n\t\treturn -1\nfor _ in range(int(input())):\n\tprint(find(int(input())))\n",
-    "for _ in ' ' * int(input()):\n\ta = int(input())\n\tif a < 4 or a in [5, 7, 11]:\n\t\tprint(-1)\n\telse:\n\t\tprint(a // 4 - (a % 4 % 2 != 0))\n",
-    "t = int(input())\nfor i in range(t):\n\tn = int(input())\n\tif n in [1, 2, 3, 5, 7, 11]:\n\t\tprint(-1)\n\telif n % 4 == 0:\n\t\tprint(n // 4)\n\telif n % 4 == 1:\n\t\tprint((n - 9) // 4 + 1)\n\telif n % 4 == 2:\n\t\tprint((n - 6) // 4 + 1)\n\telif n % 4 == 3:\n\t\tprint((n - 15) // 4 + 2)\n",
-    "import sys\nreadline = sys.stdin.readline\nQ = int(readline())\nAns = [None] * Q\nans = [None, -1, -1, -1, 1, -1, 1, -1, 2, 1, 2, -1, 3, 2, 3, 2]\nfor qu in range(Q):\n\tN = int(readline())\n\tif N <= 15:\n\t\tAns[qu] = ans[N]\n\t\tcontinue\n\tif N % 4 == 0:\n\t\tAns[qu] = N // 4\n\telif N % 4 == 1:\n\t\tAns[qu] = N // 4 - 1\n\telif N % 4 == 2:\n\t\tAns[qu] = N // 4\n\telse:\n\t\tAns[qu] = N // 4 - 1\nprint('\\n'.join(map(str, Ans)))\n",
-    "fun = lambda num: -1 if num in [1, 2, 3, 5, 7, 11] else num // 4 - num % 2\n[print(fun(int(input()))) for i in range(int(input()))]\n"
-  ],
-  "test_cases": [
+  "sampleTestCases": [
     {
       "input": "3\n4\n6\n9\n",
       "output": "1\n1\n1\n"
-    },
+    }
+  ],
+  "hiddenTestCases": [
     {
       "input": "6\n1\n2\n3\n5\n7\n11\n",
       "output": "-1\n-1\n-1\n-1\n-1\n-1\n"
@@ -303,5 +282,63 @@
       "output": "3\n"
     }
   ],
-  "extracted_at": "2026-09-04T16:21:25.926371+00:00"
+  "avgTimeComplexity": null,
+  "avgSpaceComplexity": null,
+  "overall_pass": true,
+  "sample_size_used": 18,
+  "total_test_cases_available": 67,
+  "candidates_tested": 8,
+  "best_solution_index": 2,
+  "best_solution_code": "n = int(input())\nwhile n:\n\tn -= 1\n\tnum = int(input())\n\tif num % 4 == 0:\n\t\tprint(num // 4)\n\telif num % 4 == 1:\n\t\tprint(num // 4 - 2 + 1 if num // 4 - 2 + 1 > 0 else -1)\n\telif num % 4 == 2:\n\t\tprint(num // 4 if num // 4 > 0 else -1)\n\telif num % 4 == 3:\n\t\tprint(num // 4 - 2 + 1 if num // 4 - 2 > 0 else -1)\n",
+  "per_solution_summary": [
+    {
+      "solution_index": 0,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.883
+    },
+    {
+      "solution_index": 1,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.723
+    },
+    {
+      "solution_index": 2,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.702
+    },
+    {
+      "solution_index": 3,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.749
+    },
+    {
+      "solution_index": 4,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.741
+    },
+    {
+      "solution_index": 5,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.731
+    },
+    {
+      "solution_index": 6,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.738
+    },
+    {
+      "solution_index": 7,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 0.794
+    }
+  ],
+  "detailed_error": null
 }

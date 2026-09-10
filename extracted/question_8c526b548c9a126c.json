@@ -1,0 +1,379 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/1384/D",
+  "source": "codeforces",
+  "title": null,
+  "question_text": "Koa the Koala and her best friend want to play a game.\n\nThe game starts with an array a of length n consisting of non-negative integers. Koa and her best friend move in turns and each have initially a score equal to 0. Koa starts.\n\nLet's describe a move in the game:\n\n  * During his move, a player chooses any element of the array and removes it from this array, xor-ing it with the current score of the player.\n\nMore formally: if the current score of the player is x and the chosen element is y, his new score will be x ⊕ y. Here ⊕ denotes [bitwise XOR operation](https://en.wikipedia.org/wiki/Bitwise_operation#XOR).\n\nNote that after a move element y is removed from a.\n\n  * The game ends when the array is empty. \n\n\n\nAt the end of the game the winner is the player with the maximum score. If both players have the same score then it's a draw.\n\nIf both players play optimally find out whether Koa will win, lose or draw the game.\n\nInput\n\nEach test contains multiple test cases. The first line contains t (1 ≤ t ≤ 10^4) — the number of test cases. Description of the test cases follows.\n\nThe first line of each test case contains the integer n (1 ≤ n ≤ 10^5) — the length of a.\n\nThe second line of each test case contains n integers a_1, a_2, …, a_n (0 ≤ a_i ≤ 10^9) — elements of a.\n\nIt is guaranteed that the sum of n over all test cases does not exceed 10^5.\n\nOutput\n\nFor each test case print:\n\n  * WIN if Koa will win the game. \n  * LOSE if Koa will lose the game. \n  * DRAW if the game ends in a draw. \n\nExamples\n\nInput\n\n\n3\n3\n1 2 2\n3\n2 2 3\n5\n0 0 0 2 2\n\n\nOutput\n\n\nWIN\nLOSE\nDRAW\n\n\nInput\n\n\n4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n0\n2\n5 4\n\n\nOutput\n\n\nWIN\nWIN\nDRAW\nWIN\n\nNote\n\nIn testcase 1 of the first sample we have:\n\na = [1, 2, 2]. Here Koa chooses 1, other player has to choose 2, Koa chooses another 2. Score for Koa is 1 ⊕ 2 = 3 and score for other player is 2 so Koa wins.",
+  "difficulty": "HARD",
+  "requested_tags": [
+    "dp",
+    "math",
+    "greedy"
+  ],
+  "matched_tags": [
+    "dp",
+    "math",
+    "greedy"
+  ],
+  "relaxation_floor": 2,
+  "all_tags": [
+    "greedy",
+    "math",
+    "dp",
+    "bitmasks",
+    "games",
+    "constructive algorithms"
+  ],
+  "time_limit_seconds": 1.0,
+  "memory_limit_mb": 256.0,
+  "candidate_solutions": [
+    "from math import inf as inf\nfrom math import *\nfrom collections import *\nimport sys\nimport os\ninput = sys.stdin.readline\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tb = [0] * 31\n\tfl = 'DRAW'\n\tfor i in a:\n\t\tz = bin(i)[2:]\n\t\tz = z.zfill(31)\n\t\tfor j in range(31):\n\t\t\tif z[j] == '1':\n\t\t\t\tb[j] += 1\n\tfor i in b:\n\t\tif i % 2 == 0:\n\t\t\tcontinue\n\t\tif i % 4 == 3 and (n - i) % 2 == 0:\n\t\t\tfl = 'LOSE'\n\t\telse:\n\t\t\tfl = 'WIN'\n\t\tbreak\n\tprint(fl)\n",
+    "from __future__ import division, print_function\nMOD = 998244353\nmod = 10 ** 9 + 7\n\ndef prepare_factorial():\n\tfact = [1]\n\tfor i in range(1, 100005):\n\t\tfact.append(fact[-1] * i % mod)\n\tifact = [0] * 100005\n\tifact[100004] = pow(fact[100004], mod - 2, mod)\n\tfor i in range(100004, 0, -1):\n\t\tifact[i - 1] = i * ifact[i] % mod\n\treturn (fact, ifact)\nimport sys\nfrom bisect import bisect_left, bisect_right, insort\nfrom math import floor, ceil, sqrt, degrees, atan, pi, log, sin, radians\nfrom heapq import heappop, heapify, heappush\nfrom collections import Counter, defaultdict, deque\n\ndef modinv(n, p):\n\treturn pow(n, p - 2, p)\n\ndef ncr(n, r, fact, ifact):\n\tt = fact[n] * (ifact[r] * ifact[n - r]) % mod % mod\n\treturn t\n\ndef intarray():\n\treturn map(int, sys.stdin.readline().strip().split())\n\ndef array():\n\treturn list(map(int, sys.stdin.readline().strip().split()))\n\ndef input():\n\treturn sys.stdin.readline().strip()\n\ndef GCD(x, y):\n\twhile y:\n\t\t(x, y) = (y, x % y)\n\treturn x\n\ndef lcm(x, y):\n\treturn x * y // GCD(x, y)\n\ndef get_xor(n):\n\treturn [n, 1, n + 1, 0][n % 4]\n\ndef fast_expo(a, b):\n\tres = 1\n\twhile b:\n\t\tif b & 1:\n\t\t\tres = res * a\n\t\t\tres %= MOD\n\t\t\tb -= 1\n\t\telse:\n\t\t\ta = a * a\n\t\t\ta %= MOD\n\t\t\tb >>= 1\n\tres %= MOD\n\treturn res\n\ndef get_n(P):\n\tans = (-1 + sqrt(1 + 8 * P)) // 2\n\treturn ans\n\ndef solve():\n\tn = int(input())\n\tout1 = [0] * 31\n\tout0 = [0] * 31\n\ta = array()\n\tfor i in range(31):\n\t\tfor j in a:\n\t\t\tif j & 1 << i:\n\t\t\t\tout1[i] += 1\n\t\t\telse:\n\t\t\t\tout0[i] += 1\n\tout1 = out1[::-1]\n\tout0 = out0[::-1]\n\tfor i in range(31):\n\t\tif out1[i] % 4 == 1:\n\t\t\tprint('WIN')\n\t\t\treturn\n\t\tif out1[i] % 2 != 0 and out0[i] % 2 != 0:\n\t\t\tprint('WIN')\n\t\t\treturn\n\t\tif out1[i] % 2 != 0 and out0[i] % 2 == 0:\n\t\t\tprint('LOSE')\n\t\t\treturn\n\tprint('DRAW')\n\treturn\n\ndef main():\n\tT = int(input())\n\twhile T:\n\t\tsolve()\n\t\tT -= 1\npy2 = round(0.5)\nif py2:\n\tfrom future_builtins import ascii, filter, hex, map, oct, zip\n\trange = xrange\nimport os, sys\nfrom io import IOBase, BytesIO\nBUFSIZE = 8192\n\nclass FastIO(BytesIO):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._file = file\n\t\tself._fd = file.fileno()\n\t\tself.writable = 'x' in file.mode or 'w' in file.mode\n\t\tself.write = super(FastIO, self).write if self.writable else None\n\n\tdef _fill(self):\n\t\ts = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\tself.seek((self.tell(), self.seek(0, 2), super(FastIO, self).write(s))[0])\n\t\treturn s\n\n\tdef read(self):\n\t\twhile self._fill():\n\t\t\tpass\n\t\treturn super(FastIO, self).read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\ts = self._fill()\n\t\t\tself.newlines = s.count(b'\\n') + (not s)\n\t\tself.newlines -= 1\n\t\treturn super(FastIO, self).readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.getvalue())\n\t\t\t(self.truncate(0), self.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tif py2:\n\t\t\tself.write = self.buffer.write\n\t\t\tself.read = self.buffer.read\n\t\t\tself.readline = self.buffer.readline\n\t\telse:\n\t\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\tls = list(map(int, input().split()))\n\tbit = 32\n\tcheck = True\n\twhile bit >= 0 and check:\n\t\tx = 0\n\t\tfor i in ls:\n\t\t\tif i & 1 << bit:\n\t\t\t\tx += 1\n\t\ty = n - x\n\t\tif not x & 1:\n\t\t\tbit -= 1\n\t\telse:\n\t\t\tcheck = False\n\t\t\tif x % 4 == 1:\n\t\t\t\tprint('WIN')\n\t\t\telif y % 2 == 0:\n\t\t\t\tprint('LOSE')\n\t\t\telse:\n\t\t\t\tprint('WIN')\n\tif check:\n\t\tprint('DRAW')\n",
+    "T = int(input())\nfor _ in range(0, T):\n\tn = int(input())\n\ts = [int(x) for x in input().split()]\n\tpos = [0] * 35\n\tfor i in range(0, len(s)):\n\t\ttt = bin(s[i])[2:]\n\t\ttt = '0' * (35 - len(tt)) + tt\n\t\tfor j in range(35):\n\t\t\tpos[j] += int(tt[j])\n\tans = 'DRAW'\n\tturn = 0\n\tfor i in range(0, 35):\n\t\tif pos[i] % 2 != 0:\n\t\t\tif pos[i] % 4 == 3 and (n - pos[i]) % 2 == 0:\n\t\t\t\tans = 'LOSE'\n\t\t\telse:\n\t\t\t\tans = 'WIN'\n\t\t\tbreak\n\tprint(ans)\n",
+    "from collections import defaultdict\nimport sys, math\nf = None\ntry:\n\tf = open('q1.input', 'r')\nexcept IOError:\n\tf = sys.stdin\nif 'xrange' in dir(__builtins__):\n\trange = xrange\n\ndef solution(a, n):\n\tdraw = True\n\tfor i in range(50, -1, -1):\n\t\tcnt = 0\n\t\tfor x in a:\n\t\t\tif 1 << i & x:\n\t\t\t\tcnt += 1\n\t\tif cnt % 2:\n\t\t\tdraw = False\n\t\t\tbreak\n\tif draw:\n\t\treturn 'DRAW'\n\tif (cnt - 1) % 4 == 0:\n\t\treturn 'WIN'\n\twin = (cnt + 1) // 2 % 2\n\twin = win ^ (n - cnt) % 2\n\treturn 'WIN' if win else 'LOSE'\n\ndef main():\n\tfor i in range(int(input())):\n\t\tn = int(input())\n\t\ta = list(map(int, input().split()))\n\t\tx = solution(a, n)\n\t\tif 'xrange' not in dir(__builtins__):\n\t\t\tprint(x)\n\t\telse:\n\t\t\t(print >> output, 'Case #' + str(i + 1) + ':', str(x))\n\tif 'xrange' in dir(__builtins__):\n\t\tprint(output.getvalue())\n\t\toutput.close()\nif 'xrange' in dir(__builtins__):\n\timport cStringIO\n\toutput = cStringIO.StringIO()\nmain()\n",
+    "d = {1: 'WIN', 0: 'LOSE', -1: 'DRAW'}\nt = int(input())\nfor _ in range(t):\n\tn = int(input())\n\ta = [int(x) for x in input().split()]\n\tf = [0] * 30\n\tfor x in a:\n\t\tfor b in range(30):\n\t\t\tif x >> b & 1:\n\t\t\t\tf[b] += 1\n\tans = -1\n\tfor b in reversed(range(30)):\n\t\tif f[b] % 2 == 1:\n\t\t\tans = 0 if f[b] % 4 == 3 and (n - f[b]) % 2 == 0 else 1\n\t\t\tbreak\n\tprint(d[ans])\n",
+    "from os import path\nimport sys\nfrom heapq import heappush, heappop, heapify\nfrom functools import cmp_to_key as ctk\nfrom collections import deque, defaultdict as dd\nfrom bisect import bisect, bisect_left, bisect_right, insort, insort_left, insort_right\nfrom itertools import permutations\nfrom datetime import datetime\nfrom math import ceil, sqrt, log, gcd\n\ndef ii():\n\treturn int(input())\n\ndef si():\n\treturn input().rstrip()\n\ndef mi():\n\treturn map(int, input().split())\n\ndef li():\n\treturn list(mi())\nabc = 'abcdefghijklmnopqrstuvwxyz'\nmod = 1000000007\ninf = float('inf')\nvow = ['a', 'e', 'i', 'o', 'u']\n(dx, dy) = ([-1, 1, 0, 0], [0, 0, 1, -1])\n\ndef bo(i):\n\treturn ord(i) - ord('a')\nfile = 1\n\ndef solve():\n\tfor _ in range(ii()):\n\t\tn = ii()\n\t\ta = li()\n\t\tx = 0\n\t\tfor i in a:\n\t\t\tx ^= i\n\t\tif x == 0:\n\t\t\tprint('DRAW')\n\t\t\tcontinue\n\t\tfor i in range(30, -1, -1):\n\t\t\tif x >> i & 1:\n\t\t\t\tone = 0\n\t\t\t\tzero = 0\n\t\t\t\tfor j in a:\n\t\t\t\t\tif j >> i & 1:\n\t\t\t\t\t\tone += 1\n\t\t\t\t\telse:\n\t\t\t\t\t\tzero += 1\n\t\t\t\tif zero % 2 == 0 and one % 4 == 3:\n\t\t\t\t\tprint('LOSE')\n\t\t\t\telse:\n\t\t\t\t\tprint('WIN')\n\t\t\t\tbreak\nif file:\n\tif path.exists('input.txt'):\n\t\tsys.stdin = open('input.txt', 'r')\n\t\tsys.stdout = open('output.txt', 'w')\n\telse:\n\t\tinput = sys.stdin.readline\nsolve()\n",
+    "import sys\nfrom functools import lru_cache, cmp_to_key\nfrom heapq import merge, heapify, heappop, heappush, nsmallest\nfrom math import ceil, floor, gcd, fabs, factorial, fmod, sqrt, inf\nfrom collections import defaultdict as dd, deque, Counter as C\nfrom itertools import combinations as comb, permutations as perm\nfrom bisect import bisect_left as bl, bisect_right as br, bisect\nfrom time import perf_counter\nfrom fractions import Fraction\nfrom decimal import Decimal\nmod = pow(10, 9) + 7\nmod2 = 998244353\n\ndef data():\n\treturn sys.stdin.readline().strip()\n\ndef out(var, end='\\n'):\n\tsys.stdout.write(str(var) + '\\n')\n\ndef outa(*var, end='\\n'):\n\tsys.stdout.write(' '.join(map(str, var)) + end)\n\ndef l():\n\treturn list(sp())\n\ndef sl():\n\treturn list(ssp())\n\ndef sp():\n\treturn map(int, data().split())\n\ndef ssp():\n\treturn map(str, data().split())\n\ndef l1d(n, val=0):\n\treturn [val for i in range(n)]\n\ndef l2d(n, m, val=0):\n\treturn [l1d(n, val) for j in range(m)]\nfor _ in range(int(data())):\n\tn = int(data())\n\ta = l()\n\tc = C()\n\tfor i in range(n):\n\t\tfor j in range(32, -1, -1):\n\t\t\tif a[i] & 1 << j:\n\t\t\t\tc[j] += 1\n\tanswer = 'DRAW'\n\tfor j in range(32, -1, -1):\n\t\tif not c[j] & 1:\n\t\t\tcontinue\n\t\tif c[j] % 4 == 3 and (n - c[j]) % 2 == 0:\n\t\t\tanswer = 'LOSE'\n\t\telse:\n\t\t\tanswer = 'WIN'\n\t\tbreak\n\tout(answer)\n",
+    "from collections import defaultdict\nw = 'WIN'\nd = 'DRAW'\nl = 'LOSE'\nfor _ in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tfor i in range(30, -1, -1):\n\t\tc = 2 ** i\n\t\ts1 = 0\n\t\ts0 = 0\n\t\tfor j in arr:\n\t\t\tif j & 2 ** i != 0:\n\t\t\t\ts1 += 1\n\t\t\telse:\n\t\t\t\ts0 += 1\n\t\tif s1 % 2 == 0:\n\t\t\tans = d\n\t\t\tcontinue\n\t\telif s1 % 4 == 3 and s0 % 2 == 0:\n\t\t\tans = l\n\t\t\tbreak\n\t\telse:\n\t\t\tans = w\n\t\t\tbreak\n\tprint(ans)\n",
+    "def solve():\n\tn = int(input())\n\tlst = list(map(int, input().split()))\n\tk = 1\n\twhile k < 10 ** 9:\n\t\tk *= 2\n\tnum = 0\n\twhile k and num % 2 == 0:\n\t\tnum = 0\n\t\tfor i in lst:\n\t\t\tif i % (k * 2) // k == 1:\n\t\t\t\tnum += 1\n\t\tk //= 2\n\tif k == 0 and num % 2 == 0:\n\t\tprint('DRAW')\n\t\treturn 0\n\tif num % 4 == 1 or n % 2 == 0:\n\t\tprint('WIN')\n\telse:\n\t\tprint('LOSE')\nfor i in range(int(input())):\n\tsolve()\n",
+    "for i in range(int(input())):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tfor i in range(30, -1, -1):\n\t\tcnt = 0\n\t\tfor j in l:\n\t\t\tif j & 1 << i:\n\t\t\t\tcnt += 1\n\t\tif cnt % 4 == 1 or (cnt % 4 == 3 and n - cnt & 1):\n\t\t\tprint('WIN')\n\t\t\tbreak\n\t\telif cnt % 4 == 3:\n\t\t\tprint('LOSE')\n\t\t\tbreak\n\telse:\n\t\tprint('DRAW')\n",
+    "def DecimalToBinary(a):\n\ts = []\n\twhile a >= 1:\n\t\ts.append(a % 2)\n\t\ta = a // 2\n\treturn s\n\ndef find_sum(a, p, sum):\n\tfor i in range(len(a)):\n\t\tif a[i] // 2 ** p > 0:\n\t\t\tfor j in range(p):\n\t\t\t\ta[i] = a[i] // 2\n\t\t\tsum = sum + a[i] % 2\n\treturn sum\nt = int(input())\nl = []\nfor i in range(t):\n\tn = int(input())\n\tsum = 0\n\ta = list(map(int, input().split()))\n\txor = a[0]\n\tfor i in range(1, n):\n\t\txor = xor ^ a[i]\n\txor = DecimalToBinary(xor)\n\tlenth = len(xor) - 1\n\tsum = find_sum(a, lenth, sum)\n\tif sum == 1:\n\t\tl.append('WIN')\n\telif sum % 2 == 0:\n\t\tl.append('DRAW')\n\telif (n - sum) % 2 == 0:\n\t\tif sum % 4 == 1:\n\t\t\tl.append('WIN')\n\t\telse:\n\t\t\tl.append('LOSE')\n\telse:\n\t\tl.append('WIN')\nfor i in l:\n\tprint(i)\n",
+    "from collections import defaultdict\nimport sys, math\nf = None\ntry:\n\tf = open('q1.input', 'r')\nexcept IOError:\n\tf = sys.stdin\nif 'xrange' in dir(__builtins__):\n\trange = xrange\n\ndef print_case_iterable(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, ' '.join(map(str, iterable))))\n\ndef print_case_number(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, iterable))\n\ndef print_iterable(A):\n\tprint(' '.join(A))\n\ndef read_int():\n\treturn int(f.readline().strip())\n\ndef read_int_array():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef read_string():\n\treturn list(f.readline().strip())\n\ndef ri():\n\treturn int(f.readline().strip())\n\ndef ria():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef rs():\n\treturn list(f.readline().strip())\n\ndef bi(x):\n\treturn bin(x)[2:]\nfrom collections import deque\nimport math\nNUMBER = 10 ** 9 + 7\n\ndef factorial(n):\n\tM = NUMBER\n\tf = 1\n\tfor i in range(1, n + 1):\n\t\tf = f * i % M\n\treturn f\n\ndef mult(a, b):\n\treturn a * b % NUMBER\n\ndef minus(a, b):\n\treturn (a - b) % NUMBER\n\ndef plus(a, b):\n\treturn (a + b) % NUMBER\n\ndef egcd(a, b):\n\tif a == 0:\n\t\treturn (b, 0, 1)\n\telse:\n\t\t(g, y, x) = egcd(b % a, a)\n\t\treturn (g, x - b // a * y, y)\n\ndef modinv(a):\n\tm = NUMBER\n\t(g, x, y) = egcd(a, m)\n\tif g != 1:\n\t\traise Exception('modular inverse does not exist')\n\telse:\n\t\treturn x % m\n\ndef choose(n, k):\n\tif n < k:\n\t\tassert false\n\treturn mult(factorial(n), modinv(mult(factorial(k), factorial(n - k)))) % NUMBER\nfrom collections import deque, defaultdict\nimport heapq\nfrom types import GeneratorType\n\ndef bootstrap(f, stack=[]):\n\n\tdef wrappedfunc(*args, **kwargs):\n\t\tif stack:\n\t\t\treturn f(*args, **kwargs)\n\t\telse:\n\t\t\tto = f(*args, **kwargs)\n\t\t\twhile True:\n\t\t\t\tif type(to) is GeneratorType:\n\t\t\t\t\tstack.append(to)\n\t\t\t\t\tto = next(to)\n\t\t\t\telse:\n\t\t\t\t\tstack.pop()\n\t\t\t\t\tif not stack:\n\t\t\t\t\t\tbreak\n\t\t\t\t\tto = stack[-1].send(to)\n\t\t\treturn to\n\treturn wrappedfunc\n\ndef dfs(g, timeIn, timeOut, depths, parents):\n\tcnt = 0\n\tstack = [[1, 0, 0, 0]]\n\twhile stack:\n\t\t(v, neig_i, parent, depth) = stack[-1]\n\t\tparents[v] = parent\n\t\tdepths[v] = depth\n\t\tif neig_i == 0:\n\t\t\ttimeIn[v] = cnt\n\t\t\tcnt += 1\n\t\twhile neig_i < len(g[v]):\n\t\t\tu = g[v][neig_i]\n\t\t\tif u == parent:\n\t\t\t\tneig_i += 1\n\t\t\t\tcontinue\n\t\t\tstack[-1][1] = neig_i + 1\n\t\t\tstack.append([u, 0, v, depth + 1])\n\t\t\tbreak\n\t\tif neig_i == len(g[v]):\n\t\t\tstack.pop()\n\t\t\ttimeOut[v] = cnt\n\t\t\tcnt += 1\ncnt = 0\n\n@bootstrap\ndef dfs(v, adj, timeIn, timeOut, depths, parents, parent=0, depth=0):\n\tglobal cnt\n\tparents[v] = parent\n\tdepths[v] = depth\n\ttimeIn[v] = cnt\n\tcnt += 1\n\tfor u in adj[v]:\n\t\tif u == parent:\n\t\t\tcontinue\n\t\tyield dfs(u, adj, timeIn, timeOut, depths, parents, v, depth + 1)\n\ttimeOut[v] = cnt\n\tcnt += 1\n\tyield\n\ndef gcd(a, b):\n\tif a == 0:\n\t\treturn b\n\treturn gcd(b % a, a)\n\ndef lcm(a, b):\n\treturn a * b / gcd(a, b)\n\ndef get_num_2_5(n):\n\ttwos = 0\n\tfives = 0\n\twhile n > 0 and n % 2 == 0:\n\t\tn //= 2\n\t\ttwos += 1\n\twhile n > 0 and n % 5 == 0:\n\t\tn //= 5\n\t\tfives += 1\n\treturn (twos, fives)\n\ndef shift(a, i, num):\n\tfor _ in range(num):\n\t\t(a[i], a[i + 1], a[i + 2]) = (a[i + 2], a[i], a[i + 1])\n\ndef equal(x, y):\n\treturn abs(x - y) <= 1e-09\n\ndef getAngle(a, b, c):\n\tang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))\n\treturn ang + 360 if ang < 0 else ang\n\ndef getLength(a, b):\n\treturn math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)\nfrom heapq import heapify, heappush, heappop\n\ndef bfs(adj):\n\ts = set()\n\td = defaultdict(set)\n\tq = deque([])\n\ts.add(0)\n\td[0].add(0)\n\tq.append((0, 0))\n\twhile len(q) > 0:\n\t\t(v, depth) = q.popleft()\n\t\tfor u in adj[v]:\n\t\t\tif u not in s:\n\t\t\t\ts.add(u)\n\t\t\t\td[depth + 1].add(u)\n\t\t\t\tq.append((u, depth + 1))\n\treturn d\n\n@bootstrap\ndef dfs(u, top, adj, vis):\n\tvis[u] = 1\n\tfor (v, d) in adj[u]:\n\t\tif vis[v] == 2 or d == 0:\n\t\t\tcontinue\n\t\tif vis[v] == 1:\n\t\t\tyield 'No'\n\t\tx = (yield dfs(v, top, adj, vis))\n\t\tif x == 'No':\n\t\t\tyield 'No'\n\tvis[u] = 2\n\ttop.append(u)\n\tyield\n\ndef isSubsetSum(arr, n, summ):\n\tsubarr = [[False for i in range(summ + 1)] for i in range(n + 1)]\n\tfor i in range(n + 1):\n\t\tsubarr[i][0] = True\n\tfor i in range(1, summ + 1):\n\t\tsubarr[0][i] = False\n\tfor i in range(1, n + 1):\n\t\tfor j in range(1, summ + 1):\n\t\t\tif j < arr[i - 1]:\n\t\t\t\tsubarr[i][j] = subarr[i - 1][j]\n\t\t\tif j >= arr[i - 1]:\n\t\t\t\tsubarr[i][j] = subarr[i - 1][j] or subarr[i - 1][j - arr[i - 1]]\n\treturn subarr[n][summ]\n\ndef find_lcm(a, b):\n\treturn a * b // gcd(a, b)\n\ndef find_lcm_array(A):\n\tif len(A) == 1:\n\t\treturn A[0]\n\tlcm = find_lcm(A[0], A[1])\n\tfor i in range(2, len(A)):\n\t\tlcm = find_lcm(lcm, A[i])\n\treturn lcm\nfrom string import ascii_lowercase as al\n\ndef solution(a, n):\n\tdraw = True\n\tfor i in range(50, -1, -1):\n\t\tcnt = 0\n\t\tfor x in a:\n\t\t\tif 1 << i & x:\n\t\t\t\tcnt += 1\n\t\tif cnt % 2:\n\t\t\tdraw = False\n\t\t\tbreak\n\tif draw:\n\t\treturn 'DRAW'\n\tif (cnt - 1) % 4 == 0:\n\t\treturn 'WIN'\n\twin = (cnt + 1) // 2 % 2\n\twin = win ^ (n - cnt) % 2\n\treturn 'WIN' if win else 'LOSE'\n\ndef main():\n\tT = 1\n\tT = ri()\n\tfor i in range(T):\n\t\tn = ri()\n\t\ta = ria()\n\t\tx = solution(a, n)\n\t\tif 'xrange' not in dir(__builtins__):\n\t\t\tprint(x)\n\t\telse:\n\t\t\t(print >> output, 'Case #' + str(i + 1) + ':', str(x))\n\tif 'xrange' in dir(__builtins__):\n\t\tprint(output.getvalue())\n\t\toutput.close()\nif 'xrange' in dir(__builtins__):\n\timport cStringIO\n\toutput = cStringIO.StringIO()\nmain()\n",
+    "import sys\ninpy = [int(x) for x in sys.stdin.read().split()]\nt = inpy[0]\nindex = 1\nfor _ in range(t):\n\tn = inpy[index]\n\tnum = inpy[index + 1:index + 1 + n]\n\tindex += 1 + n\n\tmemo = [0] * 32\n\tfor i in range(32):\n\t\tx = 1 << i\n\t\tfor j in num:\n\t\t\tif j & x:\n\t\t\t\tmemo[i] += 1\n\tres = 0\n\tfor i in reversed(memo):\n\t\tif i % 2 == 0:\n\t\t\tcontinue\n\t\telif i % 4 == 1 or (i % 4 == 3 and n % 2 == 0):\n\t\t\tprint('WIN')\n\t\t\tres = 1\n\t\t\tbreak\n\t\telif i % 4 == 3:\n\t\t\tprint('LOSE')\n\t\t\tres = 3\n\t\t\tbreak\n\tif res == 0:\n\t\tprint('DRAW')\n",
+    "import sys\ninput = sys.stdin.readline\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = list(map(int, input().split()))\n\tones = [0] * 40\n\tfor i in range(40):\n\t\tfor ai in a:\n\t\t\tones[i] += ai >> i & 1\n\tfor i in range(39, -1, -1):\n\t\tif ones[i] % 2 == 0:\n\t\t\tcontinue\n\t\telse:\n\t\t\tif ones[i] % 4 == 3 and (n - ones[i]) % 2 == 0:\n\t\t\t\tprint('LOSE')\n\t\t\telse:\n\t\t\t\tprint('WIN')\n\t\t\tbreak\n\telse:\n\t\tprint('DRAW')\n",
+    "import sys\n\ndef solve(significant, filler):\n\tif filler % 2 == 0:\n\t\treturn significant % 4 == 1\n\treturn True\n\ndef i():\n\treturn sys.stdin.readline()[:-1]\nfor _ in range(int(i())):\n\tdigits = [0] * 30\n\tn = int(i())\n\tnums = map(int, i().split())\n\tfor num in nums:\n\t\tbinNum = bin(num)\n\t\tbinNum = binNum[2:]\n\t\tbinNum = binNum[::-1]\n\t\tfor (index, char) in enumerate(binNum):\n\t\t\tif char == '1':\n\t\t\t\tdigits[index] += 1\n\tdigits = digits[::-1]\n\tmsb = 0\n\tdraw = False\n\tfor x in range(30):\n\t\tif digits[x] % 2 != 0:\n\t\t\tmsb = digits[x]\n\t\t\tbreak\n\telse:\n\t\tprint('DRAW')\n\t\tdraw = True\n\tif not draw:\n\t\tif solve(msb, n - msb):\n\t\t\tprint('WIN')\n\t\telse:\n\t\t\tprint('LOSE')\n",
+    "from collections import defaultdict\nimport sys, math\nf = None\ntry:\n\tf = open('q1.input', 'r')\nexcept IOError:\n\tf = sys.stdin\nif 'xrange' in dir(__builtins__):\n\trange = xrange\n\ndef print_case_iterable(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, ' '.join(map(str, iterable))))\n\ndef print_case_number(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, iterable))\n\ndef print_iterable(A):\n\tprint(' '.join(A))\n\ndef read_int():\n\treturn int(f.readline().strip())\n\ndef read_int_array():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef read_string():\n\treturn list(f.readline().strip())\n\ndef ri():\n\treturn int(f.readline().strip())\n\ndef ria():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef rs():\n\treturn list(f.readline().strip())\n\ndef bi(x):\n\treturn bin(x)[2:]\nfrom collections import deque\nimport math\nNUMBER = 10 ** 9 + 7\n\ndef egcd(a, b):\n\tif a == 0:\n\t\treturn (b, 0, 1)\n\telse:\n\t\t(g, y, x) = egcd(b % a, a)\n\t\treturn (g, x - b // a * y, y)\nfrom collections import deque, defaultdict\nimport heapq\nfrom types import GeneratorType\n\ndef shift(a, i, num):\n\tfor _ in range(num):\n\t\t(a[i], a[i + 1], a[i + 2]) = (a[i + 2], a[i], a[i + 1])\nfrom heapq import heapify, heappush, heappop\nfrom string import ascii_lowercase as al\n\ndef solution(a, n):\n\tdraw = True\n\tfor i in range(50, -1, -1):\n\t\tcnt = 0\n\t\tfor x in a:\n\t\t\tif 1 << i & x:\n\t\t\t\tcnt += 1\n\t\tif cnt % 2:\n\t\t\tdraw = False\n\t\t\tbreak\n\tif draw:\n\t\treturn 'DRAW'\n\tif (cnt - 1) % 4 == 0:\n\t\treturn 'WIN'\n\twin = (cnt + 1) // 2 % 2\n\twin = win ^ (n - cnt) % 2\n\treturn 'WIN' if win else 'LOSE'\n\ndef main():\n\tfor i in range(int(input())):\n\t\tn = int(input())\n\t\ta = list(map(int, input().split()))\n\t\tx = solution(a, n)\n\t\tif 'xrange' not in dir(__builtins__):\n\t\t\tprint(x)\n\t\telse:\n\t\t\t(print >> output, 'Case #' + str(i + 1) + ':', str(x))\n\tif 'xrange' in dir(__builtins__):\n\t\tprint(output.getvalue())\n\t\toutput.close()\nif 'xrange' in dir(__builtins__):\n\timport cStringIO\n\toutput = cStringIO.StringIO()\nmain()\n",
+    "import sys\nimport math\nfrom collections import defaultdict\nimport heapq\n\ndef getnum(num):\n\tcnt = 0\n\tans = 0\n\twhile 1 << cnt <= num:\n\t\tans = cnt\n\t\tcnt += 1\n\tif num == 0:\n\t\treturn 0\n\treturn ans + 1\nt = int(sys.stdin.readline())\nfor _ in range(t):\n\tn = int(sys.stdin.readline())\n\tarr = list(map(int, sys.stdin.readline().split()))\n\tmp = [[] for x in range(31)]\n\tlast = []\n\tfor i in range(n):\n\t\tx = getnum(arr[i])\n\t\tmp[x].append(arr[i])\n\t\tlast.append(x)\n\tlast.sort()\n\trem = n\n\tz = True\n\tfor i in range(30, 0, -1):\n\t\tif len(mp[i]) != 0:\n\t\t\ty = len(mp[i])\n\t\t\trem = n - y\n\t\t\tif y == 1:\n\t\t\t\tz = False\n\t\t\t\tprint('WIN')\n\t\t\t\tbreak\n\t\t\tif y % 2 != 0:\n\t\t\t\tif rem % 2 == 0:\n\t\t\t\t\tfirst = (y + 1) // 2\n\t\t\t\t\tsecond = y // 2\n\t\t\t\t\tif first % 2 != 0:\n\t\t\t\t\t\tprint('WIN')\n\t\t\t\t\telse:\n\t\t\t\t\t\tprint('LOSE')\n\t\t\t\t\tz = False\n\t\t\t\t\tbreak\n\t\t\t\tif rem % 2 != 0:\n\t\t\t\t\tprint('WIN')\n\t\t\t\t\tz = False\n\t\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tfor j in range(y):\n\t\t\t\t\tmp[i][j] %= 1 << i - 1\n\t\t\t\t\tx = getnum(mp[i][j])\n\t\t\t\t\tmp[x].append(mp[i][j])\n\t\telse:\n\t\t\tcontinue\n\tif z:\n\t\tprint('DRAW')\n",
+    "def solution(n, arr):\n\tnums = {}\n\tfor el in arr:\n\t\tif el in nums:\n\t\t\tnums[el][1] += 1\n\t\telse:\n\t\t\tnums[el] = [el, 1]\n\tif 0 in nums:\n\t\tdel nums[0]\n\torder_num = 2 ** 29\n\t(del_els, k) = ([], 0)\n\twhile nums:\n\t\tfor el in nums:\n\t\t\tif nums[el][0] >= order_num:\n\t\t\t\tk += nums[el][1]\n\t\t\t\tnums[el][0] -= order_num\n\t\t\t\tif not nums[el][0]:\n\t\t\t\t\tdel_els.append(el)\n\t\tfor el in del_els:\n\t\t\tdel nums[el]\n\t\tif k % 2:\n\t\t\treturn 'WIN' if k % 4 == 1 or (n - k) % 2 else 'LOSE'\n\t\tk = 0\n\t\tdel_els.clear()\n\t\torder_num >>= 1\n\treturn 'DRAW'\nfor test_i in range(int(input())):\n\tn = int(input())\n\tarr = list(map(int, input().split()))\n\tprint(solution(n, arr))\n",
+    "t = int(input())\nimport math\nfor _ in range(t):\n\tn = int(input())\n\tarr = list(map(int, input().strip().split()))[:n]\n\ta = max(arr)\n\tif a == 0:\n\t\tk = 0\n\telse:\n\t\tk = int(math.log2(a)) + 1\n\tflag = 0\n\tfor i in range(k, -1, -1):\n\t\tx = 0\n\t\ty = 0\n\t\tf = 1 << i\n\t\tfor num in arr:\n\t\t\tif num & f:\n\t\t\t\tx += 1\n\t\t\telse:\n\t\t\t\ty += 1\n\t\tif x % 2 != 0:\n\t\t\tif x % 4 == 3 and y % 2 == 0:\n\t\t\t\tprint('LOSE')\n\t\t\telse:\n\t\t\t\tprint('WIN')\n\t\t\tflag = 1\n\t\t\tbreak\n\tif flag == 0:\n\t\tprint('DRAW')\n",
+    "for _ in range(int(input())):\n\tn = int(input())\n\ta = [int(o) for o in input().split()]\n\tones = [0] * 35\n\tzeros = [0] * 35\n\tfor i in a:\n\t\tba = bin(i)[2:][::-1]\n\t\tj = -1\n\t\tfor k in ba:\n\t\t\tif k == '1':\n\t\t\t\tones[j] += 1\n\t\t\telse:\n\t\t\t\tzeros[j] += 1\n\t\t\tj -= 1\n\tres = 'DRAW'\n\tfor i in range(35):\n\t\tif ones[i] % 2 != 0:\n\t\t\tif ones[i] % 4 == 3 and (n - ones[i]) % 2 == 0:\n\t\t\t\tres = 'LOSE'\n\t\t\telse:\n\t\t\t\tres = 'WIN'\n\t\t\tbreak\n\tprint(res)\n",
+    "from sys import stdin, stdout\nfullans = ''\nfor _ in range(int(stdin.readline())):\n\tn = int(stdin.readline())\n\tls = list(map(int, stdin.readline().split()))\n\tbit = 32\n\tcheck = True\n\twhile bit >= 0 and check:\n\t\tx = 0\n\t\tfor i in ls:\n\t\t\tif i & 1 << bit:\n\t\t\t\tx += 1\n\t\ty = n - x\n\t\tif not x & 1:\n\t\t\tbit -= 1\n\t\telse:\n\t\t\tcheck = False\n\t\t\tif x % 4 == 1:\n\t\t\t\tfullans += 'WIN\\n'\n\t\t\telif y % 2 == 0:\n\t\t\t\tfullans += 'LOSE\\n'\n\t\t\telse:\n\t\t\t\tfullans += 'WIN\\n'\n\tif check:\n\t\tfullans += 'DRAW\\n'\nstdout.write(fullans)\n",
+    "t = int(input())\nfor i in range(t):\n\tn = int(input())\n\tl = list(map(int, input().split()))\n\tc = [0 for j in range(31)]\n\tmsb = 0\n\tfor j in l:\n\t\ta = bin(j).lstrip('0b')\n\t\tmsb = max(msb, len(a) - 1)\n\t\tfor k in range(len(a) - 1, -1, -1):\n\t\t\tif a[k] == '1':\n\t\t\t\tc[len(a) - 1 - k] += 1\n\tans = 'DRAW'\n\tfor j in range(msb, -1, -1):\n\t\tif c[j] % 2 == 0:\n\t\t\tcontinue\n\t\telse:\n\t\t\tif c[j] % 4 == 3 and (n - c[j]) % 2 == 0:\n\t\t\t\tans = 'LOSE'\n\t\t\telse:\n\t\t\t\tans = 'WIN'\n\t\t\tbreak\n\tprint(ans)\n",
+    "import sys\ninput = sys.stdin.readline\nd = {1: 'WIN', 0: 'LOSE', -1: 'DRAW'}\n\ndef main():\n\tt = int(input())\n\tfor _ in range(t):\n\t\tn = int(input())\n\t\ta = map(int, input().split())\n\t\tf = [0] * 30\n\t\tfor x in a:\n\t\t\tfor b in range(30):\n\t\t\t\tif x >> b & 1:\n\t\t\t\t\tf[b] += 1\n\t\tans = -1\n\t\tfor x in reversed(range(30)):\n\t\t\tif f[x] % 2 == 1:\n\t\t\t\tans = 0 if f[x] % 4 == 3 and (n - f[x]) % 2 == 0 else 1\n\t\t\t\tbreak\n\t\tprint(d[ans])\nmain()\n",
+    "T = int(input())\nfor _ in range(T):\n\tN = int(input())\n\tA = list(map(int, input().split()))\n\tbits = [0] * 32\n\tfor a in A:\n\t\tfor i in range(31, -1, -1):\n\t\t\tif a & 1 << i:\n\t\t\t\tbits[i] += 1\n\tfor b in reversed(bits):\n\t\tif b % 4 == 1:\n\t\t\tprint('WIN')\n\t\t\tbreak\n\t\tif b % 4 == 3:\n\t\t\tprint('LOSE' if N % 2 else 'WIN')\n\t\t\tbreak\n\telse:\n\t\tprint('DRAW')\n",
+    "from __future__ import division, print_function\nimport os, sys\nfrom io import BytesIO, IOBase\nif sys.version_info[0] < 3:\n\tfrom __builtin__ import xrange as range\n\tfrom future_builtins import ascii, filter, hex, map, oct, zip\nfrom bisect import bisect_left as lower_bound, bisect_right as upper_bound\n\ndef so():\n\treturn int(input())\n\ndef st():\n\treturn input()\n\ndef mj():\n\treturn map(int, input().strip().split(' '))\n\ndef msj():\n\treturn map(str, input().strip().split(' '))\n\ndef le():\n\treturn list(map(int, input().split()))\n\ndef lebe():\n\treturn list(map(int, input()))\n\ndef dmain():\n\tsys.setrecursionlimit(1000000)\n\tthreading.stack_size(1024000)\n\tthread = threading.Thread(target=main)\n\tthread.start()\n\ndef joro(L):\n\treturn ''.join(map(str, L))\n\ndef decimalToBinary(n):\n\treturn bin(n).replace('0b', '')\n\ndef isprime(n):\n\tfor i in range(2, int(n ** 0.5) + 1):\n\t\tif n % i == 0:\n\t\t\treturn False\n\treturn True\n\ndef read():\n\tsys.stdin = open('input.txt', 'r')\n\tsys.stdout = open('output.txt', 'w')\n\ndef tr(n):\n\treturn n * (n + 1) // 2\n\ndef iu():\n\tm = so()\n\tL = le()\n\ti = 30\n\twhile i >= 0:\n\t\tc = 0\n\t\tfor j in range(m):\n\t\t\tc = c + (L[j] // 2 ** i & 1)\n\t\tif c % 4 == 1:\n\t\t\tprint('WIN')\n\t\t\treturn\n\t\telif m % 2 != 0 and c % 2 != 0:\n\t\t\tprint('LOSE')\n\t\t\treturn\n\t\telif 1 == c % 2:\n\t\t\tprint('WIN')\n\t\t\treturn\n\t\ti = i - 1\n\tprint('DRAW')\n\treturn\n\ndef main():\n\tfor i in range(so()):\n\t\tiu()\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n\ndef print(*args, **kwargs):\n\t(sep, file) = (kwargs.pop('sep', ' '), kwargs.pop('file', sys.stdout))\n\tat_start = True\n\tfor x in args:\n\t\tif not at_start:\n\t\t\tfile.write(sep)\n\t\tfile.write(str(x))\n\t\tat_start = False\n\tfile.write(kwargs.pop('end', '\\n'))\n\tif kwargs.pop('flush', False):\n\t\tfile.flush()\nif sys.version_info[0] < 3:\n\t(sys.stdin, sys.stdout) = (FastIO(sys.stdin), FastIO(sys.stdout))\nelse:\n\t(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\nmain()\n",
+    "import sys\ninput = sys.stdin.readline\nfor _ in range(int(input())):\n\tn = int(input())\n\tar = [int(x) for x in input().split()]\n\tbit = [0] * 32\n\tdr = True\n\tfor i in range(32):\n\t\tfor j in ar:\n\t\t\tbit[i] += 1 if 1 << i & j else 0\n\tbit = bit[::-1]\n\tfor i in bit:\n\t\tif i % 2 != 0:\n\t\t\tdr = False\n\t\t\tif i % 4 == 3 and (n - i) % 2 == 0:\n\t\t\t\tprint('LOSE')\n\t\t\telse:\n\t\t\t\tprint('WIN')\n\t\t\tbreak\n\tif dr:\n\t\tprint('DRAW')\n",
+    "mod = 1000000007\neps = 10 ** (-9)\n\ndef main():\n\timport sys\n\tinput = sys.stdin.readline\n\tfor _ in range(int(input())):\n\t\tN = int(input())\n\t\tA = list(map(int, input().split()))\n\t\tflg = 1\n\t\tfor i in range(31, -1, -1):\n\t\t\tcnt = 0\n\t\t\tfor a in A:\n\t\t\t\tif a >> i & 1:\n\t\t\t\t\tcnt += 1\n\t\t\tif cnt & 1:\n\t\t\t\tflg = 0\n\t\t\t\tif cnt % 4 == 1:\n\t\t\t\t\tprint('WIN')\n\t\t\t\telif N & 1:\n\t\t\t\t\tprint('LOSE')\n\t\t\t\telse:\n\t\t\t\t\tprint('WIN')\n\t\t\t\tbreak\n\t\tif flg:\n\t\t\tprint('DRAW')\nmain()\n",
+    "d = {1: 'WIN', 0: 'LOSE', -1: 'DRAW'}\nans = []\nfor _ in range(int(input())):\n\tn = int(input())\n\tu = list(map(int, input().split()))\n\tf = [0] * 30\n\tfor x in u:\n\t\tfor b in range(30):\n\t\t\tif x >> b & 1:\n\t\t\t\tf[b] += 1\n\tansi = -1\n\tfor x in range(29, -1, -1):\n\t\tif f[x] % 2 == 1:\n\t\t\tif f[x] % 4 == 3 and (n - f[x]) % 2 == 0:\n\t\t\t\tansi = 0\n\t\t\telse:\n\t\t\t\tansi = 1\n\t\t\tbreak\n\tans.append(d[ansi])\nprint('\\n'.join(ans))\n",
+    "from bisect import *\nfrom collections import *\nfrom math import gcd, ceil, sqrt, floor, inf\nfrom heapq import *\nfrom itertools import *\nfrom operator import add, mul, sub, xor, truediv, floordiv\nfrom functools import *\nimport os\nimport sys\nfrom io import BytesIO, IOBase\nBUFSIZE = 8192\n\nclass FastIO(IOBase):\n\tnewlines = 0\n\n\tdef __init__(self, file):\n\t\tself._fd = file.fileno()\n\t\tself.buffer = BytesIO()\n\t\tself.writable = 'x' in file.mode or 'r' not in file.mode\n\t\tself.write = self.buffer.write if self.writable else None\n\n\tdef read(self):\n\t\twhile True:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tif not b:\n\t\t\t\tbreak\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines = 0\n\t\treturn self.buffer.read()\n\n\tdef readline(self):\n\t\twhile self.newlines == 0:\n\t\t\tb = os.read(self._fd, max(os.fstat(self._fd).st_size, BUFSIZE))\n\t\t\tself.newlines = b.count(b'\\n') + (not b)\n\t\t\tptr = self.buffer.tell()\n\t\t\t(self.buffer.seek(0, 2), self.buffer.write(b), self.buffer.seek(ptr))\n\t\tself.newlines -= 1\n\t\treturn self.buffer.readline()\n\n\tdef flush(self):\n\t\tif self.writable:\n\t\t\tos.write(self._fd, self.buffer.getvalue())\n\t\t\t(self.buffer.truncate(0), self.buffer.seek(0))\n\nclass IOWrapper(IOBase):\n\n\tdef __init__(self, file):\n\t\tself.buffer = FastIO(file)\n\t\tself.flush = self.buffer.flush\n\t\tself.writable = self.buffer.writable\n\t\tself.write = lambda s: self.buffer.write(s.encode('ascii'))\n\t\tself.read = lambda : self.buffer.read().decode('ascii')\n\t\tself.readline = lambda : self.buffer.readline().decode('ascii')\n(sys.stdin, sys.stdout) = (IOWrapper(sys.stdin), IOWrapper(sys.stdout))\ninput = lambda : sys.stdin.readline().rstrip('\\r\\n')\n\ndef RL():\n\treturn map(int, sys.stdin.readline().rstrip().split())\n\ndef RLL():\n\treturn list(map(int, sys.stdin.readline().rstrip().split()))\n\ndef N():\n\treturn int(input())\nfrom types import GeneratorType\n\ndef bootstrap(f, stack=[]):\n\n\tdef wrappedfunc(*args, **kwargs):\n\t\tif stack:\n\t\t\treturn f(*args, **kwargs)\n\t\telse:\n\t\t\tto = f(*args, **kwargs)\n\t\t\twhile True:\n\t\t\t\tif type(to) is GeneratorType:\n\t\t\t\t\tstack.append(to)\n\t\t\t\t\tto = next(to)\n\t\t\t\telse:\n\t\t\t\t\tstack.pop()\n\t\t\t\t\tif not stack:\n\t\t\t\t\t\tbreak\n\t\t\t\t\tto = stack[-1].send(to)\n\t\t\treturn to\n\treturn wrappedfunc\nfarr = [1]\nifa = []\n\ndef fact(x, mod=0):\n\tif mod:\n\t\twhile x >= len(farr):\n\t\t\tfarr.append(farr[-1] * len(farr) % mod)\n\telse:\n\t\twhile x >= len(farr):\n\t\t\tfarr.append(farr[-1] * len(farr))\n\treturn farr[x]\n\ndef ifact(x, mod):\n\tglobal ifa\n\tifa.append(pow(farr[-1], mod - 2, mod))\n\tfor i in range(x, 0, -1):\n\t\tifa.append(ifa[-1] * i % mod)\n\tifa = ifa[::-1]\n\ndef per(i, j, mod=0):\n\tif i < j:\n\t\treturn 0\n\tif not mod:\n\t\treturn fact(i) // fact(i - j)\n\treturn farr[i] * ifa[i - j] % mod\n\ndef com(i, j, mod=0):\n\tif i < j:\n\t\treturn 0\n\tif not mod:\n\t\treturn per(i, j) // fact(j)\n\treturn per(i, j, mod) * ifa[j] % mod\n\ndef catalan(n):\n\treturn com(2 * n, n) // (n + 1)\n\ndef linc(f, t, l, r):\n\twhile l < r:\n\t\tmid = (l + r) // 2\n\t\tif t > f(mid):\n\t\t\tl = mid + 1\n\t\telse:\n\t\t\tr = mid\n\treturn l\n\ndef rinc(f, t, l, r):\n\twhile l < r:\n\t\tmid = (l + r + 1) // 2\n\t\tif t < f(mid):\n\t\t\tr = mid - 1\n\t\telse:\n\t\t\tl = mid\n\treturn l\n\ndef ldec(f, t, l, r):\n\twhile l < r:\n\t\tmid = (l + r) // 2\n\t\tif t < f(mid):\n\t\t\tl = mid + 1\n\t\telse:\n\t\t\tr = mid\n\treturn l\n\ndef rdec(f, t, l, r):\n\twhile l < r:\n\t\tmid = (l + r + 1) // 2\n\t\tif t > f(mid):\n\t\t\tr = mid - 1\n\t\telse:\n\t\t\tl = mid\n\treturn l\n\ndef isprime(n):\n\tfor i in range(2, int(n ** 0.5) + 1):\n\t\tif n % i == 0:\n\t\t\treturn False\n\treturn True\n\ndef binfun(x):\n\tc = 0\n\tfor w in arr:\n\t\tc += ceil(w / x)\n\treturn c\n\ndef lowbit(n):\n\treturn n & -n\n\ndef inverse(a, m):\n\ta %= m\n\tif a <= 1:\n\t\treturn a\n\treturn (1 - inverse(m, a) * m) // a % m\n\nclass BIT:\n\n\tdef __init__(self, arr):\n\t\tself.arr = arr\n\t\tself.n = len(arr) - 1\n\n\tdef update(self, x, v):\n\t\twhile x <= self.n:\n\t\t\tself.arr[x] += v\n\t\t\tx += x & -x\n\n\tdef query(self, x):\n\t\tans = 0\n\t\twhile x:\n\t\t\tans += self.arr[x]\n\t\t\tx &= x - 1\n\t\treturn ans\n\nclass DSU:\n\n\tdef __init__(self, n):\n\t\tself.c = [-1] * n\n\n\tdef same(self, x, y):\n\t\treturn self.find(x) == self.find(y)\n\n\tdef find(self, x):\n\t\tif self.c[x] < 0:\n\t\t\treturn x\n\t\tself.c[x] = self.find(self.c[x])\n\t\treturn self.c[x]\n\n\tdef union(self, u, v):\n\t\t(u, v) = (self.find(u), self.find(v))\n\t\tif u == v:\n\t\t\treturn False\n\t\tif self.c[u] < self.c[v]:\n\t\t\t(u, v) = (v, u)\n\t\tself.c[u] += self.c[v]\n\t\tself.c[v] = u\n\t\treturn True\n\n\tdef size(self, x):\n\t\treturn -self.c[self.find(x)]\n\nclass UFS:\n\n\tdef __init__(self, n):\n\t\tself.parent = [i for i in range(n)]\n\t\tself.ranks = [0] * n\n\n\tdef find(self, x):\n\t\tif x != self.parent[x]:\n\t\t\tself.parent[x] = self.find(self.parent[x])\n\t\treturn self.parent[x]\n\n\tdef union(self, u, v):\n\t\t(pu, pv) = (self.find(u), self.find(v))\n\t\tif pu == pv:\n\t\t\treturn False\n\t\tif self.ranks[pu] >= self.ranks[pv]:\n\t\t\tself.parent[pv] = pu\n\t\t\tif self.ranks[pv] == self.ranks[pu]:\n\t\t\t\tself.ranks[pu] += 1\n\t\telse:\n\t\t\tself.parent[pu] = pv\n\ndef Prime(n):\n\tc = 0\n\tprime = []\n\tflag = [0] * (n + 1)\n\tfor i in range(2, n + 1):\n\t\tif not flag[i]:\n\t\t\tprime.append(i)\n\t\t\tc += 1\n\t\tfor j in range(c):\n\t\t\tif i * prime[j] > n:\n\t\t\t\tbreak\n\t\t\tflag[i * prime[j]] = prime[j]\n\t\t\tif i % prime[j] == 0:\n\t\t\t\tbreak\n\treturn prime\n\ndef dij(s, graph):\n\td = {}\n\td[s] = 0\n\theap = [(0, s)]\n\tseen = set()\n\twhile heap:\n\t\t(dis, u) = heappop(heap)\n\t\tif u in seen:\n\t\t\tcontinue\n\t\tfor v in graph[u]:\n\t\t\tif v not in d or d[v] > d[u] + graph[u][v]:\n\t\t\t\td[v] = d[u] + graph[u][v]\n\t\t\t\theappush(heap, (d[v], v))\n\treturn d\n\ndef GP(it):\n\treturn [(ch, len(list(g))) for (ch, g) in groupby(it)]\n\nclass DLN:\n\n\tdef __init__(self, val):\n\t\tself.val = val\n\t\tself.pre = None\n\t\tself.next = None\nt = N()\nfor i in range(t):\n\tn = N()\n\ta = RLL()\n\tres = 0\n\tfor x in a:\n\t\tres ^= x\n\tif res == 0:\n\t\tans = 'DRAW'\n\telse:\n\t\tk = 0\n\t\twhile res:\n\t\t\tres >>= 1\n\t\t\tk += 1\n\t\tk -= 1\n\t\tc = 0\n\t\tfor x in a:\n\t\t\tif x & 1 << k:\n\t\t\t\tc += 1\n\t\tc //= 2\n\t\tif c & 1:\n\t\t\tif n & 1:\n\t\t\t\tans = 'LOSE'\n\t\t\telse:\n\t\t\t\tans = 'WIN'\n\t\telse:\n\t\t\tans = 'WIN'\n\tprint(ans)\n",
+    "import sys, os, io\ninput = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline\nfor _ in range(int(input())):\n\tn = int(input())\n\ta = [int(i) for i in input().split()]\n\tcnt = [0] * 35\n\tfor i in a:\n\t\tbi = bin(i)[2:][::-1]\n\t\tfor j in range(len(bi)):\n\t\t\tif bi[j] == '1':\n\t\t\t\tcnt[j] += 1\n\tans = 'DRAW'\n\tfor i in range(34, -1, -1):\n\t\tif cnt[i] % 4 == 1 or (cnt[i] % 4 == 3 and (not n % 2)):\n\t\t\tans = 'WIN'\n\t\t\tbreak\n\t\tif cnt[i] % 4 == 3:\n\t\t\tans = 'LOSE'\n\t\t\tbreak\n\tprint(ans)\n",
+    "import sys\ninput = sys.stdin.readline\nI = lambda : list(map(int, input().split()))\n(t,) = I()\nfor _ in range(t):\n\t(n,) = I()\n\tl = I()\n\tan = -1\n\tfor i in range(30, -1, -1):\n\t\tx = 0\n\t\ty = 0\n\t\tfor j in range(n):\n\t\t\tif l[j] >> i & 1:\n\t\t\t\tx += 1\n\t\t\telse:\n\t\t\t\ty += 1\n\t\tif x % 2:\n\t\t\tif x % 4 == 3 and y % 2 == 0:\n\t\t\t\tan = 0\n\t\t\telse:\n\t\t\t\tan = 1\n\t\t\tbreak\n\tif an != -1:\n\t\tprint('LWOISNE'[an::2])\n\telse:\n\t\tprint('DRAW')\n",
+    "import sys\n\ndef rs():\n\treturn sys.stdin.readline().rstrip()\n\ndef ri():\n\treturn int(sys.stdin.readline())\n\ndef ria():\n\treturn list(map(int, sys.stdin.readline().split()))\n\ndef ws(s):\n\tsys.stdout.write(s)\n\tsys.stdout.write('\\n')\n\ndef wi(n):\n\tsys.stdout.write(str(n))\n\tsys.stdout.write('\\n')\n\ndef wia(a, sep=' '):\n\tsys.stdout.write(sep.join([str(x) for x in a]))\n\tsys.stdout.write('\\n')\n\ndef go(n, k):\n\tif k % 4 == 1:\n\t\treturn True\n\telse:\n\t\treturn n % 2 == 0\n\ndef solve(n, a):\n\tfor bit in range(32, -1, -1):\n\t\tcnt = 0\n\t\tfor i in range(n):\n\t\t\tif a[i] & 1 << bit > 0:\n\t\t\t\tcnt += 1\n\t\tif cnt % 2 == 0:\n\t\t\tcontinue\n\t\tif go(n, cnt):\n\t\t\tws('WIN')\n\t\telse:\n\t\t\tws('LOSE')\n\t\treturn\n\tws('DRAW')\n\ndef main():\n\tfor _ in range(ri()):\n\t\tn = ri()\n\t\ta = ria()\n\t\tsolve(n, a)\nmain()\n",
+    "from collections import defaultdict\nimport sys, math\nf = None\ntry:\n\tf = open('q1.input', 'r')\nexcept IOError:\n\tf = sys.stdin\nif 'xrange' in dir(__builtins__):\n\trange = xrange\n\ndef print_case_iterable(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, ' '.join(map(str, iterable))))\n\ndef print_case_number(case_num, iterable):\n\tprint('Case #{}: {}'.format(case_num, iterable))\n\ndef print_iterable(A):\n\tprint(' '.join(A))\n\ndef read_int():\n\treturn int(f.readline().strip())\n\ndef read_int_array():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef read_string():\n\treturn list(f.readline().strip())\n\ndef ri():\n\treturn int(f.readline().strip())\n\ndef ria():\n\treturn [int(x) for x in f.readline().strip().split(' ')]\n\ndef rns():\n\ta = [x for x in f.readline().split(' ')]\n\treturn (int(a[0]), a[1].strip())\n\ndef rs():\n\treturn list(f.readline().strip())\n\ndef bi(x):\n\treturn bin(x)[2:]\nfrom collections import deque\nimport math\nNUMBER = 10 ** 9 + 7\n\ndef factorial(n):\n\tM = NUMBER\n\tf = 1\n\tfor i in range(1, n + 1):\n\t\tf = f * i % M\n\treturn f\n\ndef mult(a, b):\n\treturn a * b % NUMBER\n\ndef minus(a, b):\n\treturn (a - b) % NUMBER\n\ndef plus(a, b):\n\treturn (a + b) % NUMBER\n\ndef egcd(a, b):\n\tif a == 0:\n\t\treturn (b, 0, 1)\n\telse:\n\t\t(g, y, x) = egcd(b % a, a)\n\t\treturn (g, x - b // a * y, y)\n\ndef modinv(a):\n\tm = NUMBER\n\t(g, x, y) = egcd(a, m)\n\tif g != 1:\n\t\traise Exception('modular inverse does not exist')\n\telse:\n\t\treturn x % m\n\ndef choose(n, k):\n\tif n < k:\n\t\tassert false\n\treturn mult(factorial(n), modinv(mult(factorial(k), factorial(n - k)))) % NUMBER\nfrom collections import deque, defaultdict\nimport heapq\nfrom types import GeneratorType\n\ndef bootstrap(f, stack=[]):\n\n\tdef wrappedfunc(*args, **kwargs):\n\t\tif stack:\n\t\t\treturn f(*args, **kwargs)\n\t\telse:\n\t\t\tto = f(*args, **kwargs)\n\t\t\twhile True:\n\t\t\t\tif type(to) is GeneratorType:\n\t\t\t\t\tstack.append(to)\n\t\t\t\t\tto = next(to)\n\t\t\t\telse:\n\t\t\t\t\tstack.pop()\n\t\t\t\t\tif not stack:\n\t\t\t\t\t\tbreak\n\t\t\t\t\tto = stack[-1].send(to)\n\t\t\treturn to\n\treturn wrappedfunc\n\ndef get_num_2_5(n):\n\ttwos = 0\n\tfives = 0\n\twhile n > 0 and n % 2 == 0:\n\t\tn //= 2\n\t\ttwos += 1\n\twhile n > 0 and n % 5 == 0:\n\t\tn //= 5\n\t\tfives += 1\n\treturn (twos, fives)\n\ndef shift(a, i, num):\n\tfor _ in range(num):\n\t\t(a[i], a[i + 1], a[i + 2]) = (a[i + 2], a[i], a[i + 1])\n\ndef equal(x, y):\n\treturn abs(x - y) <= 1e-09\n\ndef getAngle(a, b, c):\n\tang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))\n\treturn ang + 360 if ang < 0 else ang\n\ndef getLength(a, b):\n\treturn math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)\nfrom heapq import heapify, heappush, heappop\nfrom string import ascii_lowercase as al\n\ndef solution(a, n):\n\tdraw = True\n\tfor i in range(50, -1, -1):\n\t\tcnt = 0\n\t\tfor x in a:\n\t\t\tif 1 << i & x:\n\t\t\t\tcnt += 1\n\t\tif cnt % 2:\n\t\t\tdraw = False\n\t\t\tbreak\n\tif draw:\n\t\treturn 'DRAW'\n\tif (cnt - 1) % 4 == 0:\n\t\treturn 'WIN'\n\twin = (cnt + 1) // 2 % 2\n\twin = win ^ (n - cnt) % 2\n\treturn 'WIN' if win else 'LOSE'\n\ndef main():\n\tfor i in range(int(input())):\n\t\tn = int(input())\n\t\ta = list(map(int, input().split()))\n\t\tx = solution(a, n)\n\t\tif 'xrange' not in dir(__builtins__):\n\t\t\tprint(x)\n\t\telse:\n\t\t\t(print >> output, 'Case #' + str(i + 1) + ':', str(x))\n\tif 'xrange' in dir(__builtins__):\n\t\tprint(output.getvalue())\n\t\toutput.close()\nif 'xrange' in dir(__builtins__):\n\timport cStringIO\n\toutput = cStringIO.StringIO()\nmain()\n"
+  ],
+  "test_cases": [
+    {
+      "input": "3\n3\n2 2 2\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "LOSE\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 3\n4\n1 0 1 6\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 0\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n2 2 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n1\n2\n5 4\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n2 2 3\n5\n0 1 0 2 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 2\n3\n2 2 1\n5\n0 0 0 2 2\n",
+      "output": "LOSE\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 4 0\n3\n2 2 4\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n0 2 4\n5\n0 0 0 1 2\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 0\n3\n3 2 4\n5\n0 1 0 2 2\n",
+      "output": "DRAW\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 2\n3\n4 2 1\n5\n1 0 0 2 2\n",
+      "output": "LOSE\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n2 1 3 1 0\n4\n1 0 1 6\n1\n0\n2\n5 4\n",
+      "output": "LOSE\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n0 2 2\n5\n0 0 0 1 2\n",
+      "output": "WIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 4\n4\n1 0 1 12\n1\n1\n2\n5 4\n",
+      "output": "LOSE\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 0 1 6\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 0 0 6\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n3 2 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n0 2 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 0 0\n3\n0 2 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 1\n4\n1 0 1 6\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 0 1 2\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n3 2 0\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n2 2 0\n3\n3 2 4\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 0 0\n3\n0 2 6\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 12\n1\n1\n2\n5 4\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n2 2 3\n5\n0 1 0 1 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 2\n3\n4 2 1\n5\n0 0 0 2 2\n",
+      "output": "LOSE\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 1 1 2\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n3 2 0\n3\n2 2 3\n5\n0 0 1 2 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 0 0\n3\n0 2 4\n5\n0 0 0 1 2\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 0 0\n3\n0 2 6\n5\n0 0 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 0 12\n1\n1\n2\n5 4\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 1 0 2\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n3 1 0\n3\n2 2 3\n5\n0 0 1 2 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n0 2 0\n3\n3 2 4\n5\n0 1 0 2 2\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n5 0 0\n3\n0 2 4\n5\n0 0 0 1 2\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 1 0\n3\n0 2 6\n5\n0 0 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 0 12\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 2 1 0\n4\n1 1 0 2\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n5 0 0\n3\n0 2 4\n5\n0 0 0 1 0\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 1 0\n3\n0 2 7\n5\n0 0 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 1 0\n3\n0 2 0\n5\n0 0 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n0 1 0\n3\n0 2 0\n5\n0 0 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n0\n2\n5 0\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 2 2\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 3\n4\n1 0 1 6\n1\n0\n2\n5 7\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 0\n3\n4 2 3\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 0 0 6\n1\n0\n2\n0 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 2 0\n3\n2 1 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n1\n2\n7 4\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n2 2 3\n5\n0 1 0 3 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n3 2 2\n3\n2 2 1\n5\n0 0 0 2 2\n",
+      "output": "LOSE\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 0\n4\n1 0 1 2\n1\n0\n2\n3 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n3 4 0\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n1 4 0\n3\n2 2 4\n5\n0 0 0 2 2\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n3 2 3\n5\n0 1 0 1 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 2\n3\n4 3 1\n5\n0 0 0 2 2\n",
+      "output": "LOSE\nWIN\nDRAW\n"
+    },
+    {
+      "input": "3\n3\n4 0 0\n3\n0 2 4\n5\n0 0 0 1 1\n",
+      "output": "WIN\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 0 12\n1\n1\n2\n5 3\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 2\n3\n4 3 1\n5\n1 0 0 2 2\n",
+      "output": "LOSE\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n6 1 0\n3\n2 2 3\n5\n0 0 1 2 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n0 2 0\n3\n3 2 4\n5\n0 1 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 4\n4\n1 0 0 12\n1\n0\n2\n5 4\n",
+      "output": "LOSE\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 2 1 0\n4\n1 1 0 2\n1\n0\n2\n7 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n5 0 0\n3\n0 2 4\n5\n0 0 0 2 0\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n0 1 0\n3\n0 2 0\n5\n0 1 0 2 4\n",
+      "output": "WIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n0\n2\n5 1\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 2 2\n3\n2 2 3\n5\n0 0 1 2 2\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "4\n5\n4 1 3 1 3\n4\n1 0 1 6\n1\n1\n2\n5 7\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n2 2 0\n3\n7 2 3\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 1 1 0\n4\n1 0 0 6\n1\n0\n2\n0 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n4 4 0\n3\n2 1 4\n5\n0 0 0 2 2\n",
+      "output": "DRAW\nWIN\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 0 1 3\n4\n1 0 1 6\n1\n1\n2\n7 4\n",
+      "output": "WIN\nWIN\nWIN\nWIN\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n2 2 3\n5\n0 1 0 3 4\n",
+      "output": "WIN\nLOSE\nWIN\n"
+    },
+    {
+      "input": "3\n3\n3 8 0\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    },
+    {
+      "input": "4\n5\n4 1 5 1 3\n4\n1 0 1 6\n1\n0\n2\n5 4\n",
+      "output": "WIN\nWIN\nDRAW\nWIN\n"
+    },
+    {
+      "input": "3\n3\n1 2 2\n3\n2 2 3\n5\n0 0 0 2 2\n",
+      "output": "WIN\nLOSE\nDRAW\n"
+    }
+  ],
+  "extracted_at": "2026-09-04T16:55:54.980634+00:00"
+}
