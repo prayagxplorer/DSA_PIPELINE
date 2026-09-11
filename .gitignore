@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-
+TECH_STACK.md
 # Secrets
 .env
 *.env
@@ -11,12 +11,14 @@ venv/
 # Large/regenerable dataset -- recreate with prepare_dataset.py
 extraction/taco_candidates/
 taco_candidates/
+taco_candidates_filtered/
+taco_candidates_OLD_WITH_IMAGES/
 
 # Generated per-run outputs 
 extraction/extracted/
 sandbox/sandbox_report.json
 sandbox/mock_registry.json
-enriched/
+
 
 # Shared state 
 # stop tracking once real DB insert replaces them
@@ -30,3 +32,4 @@ enriched/
 "sandbox/__pycache__/" 
 ".env" 
 ".venv/" 
+

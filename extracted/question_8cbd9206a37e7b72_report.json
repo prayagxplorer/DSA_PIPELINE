@@ -1,0 +1,892 @@
+{
+  "question_id": "https://codeforces.com/problemset/problem/8/B",
+  "title": null,
+  "description": "The whole world got obsessed with robots,and to keep pace with the progress, great Berland's programmer Draude decided to build his own robot. He was working hard at the robot. He taught it to walk the shortest path from one point to another, to record all its movements, but like in many Draude's programs, there was a bug — the robot didn't always walk the shortest path. Fortunately, the robot recorded its own movements correctly. Now Draude wants to find out when his robot functions wrong. Heh, if Draude only remembered the map of the field, where he tested the robot, he would easily say if the robot walked in the right direction or not. But the field map was lost never to be found, that's why he asks you to find out if there exist at least one map, where the path recorded by the robot is the shortest.\n\nThe map is an infinite checkered field, where each square is either empty, or contains an obstruction. It is also known that the robot never tries to run into the obstruction. By the recorded robot's movements find out if there exist at least one such map, that it is possible to choose for the robot a starting square (the starting square should be empty) such that when the robot moves from this square its movements coincide with the recorded ones (the robot doesn't run into anything, moving along empty squares only), and the path from the starting square to the end one is the shortest.\n\nIn one movement the robot can move into the square (providing there are no obstrutions in this square) that has common sides with the square the robot is currently in.\n\nInput\n\nThe first line of the input file contains the recording of the robot's movements. This recording is a non-empty string, consisting of uppercase Latin letters L, R, U and D, standing for movements left, right, up and down respectively. The length of the string does not exceed 100.\n\nOutput\n\nIn the first line output the only word OK (if the above described map exists), or BUG (if such a map does not exist).\n\nExamples\n\nInput\n\nLLUUUR\n\n\nOutput\n\nOK\n\n\nInput\n\nRRUULLDD\n\n\nOutput\n\nBUG",
+  "raw_difficulty": "MEDIUM",
+  "constraints": [],
+  "hints": [],
+  "categories": [
+    "graphs"
+  ],
+  "sampleTestCases": [
+    {
+      "input": "DDUL\n",
+      "output": "BUG\n"
+    }
+  ],
+  "hiddenTestCases": [
+    {
+      "input": "LLLLLLLLRRRRDDDDDDDUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULLDLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUURURLRLLLLULLRLRURLULRLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDRLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRRRRRRRRRRDDDDDDDDDDDDDDDDDDDRRRRRRRRRRRRRRRRRRRUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLLUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDLLLLLLLDDDDDDDRRRRRRRUUUUUURRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDLLLDDDRRRUURRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "L\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LUUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRUULLD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLLLLLLLLLLLLLLLRUUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDLLLLDDDDRRRRUUURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDLLDDRRURRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LUUUULLLLDDDDRRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULURL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DLURUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDRDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLDDLDLLDDDLLLDLLLLLUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UURUURRUUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DRDRD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RURRRRLURRRURRUURRRRRRRRDDULULRRURRRDRRRRRRRRRRLDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRRRURRURUURRRRRDDDDLDDDRDDDDLLDLL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDUUUUUUUUUUUURRRRRRRRRRRRRLLLLLLLLLLLLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUURDLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUULLLLRDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULULL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LRUD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLDDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RLRRRRRDRRDRRRRDLRRRRRRRDLRLDDLRRRRLDLDRDRRRRDRDRDRDLRRURRLRRRRDRRRRRRRRLDDRLRRDRRRRRRRDRDRLDRDDDRDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDLDRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDDDDDDDDDDDDDDDDDDDDDDLLLLLLLLLLLLLLLLLLLLLLLLRRRRRRRRRRRRRRRRRRRRRRRRRRRUUUUUUUUUUUUUUUUUUUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDRDDLDDDDDDDRDDLD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RRRUUULLLDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "R\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DDDDDDDDDDLLLLLLLLLLLDDDDDDDDDDDRRRRRRRRRRRUUUUUUUUUURRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRRRRRRRRRRURLLLLLLLLLLLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUURDRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLDLLLLLRRRRDDLDDDDUUUUUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRDDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RULDLLUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUULURLRLLLRULLRLRURLULRLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDRRL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDULR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LDUUULLLLDDDURRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRULU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LUD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUURRUURUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RLRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDLRRRRRRRRRRDRRRURRLULUDDRRRRRRRRUURRURRRULRRRRUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLLLLRRRRRRRRRRRRRUUUUUUUUUUUUDDDDDDDDDDDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UDULLLLRDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LURD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLRDRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRLDRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDDRDDDDDDDLDDRDDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "URD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULLU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "DRDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LLLLLLLLLLLLRURRRRRRRRRRR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDLLUURR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RUUULL\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "LRRDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLUDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRRRUDDDLLLLUUUDL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URLLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDDDRR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UDRLLLLUDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRDRLDLD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DDRD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "URLUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LULRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DULLULUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLUULRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UUURULD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLDLLDDDDRDDDLDDDDRRRRRUURURRURRRRRU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDDR\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDRDDDRDLRDRDRRRRRRRDRRLRDDLRRRRRRRRDRRRRLRRURRLDRDRDRDRRRRDRDLDLRRRRLDDLRLDRRRRRRRLDRRRRDRRDRRRRRLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLUU\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "RDDD\n",
+      "output": "OK\n"
+    },
+    {
+      "input": "UUUUUUDDDDLDDRRRRLLLLLDLL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RULULLDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URRRLULUULURLRLRLRULLRLRURLULLLULLULRRUU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DURL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRRDLRD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DLDLUURR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULLR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "DRLRLDDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "ULRUL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RDU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UDLLULUR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UURRLULLULLLULRURLRLLURLRLRLRULUULULRRRU\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "URL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RLDLUUDR\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "UULRL\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "RRUULLDD\n",
+      "output": "BUG\n"
+    },
+    {
+      "input": "LLUUUR\n",
+      "output": "OK\n"
+    }
+  ],
+  "avgTimeComplexity": null,
+  "avgSpaceComplexity": null,
+  "overall_pass": true,
+  "sample_size_used": 18,
+  "total_test_cases_available": 122,
+  "candidates_tested": 63,
+  "best_solution_index": 20,
+  "best_solution_code": "a = {'L': (-1, 0), 'U': (0, 1), 'R': (1, 0), 'D': (0, -1)}\nps = [(0, 0)]\nfor c in input():\n\toffs = a[c]\n\tnow = ps[-1]\n\tnew = (now[0] + offs[0], now[1] + offs[1])\n\tk = 0\n\tfor t in a.values():\n\t\tif (new[0] + t[0], new[1] + t[1]) in ps:\n\t\t\tk += 1\n\tif new in ps or k > 1:\n\t\tprint('BUG')\n\t\texit()\n\tps.append(new)\nprint('OK')\n",
+  "per_solution_summary": [
+    {
+      "solution_index": 0,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 4.2
+    },
+    {
+      "solution_index": 1,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.3
+    },
+    {
+      "solution_index": 2,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.517
+    },
+    {
+      "solution_index": 3,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.613
+    },
+    {
+      "solution_index": 4,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.901
+    },
+    {
+      "solution_index": 5,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.195
+    },
+    {
+      "solution_index": 6,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.953
+    },
+    {
+      "solution_index": 7,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.94
+    },
+    {
+      "solution_index": 8,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.644
+    },
+    {
+      "solution_index": 9,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.115
+    },
+    {
+      "solution_index": 10,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.775
+    },
+    {
+      "solution_index": 11,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.958
+    },
+    {
+      "solution_index": 12,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.9
+    },
+    {
+      "solution_index": 13,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.723
+    },
+    {
+      "solution_index": 14,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.768
+    },
+    {
+      "solution_index": 15,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.586
+    },
+    {
+      "solution_index": 16,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.655
+    },
+    {
+      "solution_index": 17,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.722
+    },
+    {
+      "solution_index": 18,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.611
+    },
+    {
+      "solution_index": 19,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.46
+    },
+    {
+      "solution_index": 20,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.271
+    },
+    {
+      "solution_index": 21,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.732
+    },
+    {
+      "solution_index": 22,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.756
+    },
+    {
+      "solution_index": 23,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.51
+    },
+    {
+      "solution_index": 24,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.855
+    },
+    {
+      "solution_index": 25,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.782
+    },
+    {
+      "solution_index": 26,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.923
+    },
+    {
+      "solution_index": 27,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.926
+    },
+    {
+      "solution_index": 28,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.959
+    },
+    {
+      "solution_index": 29,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.89
+    },
+    {
+      "solution_index": 30,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.697
+    },
+    {
+      "solution_index": 31,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.98
+    },
+    {
+      "solution_index": 32,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.889
+    },
+    {
+      "solution_index": 33,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.945
+    },
+    {
+      "solution_index": 34,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.691
+    },
+    {
+      "solution_index": 35,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.851
+    },
+    {
+      "solution_index": 36,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.589
+    },
+    {
+      "solution_index": 37,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.765
+    },
+    {
+      "solution_index": 38,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.947
+    },
+    {
+      "solution_index": 39,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.144
+    },
+    {
+      "solution_index": 40,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.134
+    },
+    {
+      "solution_index": 41,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.939
+    },
+    {
+      "solution_index": 42,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.1
+    },
+    {
+      "solution_index": 43,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.679
+    },
+    {
+      "solution_index": 44,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.867
+    },
+    {
+      "solution_index": 45,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.056
+    },
+    {
+      "solution_index": 46,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 4.287
+    },
+    {
+      "solution_index": 47,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.412
+    },
+    {
+      "solution_index": 48,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.206
+    },
+    {
+      "solution_index": 49,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.355
+    },
+    {
+      "solution_index": 50,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.185
+    },
+    {
+      "solution_index": 51,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.792
+    },
+    {
+      "solution_index": 52,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.875
+    },
+    {
+      "solution_index": 53,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.961
+    },
+    {
+      "solution_index": 54,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.248
+    },
+    {
+      "solution_index": 55,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.024
+    },
+    {
+      "solution_index": 56,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.562
+    },
+    {
+      "solution_index": 57,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.635
+    },
+    {
+      "solution_index": 58,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 3.069
+    },
+    {
+      "solution_index": 59,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.815
+    },
+    {
+      "solution_index": 60,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.569
+    },
+    {
+      "solution_index": 61,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.98
+    },
+    {
+      "solution_index": 62,
+      "passed": 18,
+      "total": 18,
+      "time_seconds": 2.674
+    }
+  ],
+  "detailed_error": null
+}

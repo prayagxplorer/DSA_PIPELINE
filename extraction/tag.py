@@ -2,7 +2,7 @@ import ast
 from collections import Counter
 from datasets import load_from_disk
 
-taco = load_from_disk("taco_candidates")
+taco = load_from_disk("taco_candidates_filtered")
 
 
 def count_tag_field(dataset, field):
