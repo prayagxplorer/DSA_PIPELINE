@@ -14,8 +14,12 @@ taco_candidates/
 taco_candidates_filtered/
 taco_candidates_OLD_WITH_IMAGES/
 
-# Generated per-run outputs 
+# Generated per-run outputs and local pipeline state
 extraction/extracted/
+/extracted/
+/enriched/
+extraction/used_questions.json
+extraction/problem_registry.json
 sandbox/sandbox_report.json
 sandbox/mock_registry.json
 
@@ -33,3 +37,6 @@ sandbox/mock_registry.json
 ".env" 
 ".venv/" 
 
+# Local CSV exports and application lock files
+/Existing_Question_In_DB*.csv
+/.~lock.*
