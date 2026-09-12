@@ -104,7 +104,7 @@ def evaluate_question(question: dict, sample_size: int = 18, seed: Optional[int]
     # store the FULL original test case set for the DB, not just the sample
     # used for speed during verification -- sampling was an execution-time
     # shortcut, not a reason to under-populate the actual question record
-    full_cases = [TestCase(stdin=c["input"], expected_output=c["output"]) for c in all_cases]
+    full_cases = [TestCase(input=c["input"], output=c["output"]) for c in all_cases]
 
     return SandboxEvaluationReport(
         question_id=question.get("question_id"),
@@ -112,8 +112,8 @@ def evaluate_question(question: dict, sample_size: int = 18, seed: Optional[int]
         description=question.get("question_text", ""),
         raw_difficulty=question.get("difficulty"),
         categories=question.get("matched_tags", []),
-        sampleTestCases = full_cases[:1],
-        hiddenTestCases = full_cases[:1],
+        sampleTestCases=full_cases[:1],
+        hiddenTestCases=full_cases[1:],
         overall_pass=best["all_passed"] if best else False,
         sample_size_used=len(sampled_cases),
         total_test_cases_available=len(all_cases),
