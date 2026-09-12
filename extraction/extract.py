@@ -16,7 +16,7 @@ from typing import Any, Iterable, Sequence
 from datasets import Dataset, load_from_disk
 
 
-DATASET_PATH = Path("taco_candidates_filtered")
+DATASET_PATH = Path("taco_candidates")
 USED_QUESTIONS_PATH = Path("used_questions.json")
 EXTRACTED_DIRECTORY = Path("extracted")
 TRAIN_SPLIT = "train"

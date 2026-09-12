@@ -17,8 +17,8 @@ from pydantic import BaseModel
 
 
 class TestCase(BaseModel):
-    stdin: str
-    expected_output: str
+    input: str
+    output: str
 
 
 class SolutionSummary(BaseModel):
